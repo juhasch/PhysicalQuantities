@@ -3,16 +3,18 @@
 Numpy helper functions for PyPUnits
 
 """
-
+from .Quantity import *
 
 # numpy linspace wrapper for units
 def Qlinspace(start, stop, num = 50,  endpoint=True, retstep=False):
+    """ numpy.linespace with units
+    
+    """
     if not isinstance(start,PhysicalQuantity) and not isinstance(stop,PhysicalQuantity):
         return np.linspace(start, stop, num,  endpoint, retstep)
 
     if isinstance(start,PhysicalQuantity) and isinstance(stop,PhysicalQuantity):
         if start.base.unit != stop.base.unit:
-            print start.base.unit, stop.base.unit
             raise UnitError("Cannot match units")
     
     if isinstance(start,PhysicalQuantity):

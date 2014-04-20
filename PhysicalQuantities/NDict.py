@@ -31,6 +31,7 @@ class NumberDict(dict):
         for key in other.keys():
             sum_dict[key] = sum_dict[key] + other[key]
         return sum_dict
+    __radd__ = __add__
 
     def __sub__(self, other):
         sum_dict = NumberDict()
@@ -39,6 +40,7 @@ class NumberDict(dict):
         for key in other.keys():
             sum_dict[key] = sum_dict[key] - other[key]
         return sum_dict
+    __rsub__ = __sub__
 
     def __mul__(self, other):
         new = NumberDict()

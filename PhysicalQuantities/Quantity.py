@@ -5,6 +5,11 @@
 import numpy as np
 from .Unit import *
 
+import sys
+
+if sys.version_info > (2,):
+    xrange = range
+
 def isPhysicalQuantity(x):
     """ return true if x is a PhysicalQuantity """
     return hasattr(x, 'value') and hasattr(x, 'unit')
@@ -31,10 +36,7 @@ class PhysicalQuantity(object):
         2. PhysicalQuantity(value_with_unit), where value_with_unit is a string
            that contains both the value and the unit, i.e. '1.5 m/s'. This form
            is provided for more convenient interactive use.
-        """
-        for key, val in kwargs.iteritems():
-            pass
-        
+        """        
         if unit is not None:
             self.value = value
             self.unit = findUnit(unit)
@@ -221,7 +223,7 @@ class PhysicalQuantity(object):
         all the values except for the last one are integers. This is used to
         convert to irregular unit systems like hour/minute/second.
         """
-        units = map(findUnit, units)
+        units = list(map(findUnit, units))
         if len(units) == 1:
             unit = units[0]
             value = convertValue(self.value, self.unit, unit)
@@ -272,27 +274,27 @@ class PhysicalQuantity(object):
         return self.__class__(new_value, num + denom)
 
     # implementations of special functions, used by numpy ufuncs
-    def sqrt(self):
-        return pow(self, 0.5)
+    # def sqrt(self):
+        # return pow(self, 0.5)
 
-    def sin(self):
-        if self.unit.is_angle:
-            return np.sin(self.value *
-                           self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of sin must be an angle')
+    # def sin(self):
+        # if self.unit.is_angle:
+            # return np.sin(self.value *
+                           # self.unit.conversion_factor_to(unit_table['rad']))
+        # else:
+            # raise UnitError('Argument of sin must be an angle')
 
-    def cos(self):
-        if self.unit.is_angle:
-            return np.cos(self.value *
-                           self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of cos must be an angle')
+    # def cos(self):
+        # if self.unit.is_angle:
+            # return np.cos(self.value *
+                           # self.unit.conversion_factor_to(unit_table['rad']))
+        # else:
+            # raise UnitError('Argument of cos must be an angle')
 
-    def tan(self):
-        if self.unit.is_angle:
-            return np.tan(self.value *
-                           self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of tan must be an angle')
+    # def tan(self):
+        # if self.unit.is_angle:
+            # return np.tan(self.value *
+                           # self.unit.conversion_factor_to(unit_table['rad']))
+        # else:
+            # raise UnitError('Argument of tan must be an angle')
 

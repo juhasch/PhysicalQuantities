@@ -1,17 +1,27 @@
 # -*- coding: utf-8 -*-
+""" Units """
 
 import numpy as np
+import sys
 from math import pi
+from six import string_types
+from .NDict import *
 
-from NDict import *
+if sys.version_info > (2,):
+    from functools import reduce
 
 class UnitError(ValueError):
     pass
 
 # Helper functions
 def findUnit(unit):
-    if isinstance(unit, basestring):
-        name = unit.strip().replace('^', '**').replace('µ', 'mu').replace('°', 'deg')
+    """ Return PhysicalUnit class if given parameter is a valid unit
+    
+    Parameter:
+        unit - string with unit name
+     """   
+    if isinstance(unit, string_types):
+        name = unit.strip().replace('^', '**').replace('µ', 'u').replace('°', 'deg')
         try:
             unit = eval(name, unit_table)
         except NameError:
@@ -27,6 +37,7 @@ def findUnit(unit):
 
 
 def convertValue(value, src_unit, target_unit):
+    """ Convert between units, if possible """
     (factor, offset) = src_unit.conversion_tuple_to(target_unit)
     if isinstance(value, list):
         raise UnitError('Cannot convert units for a list')
@@ -34,6 +45,7 @@ def convertValue(value, src_unit, target_unit):
 
 
 def isPhysicalUnit(x):
+    """ Return true if valid PhysicalUnit class """
     return hasattr(x, 'factor') and hasattr(x, 'powers')
 
 class PhysicalUnit(object):
@@ -60,7 +72,7 @@ class PhysicalUnit(object):
         self.baseunit = self
         self.comment = comment
         self.url = url        
-        if isinstance(names, basestring):
+        if isinstance(names, string_types):
             self.names = NumberDict()
             self.names[names] = 1
         else:
@@ -103,7 +115,7 @@ class PhysicalUnit(object):
             reduce(lambda a, b: a + b, self.powers) == 1
 
     def __str__(self):
-        name = self.name.strip().replace('**', r'^').replace('mu', r'µ').replace('deg', r'°')
+        name = self.name.strip().replace('**', r'^').replace('u', r'µ').replace('deg', r'°')
         return name
 
     def __repr__(self):
@@ -113,7 +125,7 @@ class PhysicalUnit(object):
         """ Return latex representation of unit
             TODO: more info for aggregate units 
         """
-        unit = self.name.replace('**', '^').replace('mu', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace(' pi', r' \pi ')
+        unit = self.name.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace(' pi', r' \pi ')
         if self.prefixed == False:
             if self.comment is not '':
                 info = '(<a href="' + self.url + '" target="_blank">'+ self.comment + '</a>)'
@@ -144,7 +156,7 @@ class PhysicalUnit(object):
         if isPhysicalUnit(other):
             return PhysicalUnit(self.names + other.names,
                                 self.factor * other.factor,
-                                map(lambda a, b: a+b, self.powers, other.powers))
+                                list(map(lambda a, b: a+b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + {str(other): 1},
                                 self.factor * other, self.powers,
@@ -158,7 +170,7 @@ class PhysicalUnit(object):
         if isPhysicalUnit(other):
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
-                                map(lambda a, b: a-b, self.powers, other.powers))
+                                list(map(lambda a, b: a-b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names+{str(other): -1},
                                 self.factor/other, self.powers)
@@ -169,18 +181,20 @@ class PhysicalUnit(object):
         if isPhysicalUnit(other):
             return PhysicalUnit(other.names - self.names,
                                 other.factor/self.factor,
-                                map(lambda a, b: a-b, other.powers, self.powers))
+                                list(map(lambda a, b: a-b, other.powers, self.powers)))
         else:
             return PhysicalUnit({str(other): 1} - self.names,
                                 other / self.factor,
-                                map(lambda x: -x, self.powers))
+                                list(map(lambda x: -x, self.powers)))
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units with non-zero offset')
         if isinstance(other, int):
             return PhysicalUnit(other*self.names, pow(self.factor, other),
-                                map(lambda x, p=other: x*p, self.powers))
+                                list(map(lambda x, p=other: x*p, self.powers)))
         if isinstance(other, float):
             inv_exp = 1./other
             rounded = int(np.floor(inv_exp + 0.5))
@@ -190,8 +204,8 @@ class PhysicalUnit(object):
                     f = pow(self.factor, other)
                     p = map(lambda x, p=rounded: x/p, self.powers)
                     if reduce(lambda a, b: a and b,
-                              map(lambda x, e=rounded: x%e == 0,
-                                  self.names.values())):
+                              list(map(lambda x, e=rounded: x%e == 0,
+                                  self.names.values()))):
                         names = self.names/rounded
                     else:
                         names = NumberDict()
@@ -313,22 +327,20 @@ def addPrefixed(unitname, range='full'):
         if prefixedname not in unit_table:
             addUnit(prefixedname, prefix[1]*unit,prefixed=True,baseunit=unit)
 
-
 # add scaling prefixes
 _full_prefixes = [
     ('Y',  1.e24), ('Z',  1.e21), ('E',  1.e18), ('P',  1.e15), ('T',  1.e12),
     ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3),  ('h',  1.e2),  ('da', 1.e1),
-    ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('mu', 1.e-6), ('n',  1.e-9),
+    ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('u', 1.e-6), ('n',  1.e-9),
     ('p',  1.e-12), ('f',  1.e-15), ('a',  1.e-18), ('z',  1.e-21),
     ('y',  1.e-24),
 ]
 
-# actually, use a reduced set of scaling prefixes is enough for engineering
-# purposes:
+# actually, use a reduced set of scaling prefixes for engineering purposes:
 _engineering_prefixes = [
     ('T',  1.e12),
     ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3),  ('h',  1.e2),  ('da', 1.e1),
-    ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('mu', 1.e-6), ('n',  1.e-9),
+    ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('u', 1.e-6), ('n',  1.e-9),
     ('p',  1.e-12), ('f',  1.e-15), ('a',  1.e-18),
 ]
 
@@ -346,28 +358,4 @@ addPrefixed(addUnit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0
 addPrefixed(addUnit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0],url='https://en.wikipedia.org/wiki/Candela', comment='Candela')),range='engineering')
 addPrefixed(addUnit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0],url='https://en.wikipedia.org/wiki/Radian', comment='Radian')),range='engineering')
 addPrefixed(addUnit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1],url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian')),range='engineering')
-addPrefixed(addUnit('Hz', '1/s', 'Hertz', url='https://en.wikipedia.org/wiki/Hertz'),range='engineering')
-addPrefixed(addUnit('N', 'm*kg/s**2', 'Newton', url='https://en.wikipedia.org/wiki/Newton_(unit)'),range='engineering')
-addPrefixed(addUnit('Pa', 'N/m**2', 'Pascal', url='https://en.wikipedia.org/wiki/Pascal_(unit)'),range='engineering')
-addPrefixed(addUnit('J', 'N*m', 'Joule', url='https://en.wikipedia.org/wiki/Joule'),range='engineering')
-addPrefixed(addUnit('W', 'J/s', 'Watt', url='https://en.wikipedia.org/wiki/Watt'),range='engineering')
-addPrefixed(addUnit('C', 's*A', 'Coulomb', url='https://en.wikipedia.org/wiki/Coulomb'),range='engineering')
-addPrefixed(addUnit('V', 'W/A', 'Volt', url='https://en.wikipedia.org/wiki/Volt'),range='engineering')
-addPrefixed(addUnit('F', 'C/V', 'Farad', url='https://en.wikipedia.org/wiki/Farad'),range='engineering')
-addPrefixed(addUnit('Ohm', 'V/A', 'Ohm', url='https://en.wikipedia.org/wiki/Ohm_(unit)'),range='engineering')
-addPrefixed(addUnit('S', 'A/V', 'Siemens', url='https://en.wikipedia.org/wiki/Siemens_(unit)'),range='engineering')
-addPrefixed(addUnit('Wb', 'V*s', 'Weber', url='https://en.wikipedia.org/wiki/Weber_(unit)'),range='engineering')
-addPrefixed(addUnit('T', 'Wb/m**2', 'Tesla', url='https://en.wikipedia.org/wiki/Tesla_(unit)'),range='engineering')
-addPrefixed(addUnit('H', 'Wb/A', 'Henry', url='https://en.wikipedia.org/wiki/Henry_(unit)'),range='engineering')
-addPrefixed(addUnit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/Lumen_(unit)'),range='engineering')
-addPrefixed(addUnit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'),range='engineering')
-
-# Angle units
-unit_table['pi'] = pi #np.pi
-addUnit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
-addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
-addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
-
-addUnit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
-addUnit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 

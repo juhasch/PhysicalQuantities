@@ -1,21 +1,19 @@
-""" IPython extension for dB calculations """
+# -*- coding: utf-8 -*-
+""" Class for dB calculations 
 
-#-----------------------------------------------------------------------------
-#  Copyright (C) 2013  The IPython Development Team
-#
-#  Distributed under the terms of the BSD License.  The full license is in
-#  the file COPYING, distributed as part of this software.
-#-----------------------------------------------------------------------------
+Example:
+    from PhysicalQuantities.dBunits import dBUnit
+    a = dBUnit(0.1,'dBm', islog=True)
+    print(a)
 
-import re
+"""
+
 import numpy as np
-
+import re
 import PhysicalQuantities as pq
 
-from IPython.core.inputtransformer import StatelessInputTransformer
-
 # list of tuples: (base unit, correction factor to base unit, conversion factor to linear)
-_dB_units = {'dB':  ('', 0, 1),
+dB_units = {'dB':  ('', 0, 1),
             'dBm':  ('W', -30, 10),  # Power in Watt
             'dBW':  ('W', 0, 10),
             'dBnV': ('V', -90, 20),  # Voltage
@@ -29,7 +27,7 @@ _dB_units = {'dB':  ('', 0, 1),
             'dBi':  ('', 0, 10),    # Antenna gain G
             'dBd':  ('', 2.15, 10)}
 
-
+           
 class UnitError(ValueError):
     pass
 
@@ -41,40 +39,40 @@ class dBUnit(object):
         islog = False
         self.stddev = 0
         self.z0 = 50
-        for key, val in kwargs.iteritems():
+        for key, val in list(kwargs.items()):
             if key is 'islog':
                 islog = val    # convert to log at initialization
             if key is 'stddev':
                 self.stddev = val
-        if _dB_units[unit]:
+        if dB_units[unit]:
             self.unit = unit
             if islog is True:
                 self.value = value
             else:
-                self.value = _dB_units[self.unit][2] * np.log10(value) - _dB_units[self.unit][1]
+                self.value = dB_units[self.unit][2] * np.log10(value) - dB_units[self.unit][1]
         else:
             raise UnitError('Unknown unit %s' % unit)
 
-        for key, val in kwargs.iteritems():
+        for key, val in list(kwargs.items()):
             # add attributes, e.g. varname.dBm
             if key is 'attr':
-                base = _dB_units[self.unit][0]
-                for attr in _dB_units.keys():
-                    if _dB_units[attr][0] == base:
+                base = dB_units[self.unit][0]
+                for attr in dB_units.keys():
+                    if dB_units[attr][0] == base:
                         setattr(self,attr, self.to(attr))
 
     def __dir__(self):
         """ return list of dB units for tab completion """
         try:
-            base = _dB_units[self.unit][0]
+            base = dB_units[self.unit][0]
         except:
             raise AttributeError
         if base == '':
             return
 
         x = []
-        for _u in _dB_units:
-            if _dB_units[_u][0] == base:
+        for _u in dB_units:
+            if dB_units[_u][0] == base:
                 x.append(_u)
         x.append(base)
         return filter(None,[str(_x) for _x in x])
@@ -85,21 +83,21 @@ class dBUnit(object):
         """
         dropunit = (attr[-1] == '_')
         unit = attr.strip('_')
-        isdBunit = unit in _dB_units.keys()
-        islinunit = unit in  _dB_units[self.unit][0]
+        isdBunit = unit in dB_units.keys()
+        islinunit = unit in  dB_units[self.unit][0]
 
         if islinunit:
             if dropunit is False:
-                return pu.Q(self.__float__(),_dB_units[self.unit][0] )
+                return pq.Q(self.__float__(),dB_units[self.unit][0] )
             else:
                 return self.__float__()
         
         # convert to different scaling
         if self.unit is unit:
             return self
-        elif _dB_units[unit][0] is _dB_units[self.unit][0]:
+        elif dB_units[unit][0] is dB_units[self.unit][0]:
             # convert to same base unit, only scaling
-            value = self.value + _dB_units[self.unit][1] - _dB_units[unit][1]
+            value = self.value + dB_units[self.unit][1] - dB_units[unit][1]
             if dropunit is False:
                 return self.__class__(value, unit, islog=True)
             else:
@@ -117,7 +115,7 @@ class dBUnit(object):
             # easy unitless adding
             value = self.value + other.value
             return self.__class__(value, self.unit, islog=True)
-        elif _dB_units[self.unit][0] is _dB_units[other.unit][0]:
+        elif dB_units[self.unit][0] is dB_units[other.unit][0]:
             # same unit adding
             val1 = float(self)
             val2 = float(other)
@@ -132,7 +130,7 @@ class dBUnit(object):
             # easy unitless adding
             value = self.value - other.value
             return self.__class__(value, self.unit, islog=True)
-        elif _dB_units[self.unit][0] is _dB_units[other.unit][0]:
+        elif dB_units[self.unit][0] is dB_units[other.unit][0]:
             # same unit substraction
             val1 = float(self)
             val2 = float(other)
@@ -144,68 +142,11 @@ class dBUnit(object):
 
     def __float__(self):
         # return linear value in base unit
-        dbw = self.value + _dB_units[self.unit][1]
-        return 10**(dbw/(_dB_units[self.unit][2]))
+        dbw = self.value + dB_units[self.unit][1]
+        return 10**(dbw/(dB_units[self.unit][2]))
 
     def __str__(self):
         return "%.1f %s" % (self.value, self.unit)
 
     def __repr__(self):
         return '<dBUnit ' + str(self.value) + ' ' + self.unit + '>'
-
-# regex: number + space + dB-unit
-# valid: 0dBm, 0 dBm, 0. dBm
-# invalid: 0.dBm
-number = r'(-?[\d0-9-.]+)'
-_unit_list = '('
-for x in _dB_units.keys()[0:-1]:
-    _unit_list += x + '|'
-_unit_list += _dB_units.keys()[-1] + ')'
-match = number + r'(\s*)' + _unit_list
-
-# regex for finding units and quoted strings
-number = r'-?[\d0-9.]+'  # problem: 1dBm-0dB
-stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-match = stringmatch + '|' + number + r'(\s*)' + _unit_list
-line_match = re.compile(match)
-
-# regex to match unit after it has been found using line_match
-number = r'(-?[\d0-9-]+' +r'-?[\d0-9.eE-]*)'
-match = number + r'(.\s|\s*)' + _unit_list
-unit_match = re.compile(match)
-
-
-def replace_inline(ml):
-    """Replace an inline unit expression by valid Python code
-    """
-    if ml.group()[0][0] in '"\'':
-        return ml.group()
-
-    def replace_unit(mo):
-        try:
-            return "dBUnit(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
-        except KeyError:
-            return mo.group()
-
-    return unit_match.sub(replace_unit, ml.group())
-
-
-@StatelessInputTransformer.wrap
-def dBUnit_transform(line):
-    line = line_match.sub(replace_inline, line)
-    return line
-
-__transformer = dBUnit_transform()
-
-
-def load_ipython_extension(ip):
-    global __transformer
-    ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
-    ip.user_ns['dBUnit'] = dBUnit
-
-
-def unload_ipython_extension(ip):
-    global __transformer
-    if type(__transformer) is StatelessInputTransformer:
-        ip.input_transformer_manager.logical_line_transforms.remove(__transformer)
-        ip.user_ns.pop('dBUnit')
