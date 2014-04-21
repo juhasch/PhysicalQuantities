@@ -14,7 +14,7 @@ setup(
     keywords = "Physical Quantities IPython",
     url = "http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
-    long_description=read('README'),
+    long_description=read('README.md'),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
