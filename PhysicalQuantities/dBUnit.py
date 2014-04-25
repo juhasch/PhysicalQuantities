@@ -9,6 +9,8 @@ Example:
 """
 
 import numpy as np
+import copy
+
 import re
 import PhysicalQuantities as pq
 
@@ -104,7 +106,21 @@ class dBUnit(object):
                 return value
         else:
             raise UnitError('No conversion between units %s and %s' % (self.unit, unit))
-            
+
+		def copy(self):
+        """Return a copy of the PhysicalQuantity including the value.
+        Needs deepcopy to copy the value
+        """
+        return copy.deepcopy(self)
+
+    def __getitem__(self, key):
+        """ Allow indexing if quantities if underlying object is array or list
+            e.g. obj[0] or obj[0:4]
+        """
+        if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
+            return self.__class__(self.value[key], self.unit)
+        raise AttributeError        
+		
     @property
     def dB(self):
         # return dB value without unit

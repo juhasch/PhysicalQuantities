@@ -11,7 +11,7 @@ Example:
 import numpy as np
 import re
 import PhysicalQuantities as pq
-from .dBunit import *
+from PhysicalQuantities.dBUnit import *
 
 from IPython.core.inputtransformer import StatelessInputTransformer
 
@@ -29,7 +29,7 @@ _unit_list += _li[-1] + ')'
 match = number + r'(\s*)' + _unit_list
 
 # regex for finding units and quoted strings
-number = r'(?<!\w)(-?[\d0-9-.]+-?[\d0-9eE-]*)'
+number = r'(?<!\w)(-?[\d0-9.]+[\d0-9eE-|x]*)'
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 match = stringmatch+ '|' + number + r'(\s*)' + _unit_list
 line_match = re.compile(match)

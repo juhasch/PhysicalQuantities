@@ -6,6 +6,7 @@ import numpy as np
 from .Unit import *
 
 import sys
+import copy
 
 if sys.version_info > (2,):
     xrange = range
@@ -214,6 +215,12 @@ class PhysicalQuantity(object):
         else:
             return np.ceil(x)
 
+    def copy(self):
+        """Return a copy of the PhysicalQuantity including the value.
+        Needs deepcopy to copy the value
+        """
+        return copy.deepcopy(self)
+            
     def to(self, *units):
         """Express the quantity in different units. If one unit is specified, a
         new PhysicalQuantity object is returned that expresses the quantity in
@@ -274,8 +281,8 @@ class PhysicalQuantity(object):
         return self.__class__(new_value, num + denom)
 
     # implementations of special functions, used by numpy ufuncs
-    # def sqrt(self):
-        # return pow(self, 0.5)
+    def sqrt(self):
+        return pow(self, 0.5)
 
     # def sin(self):
         # if self.unit.is_angle:
