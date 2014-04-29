@@ -125,7 +125,7 @@ class PhysicalUnit(object):
         """ Return latex representation of unit
             TODO: more info for aggregate units 
         """
-        unit = self.name.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace(' pi', r' \pi ')
+        unit = self.name.replace('**', '^').replace('u', '\um').replace('deg', '°').replace('*', r' \cdot ').replace(' pi', r' \pi ')
         if self.prefixed == False:
             if self.comment is not '':
                 info = '(<a href="' + self.url + '" target="_blank">'+ self.comment + '</a>)'
@@ -138,7 +138,8 @@ class PhysicalUnit(object):
             else:
                 info = r'$ = %s \cdot %s$ (' % (self.factor, self.baseunit) +\
                     '<a href="' + baseunit.url + '" target="_blank">'+ baseunit.comment + '</a>)'            
-        s = r'$%s$ %s' % (unit, info)
+        # s = r'$%s$ %s' % (unit, info) # TODO: too verbose ...
+        s = r'$%s$' % (unit)
         return s
 
     @property
@@ -252,37 +253,37 @@ class PhysicalUnit(object):
         offset = self.offset - (other.offset * other.factor / self.factor)
         return (factor, offset)
 
-    def html_list(self):
-        """ List all defined units """
-        from IPython.display import display, Math, Latex, HTML
-        str = "<table>"
-        str += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
-        for name in unit_table:
-            unit = unit_table[name]
-            if isinstance(unit,PhysicalUnit):
-                if unit.prefixed == False:
-                    if isinstance(unit.baseunit, PhysicalUnit):
-                        baseunit = '$ %s $' % unit.baseunit
-                    else:
-                        baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('mu', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace('pi', r' \pi ')
-                    #baseunit = '$ %s $' % unit.baseunit 
-                    #print baseunit
-                    #baseunit = str(unit.baseunit)
-                    #replace(' pi', r' \pi ')
-                    str+= "<tr><td>" + unit.name + '</td><td>' + baseunit +\
-                          '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
-                          "</a></td></tr>"
-        str += "</table>"
-        return HTML(str)
-        
-    def list(self):
-        """ List all defined units """
-        str=[]
-        for name in unit_table:
-            unit = unit_table[name]
-            if isinstance(unit,PhysicalUnit) and unit.prefixed == False:
-                str.append(unit.name)
-        return str
+def units_html_list():
+    """ List all defined units """
+    from IPython.display import display, Math, Latex, HTML
+    str = "<table>"
+    str += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
+    for name in unit_table:
+        unit = unit_table[name]
+        if isinstance(unit,PhysicalUnit):
+            if unit.prefixed == False:
+                if isinstance(unit.baseunit, PhysicalUnit):
+                    baseunit = '$ %s $' % unit.baseunit
+                else:
+                    baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace('pi', r' \pi ')
+                #baseunit = '$ %s $' % unit.baseunit 
+                #print baseunit
+                #baseunit = str(unit.baseunit)
+                #replace(' pi', r' \pi ')
+                str+= "<tr><td>" + unit.name + '</td><td>' + baseunit +\
+                      '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
+                      "</a></td></tr>"
+    str += "</table>"
+    return HTML(str)
+    
+def units_list():
+    """ List all defined units """
+    str=[]
+    for name in unit_table:
+        unit = unit_table[name]
+        if isinstance(unit,PhysicalUnit) and unit.prefixed == False:
+            str.append(unit.name)
+    return str
 
 
 def addUnit(name, unit, comment='',prefixed=False, baseunit=None, url=''):

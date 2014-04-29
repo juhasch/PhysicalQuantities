@@ -282,26 +282,22 @@ class PhysicalQuantity(object):
 
     # implementations of special functions, used by numpy ufuncs
     def sqrt(self):
-        return pow(self, 0.5)
+         return self.__pow__(0.5)
 
-    # def sin(self):
-        # if self.unit.is_angle:
-            # return np.sin(self.value *
-                           # self.unit.conversion_factor_to(unit_table['rad']))
-        # else:
-            # raise UnitError('Argument of sin must be an angle')
+    def sin(self):
+        if self.unit.is_angle:
+            return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of sin must be an angle')
 
-    # def cos(self):
-        # if self.unit.is_angle:
-            # return np.cos(self.value *
-                           # self.unit.conversion_factor_to(unit_table['rad']))
-        # else:
-            # raise UnitError('Argument of cos must be an angle')
+    def cos(self):
+        if self.unit.is_angle:
+            return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of cos must be an angle')
 
-    # def tan(self):
-        # if self.unit.is_angle:
-            # return np.tan(self.value *
-                           # self.unit.conversion_factor_to(unit_table['rad']))
-        # else:
-            # raise UnitError('Argument of tan must be an angle')
-
+    def tan(self):
+        if self.unit.is_angle:
+            return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of tan must be an angle')
