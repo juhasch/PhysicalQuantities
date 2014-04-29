@@ -2,7 +2,10 @@ PhysicalQuantities is a python module that allows calculations to be aware of ph
 
 The module also contains an extension for IPython. This allows simplified usage, simply typing in physical quantities as number and unit.
 
-The Github repository for this module can be found here: https://github.com/juhasch/ipython-physical-units
+Documentation is contained in IPython notebooks:
+http://nbviewer.ipython.org/github/juhasch/PhysicalQuantities/blob/master/doc/Index.ipynb
 
 This module is based on the IPython extension by Georg Brandl: https://bitbucket.org/birkenfeld/ipython-physics.
 It was converted into a standalone Python module and extended heavily to be as flexible as possible.
+
+Currently, there are some bugs when running under Python3.
