@@ -36,16 +36,20 @@ class UnitError(ValueError):
 
 class dBUnit(object):
     """ dB unit calculations """
+
     def __init__(self, value, unit, **kwargs):
         # initialize and convert to logarithm if islog=False
         islog = False
-        self.stddev = 0
         self.z0 = 50
+        try:
+            ip = get_ipython()
+            self.ptformatter = ip.display_formatter.formatters['text/plain']
+        except:
+            self.ptformatter = None
+        self.format = '' # display format for number to string conversion
         for key, val in list(kwargs.items()):
             if key is 'islog':
                 islog = val    # convert to log at initialization
-            if key is 'stddev':
-                self.stddev = val
         if dB_units[unit]:
             self.unit = unit
             if islog is True:
@@ -107,7 +111,7 @@ class dBUnit(object):
         else:
             raise UnitError('No conversion between units %s and %s' % (self.unit, unit))
 
-		def copy(self):
+    def copy(self):
         """Return a copy of the PhysicalQuantity including the value.
         Needs deepcopy to copy the value
         """
@@ -162,7 +166,11 @@ class dBUnit(object):
         return 10**(dbw/(dB_units[self.unit][2]))
 
     def __str__(self):
-        return "%.1f %s" % (self.value, self.unit)
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+            # %precision magic only works for floats
+            format = self.ptformatter.float_format
+            return "%s %s" % (format%self.value, str(self.unit))
+        return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
 
     def __repr__(self):
-        return '<dBUnit ' + str(self.value) + ' ' + self.unit + '>'
+        return '<dBUnit ' + str(self) + '>'

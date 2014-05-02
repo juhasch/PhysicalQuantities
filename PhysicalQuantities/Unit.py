@@ -21,7 +21,7 @@ def findUnit(unit):
         unit - string with unit name
      """   
     if isinstance(unit, string_types):
-        name = unit.strip().replace('^', '**').replace('µ', 'u').replace('°', 'deg')
+        name = unit.strip().replace('^', '**') #.replace('µ', 'u').replace('°', 'deg')
         try:
             unit = eval(name, unit_table)
         except NameError:
@@ -115,7 +115,7 @@ class PhysicalUnit(object):
             reduce(lambda a, b: a + b, self.powers) == 1
 
     def __str__(self):
-        name = self.name.strip().replace('**', r'^').replace('u', r'µ').replace('deg', r'°')
+        name = self.name.strip().replace('**', u'^') #.replace('u', u'µ').replace('deg', u'°')
         return name
 
     def __repr__(self):
@@ -125,7 +125,7 @@ class PhysicalUnit(object):
         """ Return latex representation of unit
             TODO: more info for aggregate units 
         """
-        unit = self.name.replace('**', '^').replace('u', '\um').replace('deg', '°').replace('*', r' \cdot ').replace(' pi', r' \pi ')
+        unit = self.name.replace('**', '^').replace('u', '\mu ').replace('deg', r'\,^{\circ}').replace('*', r' \cdot ').replace(' pi', r' \pi ')
         if self.prefixed == False:
             if self.comment is not '':
                 info = '(<a href="' + self.url + '" target="_blank">'+ self.comment + '</a>)'

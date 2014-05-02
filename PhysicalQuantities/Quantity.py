@@ -31,13 +31,15 @@ class PhysicalQuantity(object):
     def __init__(self, value, unit=None,  **kwargs):
         """There are two constructor calling patterns:
 
-        1. PhysicalQuantity(value, unit), where value is any number and unit is
-           a string defining the unit
-
-        2. PhysicalQuantity(value_with_unit), where value_with_unit is a string
-           that contains both the value and the unit, i.e. '1.5 m/s'. This form
-           is provided for more convenient interactive use.
-        """        
+        PhysicalQuantity(value, unit), where value is any number and unit is
+        a string defining the unit
+        """
+        try:
+            ip = get_ipython()
+            self.ptformatter = ip.display_formatter.formatters['text/plain']
+        except:
+            self.ptformatter = None
+        self.format = '' # display format for number to string conversion
         if unit is not None:
             self.value = value
             self.unit = findUnit(unit)
@@ -91,8 +93,10 @@ class PhysicalQuantity(object):
         """ Return string representation as 'value unit'
             e.g. str(obj)
         """
-        unit = str(self.unit) # pretty print units
-        return '%s %s' % ( self.value, unit)
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+            # %precision magic only works for floats
+            format = self.ptformatter.float_format
+        return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
 
     def __complex__(self):
         """ Return complex number without units converted to base units 
@@ -112,13 +116,11 @@ class PhysicalQuantity(object):
     def _repr_latex_(self):
         """ Return Latex representation for IPython notebook
         """
-        unit = self.unit._repr_latex_() 
-        s = r'%s %s' % (self.value, unit)
-        return s
-
-#    @property
-#    def latex(self):
-#        return Latex(self._repr_latex_())
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+            # %precision magic only works for floats
+            format = self.ptformatter.float_format
+            return u"%s %s" % (format%self.value,  self.unit._repr_latex_())
+        return '{0:{format}} {1}'.format(self.value, self.unit._repr_latex_(),format=self.format)
 
     def _sum(self, other, sign1, sign2):
         if not isPhysicalQuantity(other):
