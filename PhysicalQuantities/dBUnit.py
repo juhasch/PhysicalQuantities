@@ -22,7 +22,7 @@ import re
 import PhysicalQuantities as pq
 
 # list of tuples: (base unit, correction factor to base unit, conversion factor to linear)
-dB_units = {'dB':  ('', 0, 10),
+dB_units = {'dB':  ('', 0, 1),
             'dBm':  ('W', -30, 10),  # Power in Watt
             'dBW':  ('W', 0, 10),
             'dBnV': ('V', -90, 20),  # Voltage
@@ -170,7 +170,7 @@ class dBUnit(object):
     def __mul__(self, other):
         if self.unit is 'dB' and not hasattr(other,'unit'):
             # dB without physical dimension can be multiplied with a factor
-            print self,self.value,other,value
+            value = self.value * other
             return self.__class__(value, self.unit, islog=True)
 
     __rmul__ = __mul__
