@@ -59,8 +59,8 @@ addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
 addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
 
 # Time
-addUnit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
-addUnit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
+addUnit('minutes', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
+addUnit('hours', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
 # numpy linspace wrapper for units
 def linspace(start, stop, num = 50,  endpoint=True, retstep=False):

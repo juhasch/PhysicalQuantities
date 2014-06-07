@@ -91,12 +91,6 @@ addUnit('atm', '101325.*Pa', 'standard atmosphere')
 addUnit('torr', 'atm/760', 'torr = mm of mercury')
 addUnit('psi', '6894.75729317*Pa', 'pounds per square inch')
 
-# Angle units
-addUnit('deg', 'pi*rad/180', 'degrees')
-addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
-addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
-#_unit_table['cycles'] = 2*np.pi
-
 # Temperature units -- can't use the 'eval' trick that _addUnit provides
 # for degC and degF because you can't add units
 #kelvin = _findUnit('K')
