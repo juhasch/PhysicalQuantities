@@ -340,7 +340,7 @@ _full_prefixes = [
 # actually, use a reduced set of scaling prefixes for engineering purposes:
 _engineering_prefixes = [
     ('T',  1.e12),
-    ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3),  ('h',  1.e2),  ('da', 1.e1),
+    ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3), 
     ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('u', 1.e-6), ('n',  1.e-9),
     ('p',  1.e-12), ('f',  1.e-15), ('a',  1.e-18),
 ]

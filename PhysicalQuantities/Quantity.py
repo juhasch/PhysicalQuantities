@@ -2,6 +2,7 @@
 """
 
 """
+from __future__ import division
 import numpy as np
 from .Unit import *
 
@@ -222,7 +223,25 @@ class PhysicalQuantity(object):
         Needs deepcopy to copy the value
         """
         return copy.deepcopy(self)
-            
+
+    def autoscale(self):
+        """ autoscale if it has a simple unit """
+        if len(self.unit.names) == 1:
+            b = self.base
+            v = b.value
+            n = np.log10(v)
+            # we want to be between 0..999 
+            _scale = np.floor(n)
+            # now search for unit
+            for i in unit_table:
+                u = unit_table[i]
+                if isinstance(u,PhysicalUnit):
+                    if u.baseunit is self.unit.baseunit:
+                        f = np.log10(u.factor) - _scale
+                        if (f > -3) and (f < 1):
+                            return self.to(i)
+        return self
+    
     def to(self, *units):
         """Express the quantity in different units. If one unit is specified, a
         new PhysicalQuantity object is returned that expresses the quantity in
