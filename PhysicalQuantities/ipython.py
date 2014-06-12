@@ -32,20 +32,22 @@ for unit in _li[::-1]:
 _unit_list = _unit_list[0:-1] + ')'
 
 # regex for finding units and quoted strings
-#number = r'(?<!\w)(-?[\d0-9.]+[\d0-9eE-|x]*)'
-number = r'(?<!\w)-?[0-9]+[.0-9]*[eE0-9-]+'
+number = r'([a-z]*)(-?[0-9]*.?[0-9]*[eE]?-?[0-9]*)'
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 match = stringmatch+ '|' + number + r'(\s*)' + _unit_list + r'(?:\W+|$)'
 line_match = re.compile(match)
 
 # regex to match unit after it has been found using line_match
-number = r'(-?[\d0-9-]+' +r'-?[\d0-9.eE-]*)'
+number = r'(-?[0-9]*.?[0-9]*[eE]?-?[0-9]*)'
 match = number + r'(.\s|\s*)' + _unit_list
 unit_match = re.compile(match)
 
 def replace_inline(ml):
     """Replace an inline unit expression by valid Python code
     """
+    if len (ml.groups()[2]) > 0:
+        return ml.group()
+
     if ml.group()[0][0] in '"\'':
         return ml.group()
 
