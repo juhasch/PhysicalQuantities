@@ -32,6 +32,18 @@ without explicitly calling a function constructor
 from __future__ import absolute_import
 from .Quantity import *
 
+version="0.1"
+# Bugs in this version:
+# - wrong results with PYthon 3 !!!
+# - regex not correct
+# - initialize dBUnit with a PhysicalQuantity
+#
+# TODO
+# - plotting helper functions
+# - add annotation or name (e.g. 'Frequency')
+# - engineering autoscaling -> 4e-6s -> 4 µs
+
+
 Q=PhysicalQuantity
 U=PhysicalUnit
 
@@ -57,10 +69,10 @@ unit_table['pi'] = pi #np.pi
 addUnit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
 addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
 addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
-
+del unit_table['pi']
 # Time
-addUnit('minutes', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
-addUnit('hours', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
+addUnit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
+addUnit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
 # numpy linspace wrapper for units
 def linspace(start, stop, num = 50,  endpoint=True, retstep=False):

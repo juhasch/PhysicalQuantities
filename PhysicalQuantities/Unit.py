@@ -350,7 +350,6 @@ unit_table = {}
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
 addUnit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
-addPrefixed(addUnit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Metre', comment='Metre'),range='engineering')
 addPrefixed(addUnit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'),range='engineering')
 addPrefixed(addUnit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Second', comment='Second'),range='engineering')
 addPrefixed(addUnit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'),range='engineering')
@@ -359,3 +358,4 @@ addPrefixed(addUnit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0
 addPrefixed(addUnit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),url='https://en.wikipedia.org/wiki/Candela', comment='Candela'),range='engineering')
 addPrefixed(addUnit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),url='https://en.wikipedia.org/wiki/Radian', comment='Radian'),range='engineering')
 addPrefixed(addUnit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'),range='engineering')
+addPrefixed(addUnit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Metre', comment='Metre'),range='engineering')
