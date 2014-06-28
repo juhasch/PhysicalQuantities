@@ -97,6 +97,7 @@ class PhysicalQuantity(object):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
             format = self.ptformatter.float_format
+            return u"%s %s" % (format%self.value,  str(self.unit))
         return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
 
     def __complex__(self):

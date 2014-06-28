@@ -22,6 +22,8 @@ def findUnit(unit):
      """   
     if isinstance(unit, string_types):
         name = unit.strip().replace('^', '**') #.replace('µ', 'u').replace('°', 'deg')
+        if name[0:2] == '1/': 
+            name = name[2:] + '**-1' # replace 1/x with x**-1
         try:
             unit = eval(name, unit_table)
         except NameError:
@@ -187,8 +189,8 @@ class PhysicalUnit(object):
             return PhysicalUnit({str(other): 1} - self.names,
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
-    __truediv__ = __div__
-    __rtruediv__ = __rdiv__
+#    __truediv__ = __div__
+#    __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
         if self.offset != 0:
