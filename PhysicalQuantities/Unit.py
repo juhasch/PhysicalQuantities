@@ -189,8 +189,8 @@ class PhysicalUnit(object):
             return PhysicalUnit({str(other): 1} - self.names,
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
-#    __truediv__ = __div__
-#    __rtruediv__ = __rdiv__
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
         if self.offset != 0:
