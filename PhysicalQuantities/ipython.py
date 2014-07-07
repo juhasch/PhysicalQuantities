@@ -34,36 +34,29 @@ _unit_list = _unit_list[0:-1] + ')'
 # regex for finding units and quoted strings
 number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-match = stringmatch+ '|' + number + r'(\s*)' + _unit_list + r'(?:\W+|$)'
-line_match = re.compile(match)
+number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
+match1 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')'+ r'(?:\W+|$)'
+match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*[2-9]+' + ')'+  r'(?:\W+|$)'
+match3 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\/['  + _unit_list + '])' +  r'(?:\W+|$)'
 
-# regex to match unit after it has been found using line_match
-number = r'(-?[0-9]*.?[0-9]*[eE]?-?[0-9]*)'
-match = number + r'(.\s|\s*)' + _unit_list
-unit_match = re.compile(match)
+line_match1 = re.compile(match1)
+line_match2 = re.compile(match2)
+line_match3 = re.compile(match3)
 
-def replace_inline(ml):
+def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
-    a= ml.groups()
-    if a is not None:
-        if a[2] is not None: 
-            if len (a[2]) == 0:
-                return ml.group()
-        
-    if ml.group()[0][0] in '"\'':
-        return ml.group()
-
-    def replace_unit(mo):
-        try:
-            return 'PhysicalQuantity('+ mo.group(1)+',\'' + mo.group(3) + '\')'
-        except KeyError:
-            return mo.group()
-    return unit_match.sub(replace_unit, ml.group())
+    if (m):
+#        print m.groups()
+        if m.group(2) == '':
+            return m.group(0)
+    return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + '\')'
 
 @StatelessInputTransformer.wrap
 def _transform(line):
-    line = line_match.sub(replace_inline, line)
+    line = line_match3.sub(replace_inline, line) # unit**n
+    line = line_match2.sub(replace_inline, line) # unit/unit
+    line = line_match1.sub(replace_inline, line)
     return line
 
 __transformer = _transform()
