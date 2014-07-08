@@ -26,19 +26,22 @@ subst_re = re.compile(r'\?' + name)
 
 # sort units after length for Regex matching
 _li = sorted(pq.unit_table,key=len)
-_unit_list = '('
+_unit_list = ''
 for unit in _li[::-1]:
     _unit_list += unit + '|'
-_unit_list = _unit_list[0:-1] + ')'
+_unit_list = _unit_list[0:-1]# + ']'
 
 # regex for finding units and quoted strings
-number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
-match1 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')'+ r'(?:\W+|$)'
-match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*[2-9]+' + ')'+  r'(?:\W+|$)'
-match3 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\/['  + _unit_list + '])' +  r'(?:\W+|$)'
+number1 = r'(?<![\w])(-?[0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
+number2 = r'(?<![\w])(-?[0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
+match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
+match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
+match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*[2-9]+' + ')' #+  r'(?:\W+|$)'
+match3 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\/['  + _unit_list + '])'# +  r'(?:\W+|$)'
 
+line_match0 = re.compile(match0)
 line_match1 = re.compile(match1)
 line_match2 = re.compile(match2)
 line_match3 = re.compile(match3)
@@ -48,15 +51,20 @@ def replace_inline(m):
     """
     if (m):
 #        print m.groups()
-        if m.group(2) == '':
+        if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + '\')'
 
 @StatelessInputTransformer.wrap
 def _transform(line):
     line = line_match3.sub(replace_inline, line) # unit**n
+#    print "3:%s" % line
     line = line_match2.sub(replace_inline, line) # unit/unit
+#    print "2:%s" % line
     line = line_match1.sub(replace_inline, line)
+#    print "1:%s" % line
+    line = line_match0.sub(replace_inline, line)
+#    print "0:%s" % line    
     return line
 
 __transformer = _transform()

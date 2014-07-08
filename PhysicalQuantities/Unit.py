@@ -23,8 +23,9 @@ def findUnit(unit):
     if isinstance(unit, string_types):
         name = unit.strip().replace('^', '**') #.replace('µ', 'u').replace('°', 'deg')
         if name[0:2] == '1/': 
-            name = name[2:] + '**-1' # replace 1/x with x**-1
+            name = '(' + name[2:] + ')**-1' # replace 1/x with x**-1
         try:
+#            print "name: %s" % name
             unit = eval(name, unit_table)
         except NameError:
             raise UnitError('Invalid or unknown unit in %s' % name)
@@ -193,6 +194,8 @@ class PhysicalUnit(object):
     __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
+#        print self
+#        print other
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units with non-zero offset')
         if isinstance(other, int):
