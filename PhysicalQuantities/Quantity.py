@@ -313,7 +313,7 @@ class PhysicalQuantity(object):
 
         # implementations of special functions, used by numpy ufuncs
     def sqrt(self):
-         return np.sqrt(self.value) # TODO!!!self.__pow__(0.5)
+        return self ** 0.5
 
     def sin(self):
         if self.unit.is_angle:

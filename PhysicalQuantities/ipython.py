@@ -29,7 +29,7 @@ _li = sorted(pq.unit_table,key=len)
 _unit_list = ''
 for unit in _li[::-1]:
     _unit_list += unit + '|'
-_unit_list = _unit_list[0:-1]# + ']'
+_unit_list = _unit_list[0:-1]
 
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
