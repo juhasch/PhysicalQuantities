@@ -4,6 +4,7 @@
 """
 from __future__ import division
 import numpy as np
+from sympy import printing
 from .Unit import *
 
 import sys
@@ -122,6 +123,9 @@ class PhysicalQuantity(object):
             # %precision magic only works for floats
             format = self.ptformatter.float_format
             return u"%s %s" % (format%self.value,  self.unit._repr_latex_())
+        if str(type(self.value)).find('sympy') > 0:
+            # sympy
+            return '${0}$ {1}'.format( printing.latex(self.value), self.unit._repr_latex_())
         return '{0:{format}} {1}'.format(self.value, self.unit._repr_latex_(),format=self.format)
 
     def _sum(self, other, sign1, sign2):
