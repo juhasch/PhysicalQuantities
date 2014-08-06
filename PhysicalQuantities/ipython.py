@@ -64,7 +64,7 @@ def _transform(line):
     line = line_match1.sub(replace_inline, line)
 #    print "1:%s" % line
     line = line_match0.sub(replace_inline, line)
-    print "0:%s" % line    
+#    print "0:%s" % line    
     return line
 
 __transformer = _transform()
