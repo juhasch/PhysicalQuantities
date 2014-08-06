@@ -38,7 +38,7 @@ number1 = r'(?<![\w])(-?[0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
 number2 = r'(?<![\w])(-?[0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
 match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
 match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
-match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*[2-9]+' + ')' #+  r'(?:\W+|$)'
+match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*-?[1-9]+' + ')' #+  r'(?:\W+|$)'
 match3 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\/['  + _unit_list + '])'# +  r'(?:\W+|$)'
 
 line_match0 = re.compile(match0)
@@ -64,7 +64,7 @@ def _transform(line):
     line = line_match1.sub(replace_inline, line)
 #    print "1:%s" % line
     line = line_match0.sub(replace_inline, line)
-#    print "0:%s" % line    
+    print "0:%s" % line    
     return line
 
 __transformer = _transform()
