@@ -5,7 +5,7 @@ from math import pi
 from .Quantity import *
 
 c0 = PhysicalQuantity(299792458., 'm/s')
-mu0 = PhysicalQuantity(4.e-7 ,'pi*N/A**2')
+mu0 = PhysicalQuantity(4*np.pi*1e-7 ,'N/A**2')
 eps0 = PhysicalQuantity(8.854188e-12 ,'F/m')
 Grav = PhysicalQuantity(6.67384e-11 ,'m**3/kg/s**2')
 hpl = PhysicalQuantity(6.62606957e-34 ,'J*s')
