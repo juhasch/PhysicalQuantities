@@ -17,11 +17,6 @@ addUnit('yr', '365.25*d', 'year')
 addUnit('fortnight', '1209600*s', '14 days')
 
 # Length units
-addUnit('inch', '2.54*cm', 'inch')
-addUnit('ft', '12*inch', 'foot')
-addUnit('yd', '3*ft', 'yard')
-addUnit('mi', '5280.*ft', '(British) mile')
-addUnit('nmi', '1852.*m', 'Nautical mile')
 addUnit('Ang', '1.e-10*m', 'Angstrom')
 addUnit('AA', '1.e-10*m', 'Angstrom')
 
@@ -39,27 +34,13 @@ addUnit('acres', 'mi**2/640', 'acre')
 addUnit('b', '1.e-28*m', 'barn')
 
 # Volume units
-addUnit('l', 'dm**3', 'liter')
-addUnit('dl', '0.1*l', 'deci liter')
-addUnit('cl', '0.01*l', 'centi liter')
-addUnit('ml', '0.001*l', 'milli liter')
-addUnit('mul', '0.000001*l', 'micro liter')
-addUnit('tsp', '4.92892159375*ml', 'teaspoon')
+addUnit('tsp', '4.92892159375*cm**3', 'teaspoon')
 addUnit('tbsp', '3*tsp', 'tablespoon')
-addUnit('floz', '2*tbsp', 'fluid ounce')
-addUnit('cup', '8*floz', 'cup')
-addUnit('pt', '16*floz', 'pint')
-addUnit('qt', '2*pt', 'quart')
-addUnit('galUS', '4*qt', 'US gallon')
-addUnit('galUK', '4.54609*l', 'British gallon')
 
 # Mass units
 addUnit('t', '1000*kg', 'Metric ton')
 addUnit('amu', '1.660538921e-27*kg', 'atomic mass units')
 addUnit('Da', '1*amu', 'Dalton')
-addUnit('oz', '28.349523125*g', 'ounce')
-addUnit('lb', '16*oz', 'pound')
-addUnit('ton', '2000*lb', 'US ton')
 
 # Force units
 addUnit('dyn', '1.e-5*N', 'dyne (cgs unit)')
@@ -73,7 +54,6 @@ addUnit('cal', '4.184*J', 'thermochemical calorie')
 addUnit('kcal', '1000*cal', 'thermochemical kilocalorie')
 addUnit('cali', '4.1868*J', 'international calorie')
 addUnit('kcali', '1000*cali', 'international kilocalorie')
-addUnit('Btu', '1055.05585262*J', 'British thermal unit')
 
 
 # Electromagnetic units
@@ -89,17 +69,12 @@ addUnit('mbar', '1.e2*Pa', 'millibar')
 addUnit('kbar', '1.e8*Pa', 'kilobar')
 addUnit('atm', '101325.*Pa', 'standard atmosphere')
 addUnit('torr', 'atm/760', 'torr = mm of mercury')
-addUnit('psi', '6894.75729317*Pa', 'pounds per square inch')
 
 # Temperature units -- can't use the 'eval' trick that _addUnit provides
 # for degC and degF because you can't add units
-#kelvin = _findUnit('K')
 addUnit('degR', '(5./9.)*K', 'degrees Rankine')
 addUnit('degC', PhysicalUnit(None, 1.0, kelvin.powers, 273.15),
          'degrees Celcius')
-addUnit('degF', PhysicalUnit(None, 5./9., kelvin.powers, 459.67),
-         'degree Fahrenheit')
-#del kelvin
 
 # Radiation-related units
 addPrefixed(addUnit('Ci', '3.7e10*Bq', 'Curie'),range='engineering')
