@@ -56,6 +56,8 @@ class PhysicalQuantity(object):
             if isPhysicalUnit(_u):
                 if str(_u.baseunit) ==  str(self.unit.baseunit):
                     ulist.append(_u.name)
+        ulist.append('value')
+        ulist.append('unit')
         return ulist
     
     def __getattr__(self,attr):
