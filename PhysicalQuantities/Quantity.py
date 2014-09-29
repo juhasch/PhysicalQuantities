@@ -81,7 +81,18 @@ class PhysicalQuantity(object):
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return self.__class__(self.value[key], self.unit)
-        raise AttributeError        
+        raise AttributeError('Not a PhysicalQuantity array or list')
+
+    def __setitem__(self, key, value):
+        """ Set quantities if underlying object is array or list
+            e.g. obj[0] = 1m
+        """
+        if not isinstance(value, PhysicalQuantity):
+            raise AttributeError('Not a Physical Quantity')
+        if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
+            self.value[key] = value.to(self.unit)
+            return self.__class__(self.value[key], self.unit)
+        raise AttributeError('Not a PhysicalQuantity array or list')
         
     def __len__(self):
         """ Return length of quantity if underlying object is array or list

@@ -41,7 +41,7 @@ version="0.1"
 # TODO
 # - plotting helper functions
 # - add annotation or name (e.g. 'Frequency')
-# - engineering autoscaling -> 4e-6s -> 4 µs
+# - better engineering autoscaling -> 4e-6s -> 4 us
 
 
 Q=PhysicalQuantity
