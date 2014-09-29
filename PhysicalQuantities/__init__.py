@@ -32,13 +32,9 @@ without explicitly calling a function constructor
 from __future__ import absolute_import
 from .Quantity import *
 
-version="0.1"
-# Bugs in this version:
-# - wrong results with PYthon 3 !!!
-# - regex not correct
-# - initialize dBUnit with a PhysicalQuantity
-#
+version="0.2"
 # TODO
+# - initialize dBQuantity with a PhysicalQuantity
 # - plotting helper functions
 # - add annotation or name (e.g. 'Frequency')
 # - better engineering autoscaling -> 4e-6s -> 4 us
