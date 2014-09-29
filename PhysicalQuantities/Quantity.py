@@ -4,7 +4,11 @@
 """
 from __future__ import division
 import numpy as np
-from sympy import printing
+try:
+    from sympy import printing
+except:
+    pass
+
 from .Unit import *
 
 import sys
