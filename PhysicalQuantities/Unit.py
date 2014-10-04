@@ -212,7 +212,7 @@ class PhysicalUnit(object):
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x%e == 0,
                                   self.names.values()))):
-                        names = self.names/rounded
+                        names = dict((k, self.names[k] / rounded) for k in self.names)
                     else:
                         names = NumberDict()
                         if f != 1.:
