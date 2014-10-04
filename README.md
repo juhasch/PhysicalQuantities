@@ -8,4 +8,3 @@ http://nbviewer.ipython.org/github/juhasch/PhysicalQuantities/blob/master/doc/In
 This module is based on the IPython extension by Georg Brandl: https://bitbucket.org/birkenfeld/ipython-physics.
 It was converted into a standalone Python module and extended heavily to be as flexible as possible.
 
-Currently, there are some bugs when running under Python3.
