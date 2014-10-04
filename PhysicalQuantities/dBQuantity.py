@@ -11,9 +11,9 @@ Example:
 # TODO:
 # Conversion from a PhysicalQuantity to correct dB<x> value
 
-def dB(x):
-    """ Convert value to 10*log10 """
-    return dBQuantity(10*np.log10(x),'dB',islog=True)
+def dB(x,scale=10):
+    """ Convert value to scale*log10 """
+    return dBQuantity(scale*np.log10(x),'dB',islog=True)
 
 import numpy as np
 import copy
