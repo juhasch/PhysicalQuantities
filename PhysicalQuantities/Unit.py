@@ -194,8 +194,6 @@ class PhysicalUnit(object):
     __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
-#        print self
-#        print other
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units with non-zero offset')
         if isinstance(other, int):
@@ -206,9 +204,9 @@ class PhysicalUnit(object):
             rounded = int(np.floor(inv_exp + 0.5))
             if abs(inv_exp-rounded) < 1.e-10:
                 if reduce(lambda a, b: a and b,
-                          map(lambda x, e=rounded: x%e == 0, self.powers)):
+                          list(map(lambda x, e=rounded: x%e == 0, self.powers))):
                     f = pow(self.factor, other)
-                    p = map(lambda x, p=rounded: x/p, self.powers)
+                    p = list(map(lambda x, p=rounded: x/p, self.powers))
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x%e == 0,
                                   self.names.values()))):
