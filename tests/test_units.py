@@ -26,7 +26,6 @@ def test_unit_division():
     b = pq.Q(1, 'cm')
     assert type(a/b) == float
 
-
 def test_unit_multiplication():
     a = pq.Q(1, 'mm')
     b = pq.Q(1, 'cm')
