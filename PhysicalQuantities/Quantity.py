@@ -221,6 +221,31 @@ class PhysicalQuantity(object):
 
     def __nonzero__(self):
         return self.value != 0
+        
+    def __gt__(self, other):
+        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+            return self.base.value > other.base.value
+        raise UnitError('Cannot compare different dimensions')
+
+    def __ge__(self, other):
+        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+            return self.base.value >= other.base.value
+        raise UnitError('Cannot compare different dimensions')
+
+    def __lt__(self, other):
+        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+            return self.base.value < other.base.value
+        raise UnitError('Cannot compare different dimensions')
+
+    def __le__(self, other):
+        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+            return self.base.value <= other.base.value
+        raise UnitError('Cannot compare different dimensions')
+
+    def __eq__(self, other):
+        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+            return self.base.value == other.base.value
+        raise UnitError('Cannot compare different dimensions')
 
     def __format__(self, *args, **kw):
         return "{1:{0}} {2}".format(args[0], self.value, self.unit)
