@@ -107,6 +107,36 @@ class PhysicalUnit(object):
         else:
             num = num[1:]
         return num + denom
+    def _text(self,unit):
+        return r'\text{' + unit + '}'
+    @property
+    def _latex_name(self):
+        num = ''
+        denom = ''
+        for unit in self.names.keys():
+            power = self.names[unit]
+            if power < 0:
+                if denom is '':
+                    denom = self._text(unit)
+                else:
+                    denom = denom + r'\cdot ' + self._text(unit)
+                if power < -1:
+                    denom = denom + '^' + str(-power)
+            elif power > 0:
+                if num is '':
+                    num = self._text(unit)
+                else:
+                    num = num + r'\cdot ' + self._text(unit)
+                if power > 1:
+                    num = num + '^' + str(power)
+        if num is '':
+            num = '1'
+        if denom is not '':
+            name = r'\frac{' + num + '}{' + denom + '}'
+        else:
+            name = num
+        name = name.replace('u', u'µ').replace(r'\text{deg}', r'\,^{\circ}').replace(' pi', r' \pi ')        
+        return name
 
     @property
     def is_dimensionless(self):
@@ -128,7 +158,7 @@ class PhysicalUnit(object):
         """ Return latex representation of unit
             TODO: more info for aggregate units 
         """
-        unit = self.name.replace('**', '^').replace('u', '\mu ').replace('deg', r'\,^{\circ}').replace('*', r' \cdot ').replace(' pi', r' \pi ')
+        unit = self._latex_name
         if self.prefixed == False:
             if self.comment is not '':
                 info = '(<a href="' + self.url + '" target="_blank">'+ self.comment + '</a>)'
