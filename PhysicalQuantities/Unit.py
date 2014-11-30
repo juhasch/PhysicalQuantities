@@ -197,8 +197,10 @@ class PhysicalUnit(object):
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units with non-zero offset')
         if isinstance(other, int):
-            return PhysicalUnit(other*self.names, pow(self.factor, other),
-                                list(map(lambda x, p=other: x*p, self.powers)))
+            p = list(map(lambda x, p=other: x*p, self.powers))
+            f =  pow(self.factor, other)
+            names = dict((k, self.names[k] * other) for k in self.names)
+            return PhysicalUnit(names, f, p)
         if isinstance(other, float):
             inv_exp = 1./other
             rounded = int(np.floor(inv_exp + 0.5))
@@ -207,6 +209,7 @@ class PhysicalUnit(object):
                           list(map(lambda x, e=rounded: x%e == 0, self.powers))):
                     f = pow(self.factor, other)
                     p = list(map(lambda x, p=rounded: x/p, self.powers))
+                    p = [ int(x) for x in p]
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x%e == 0,
                                   self.names.values()))):
