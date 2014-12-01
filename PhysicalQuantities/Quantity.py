@@ -96,7 +96,7 @@ class PhysicalQuantity(object):
         if not isinstance(value, PhysicalQuantity):
             raise AttributeError('Not a Physical Quantity')
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
-            self.value[key] = value.to(self.unit)
+            self.value[key] = value.to(self.unit).value
             return self.__class__(self.value[key], self.unit)
         raise AttributeError('Not a PhysicalQuantity array or list')
         
