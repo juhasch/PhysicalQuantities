@@ -25,7 +25,6 @@ def findUnit(unit):
         if name[0:2] == '1/': 
             name = '(' + name[2:] + ')**-1' # replace 1/x with x**-1
         try:
-#            print "name: %s" % name
             unit = eval(name, unit_table)
         except NameError:
             raise UnitError('Invalid or unknown unit in %s' % name)
@@ -192,7 +191,7 @@ class PhysicalUnit(object):
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a+b, self.powers, other.powers)))
         else:
-            return PhysicalUnit(self.names + {str(other): 1},
+            return PhysicalUnit(self.names + NumberDict({str(other): 1}),
                                 self.factor * other, self.powers,
                                 self.offset * other)
 
@@ -206,7 +205,7 @@ class PhysicalUnit(object):
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a-b, self.powers, other.powers)))
         else:
-            return PhysicalUnit(self.names+{str(other): -1},
+            return PhysicalUnit(self.names+NumberDict({str(other): -1}),
                                 self.factor/other, self.powers)
 
     def __rdiv__(self, other):
@@ -217,7 +216,7 @@ class PhysicalUnit(object):
                                 other.factor/self.factor,
                                 list(map(lambda a, b: a-b, other.powers, self.powers)))
         else:
-            return PhysicalUnit({str(other): 1} - self.names,
+            return PhysicalUnit(NumberDict({str(other): 1}) - self.names,
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
     __truediv__ = __div__
@@ -229,7 +228,7 @@ class PhysicalUnit(object):
         if isinstance(other, int):
             p = list(map(lambda x, p=other: x*p, self.powers))
             f =  pow(self.factor, other)
-            names = dict((k, self.names[k] * other) for k in self.names)
+            names = NumberDict((k, self.names[k] * other) for k in self.names)
             return PhysicalUnit(names, f, p)
         if isinstance(other, float):
             inv_exp = 1./other
@@ -243,7 +242,7 @@ class PhysicalUnit(object):
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x%e == 0,
                                   self.names.values()))):
-                        names = dict((k, self.names[k] / rounded) for k in self.names)
+                        names = NumberDict((k, self.names[k] / rounded) for k in self.names)
                     else:
                         names = NumberDict()
                         if f != 1.:
@@ -302,10 +301,6 @@ def units_html_list():
                     baseunit = '$ %s $' % unit.baseunit
                 else:
                     baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace('pi', r' \pi ')
-                #baseunit = '$ %s $' % unit.baseunit 
-                #print baseunit
-                #baseunit = str(unit.baseunit)
-                #replace(' pi', r' \pi ')
                 str+= "<tr><td>" + unit.name + '</td><td>' + baseunit +\
                       '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
                       "</a></td></tr>"
