@@ -93,10 +93,11 @@ class PhysicalQuantity(object):
         """ Set quantities if underlying object is array or list
             e.g. obj[0] = 1m
         """
+        #print("setitem", type(value), self.unit == value.unit)
         if not isinstance(value, PhysicalQuantity):
             raise AttributeError('Not a Physical Quantity')
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
-            self.value[key] = value.to(self.unit)
+            self.value[key] = value.to(self.unit).value
             return self.__class__(self.value[key], self.unit)
         raise AttributeError('Not a PhysicalQuantity array or list')
         
