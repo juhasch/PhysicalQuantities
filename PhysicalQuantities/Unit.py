@@ -127,7 +127,7 @@ class PhysicalUnit(object):
                 else:
                     num = num + r'\cdot ' + self._text(unit)
                 if power > 1:
-                    num = num + '^' + str(power)
+                    num = num + '^{' + str(power) + '}'
         if num is '':
             num = '1'
         if denom is not '':
