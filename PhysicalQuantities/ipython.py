@@ -29,8 +29,8 @@ _li = sorted(pq.unit_table,key=len)
 _unit_list = ''
 for unit in _li[::-1]:
     _unit_list += unit + '|'
-_unit_list = _unit_list[0:-1] 
-#print _unit_list
+_unit_list = _unit_list[0:-1]
+
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
@@ -39,6 +39,7 @@ number2 = r'(?<![\w])(-?[0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
 match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
 match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
 match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*-?[1-9]+' + ')' #+  r'(?:\W+|$)'
+match2 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')' #+  r'(?:\W+|$)'
 match3 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')' # +  r'(?:\W+|$)'
 
 line_match0 = re.compile(match0)
@@ -50,11 +51,20 @@ def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
     if (m):
-#        print m.groups()
+#        print(m.groups())
         if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + '\')'
 
+def replace_inline1(m):
+    """Replace an inline unit expression by valid Python code
+    """
+    if (m):
+#        print(m.groups())
+        if m.group(3) == None or m.group(3) == '':
+            return m.group(0)
+    return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
+    
 def replace_inline2(m):
     """Replace an inline unit expression by valid Python code
     """
@@ -67,13 +77,13 @@ def replace_inline2(m):
 @StatelessInputTransformer.wrap
 def _transform(line):
     line = line_match3.sub(replace_inline2, line) # unit/unit
-#    print "3:%s" % line
-    line = line_match2.sub(replace_inline, line) # unit**n
-#    print "2:%s" % line
+#    print("3:%s" % line)
+    line = line_match2.sub(replace_inline1, line) # unit**n
+#    print("2:%s" % line)
     line = line_match1.sub(replace_inline, line)
-#    print "1:%s" % line
+#    print("1:%s" % line)
     line = line_match0.sub(replace_inline, line)
-#    print "0:%s" % line    
+#    print("0:%s" % line)
     return line
 
 __transformer = _transform()
