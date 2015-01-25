@@ -36,11 +36,10 @@ stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 number = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
 number1 = r'(?<![\w])(-?[0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
 number2 = r'(?<![\w])(-?[0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
-match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
-match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')' #+ r'(?:\W+|$)'
-match2 = stringmatch + '|' + number + r'(\s*)' + '([' + _unit_list + ']\*\*-?[1-9]+' + ')' #+  r'(?:\W+|$)'
-match2 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')' #+  r'(?:\W+|$)'
-match3 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')' # +  r'(?:\W+|$)'
+match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
+match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')'
+match2 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
+match3 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')'
 
 line_match0 = re.compile(match0)
 line_match1 = re.compile(match1)
@@ -60,7 +59,6 @@ def replace_inline1(m):
     """Replace an inline unit expression by valid Python code
     """
     if (m):
-#        print(m.groups())
         if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
@@ -69,7 +67,6 @@ def replace_inline2(m):
     """Replace an inline unit expression by valid Python code
     """
     if (m):
-#        print m.groups()
         if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) +  '/' + m.group(6) + '\')'
