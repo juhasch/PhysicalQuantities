@@ -25,13 +25,13 @@ import PhysicalQuantities as pq
 dB_units = {'dB':  ('', 0, 1),
             'dBm':  ('W', -30, 10),  # Power in Watt
             'dBW':  ('W', 0, 10),
-            'dBnV': ('V', -90, 20),  # Voltage
-            'dBuV': ('V', -60, 20),
-            'dBmV': ('V', -30, 20),
+            'dBnV': ('V', -180, 20),  # Voltage
+            'dBuV': ('V', -120, 20),
+            'dBmV': ('V', -60, 20),
             'dBV':  ('V', 0, 20),
-            'dBnA': ('A', -90, 20),  # Ampere
-            'dBuA': ('A', -60, 20),
-            'dBmA': ('A', -30, 20),
+            'dBnA': ('A', -180, 20),  # Ampere
+            'dBuA': ('A', -120, 20),
+            'dBmA': ('A', -60, 20),
             'dBA':  ('A', 0, 20),
             'dBi':  ('', 0, 10),    # Antenna gain G
             'dBd':  ('', 2.15, 10)}
