@@ -7,7 +7,7 @@ from __future__ import division
 
 try:
     from sympy import printing
-except:
+except ImportError:
     pass
 
 from .Unit import *
@@ -15,7 +15,6 @@ from .Unit import *
 import copy
 
 from IPython import get_ipython
-import numpy as np
 
 
 def isphysicalquantity(x):
@@ -60,7 +59,7 @@ class PhysicalQuantity(object):
         u = unit_table.values()
         for _u in u:
             if isPhysicalUnit(_u):
-                if str(_u.baseunit) == str(self.unit.baseunit):
+                if str(_u.baseunit) is str(self.unit.baseunit):
                     ulist.append(_u.name)
         ulist.append('value')
         ulist.append('unit')
@@ -70,14 +69,14 @@ class PhysicalQuantity(object):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit after rescaling and return value only.
         """
-        dropunit = (attr[-1] == '_')
+        dropunit = (attr[-1] is '_')
         attr = attr.strip('_')
         try:
             attrunit = unit_table[attr]
         except:
             raise AttributeError
         if isPhysicalUnit(attrunit):
-            if dropunit == True :
+            if dropunit is True:
                 return self.to(attrunit.name).value
             else:
                 return self.to(attrunit.name)
@@ -117,8 +116,8 @@ class PhysicalQuantity(object):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
-            return u"%s %s" % (fmt%self.value,  str(self.unit))
-        return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
+            return u"%s %s" % (fmt%self.value, str(self.unit))
+        return '{0:{format}} {1}'.format(self.value, str(self.unit), format=self.format)
 
     def __complex__(self):
         """ Return complex number without units converted to base units 
@@ -142,7 +141,7 @@ class PhysicalQuantity(object):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
-            return u"%s %s" % (fmt%self.value,  self.unit._repr_latex_())
+            return u"%s %s" % (fmt % self.value, self.unit._repr_latex_())
         if str(type(self.value)).find('sympy') > 0:
             # sympy
             return '${0}$ {1}'.format( printing.latex(self.value), self.unit.latex)
@@ -222,28 +221,28 @@ class PhysicalQuantity(object):
         return self.value != 0
         
     def __gt__(self, other):
-        if isphysicalquantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit is other.base.unit:
             return self.base.value > other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __ge__(self, other):
-        if isphysicalquantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit is other.base.unit:
             return self.base.value >= other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __lt__(self, other):
-        if isphysicalquantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit is other.base.unit:
             return self.base.value < other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __le__(self, other):
-        if isphysicalquantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit is other.base.unit:
             return self.base.value <= other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __eq__(self, other):
-        if isphysicalquantity(other) and self.base.unit == other.base.unit:
-            return self.base.value == other.base.value
+        if isphysicalquantity(other) and self.base.unit is other.base.unit:
+            return self.base.value is other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __format__(self, *args, **kw):
@@ -273,7 +272,7 @@ class PhysicalQuantity(object):
     @property
     def autoscale(self):
         """ autoscale if it has a simple unit """
-        if len(self.unit.names) == 1:
+        if len(self.unit.names) is 1:
             b = self.base
             n = np.log10(b.value)
             # we want to be between 0..999 
@@ -298,7 +297,7 @@ class PhysicalQuantity(object):
         convert to irregular unit systems like hour/minute/second.
         """
         units = list(map(findunit, units))
-        if len(units) == 1:
+        if len(units) is 1:
             unit = units[0]
             value = convertValue(self.value, self.unit, unit)
             return self.__class__(value, unit)
@@ -309,7 +308,7 @@ class PhysicalQuantity(object):
             unit = self.unit
             for i in range(len(units)-1, -1, -1):
                 value = value*unit.conversion_factor_to(units[i])
-                if i == 0:
+                if i is 0:
                     rounded = value
                 else:
                     rounded = self._round(value)
@@ -341,7 +340,7 @@ class PhysicalQuantity(object):
                 num += '*' + unit
                 if power > 1:
                     num += '**' + str(power)
-        if len(num) == 0:
+        if len(num) is 0:
             num = '1'
         else:
             num = num[1:]

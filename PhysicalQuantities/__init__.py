@@ -31,7 +31,7 @@ without explicitly calling a function constructor
 """
 from __future__ import absolute_import
 from .Quantity import *
-from numpy import pi
+import numpy as np
 
 import pkg_resources  # part of setuptools
 version = pkg_resources.require("MyProject")[0].version
@@ -57,7 +57,7 @@ addPrefixed(addUnit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/L
 addPrefixed(addUnit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'),range='engineering')
 
 # Angle units
-unit_table['pi'] = pi
+unit_table['pi'] = np.pi
 addUnit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
 addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
 addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
