@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-
+""" PhysicalQuantity class definition
+ Original author: Georg Brandl <georg@python.org>.
+                  https://bitbucket.org/birkenfeld/ipython-physics
 """
 from __future__ import division
-import numpy as np
+
 try:
     from sympy import printing
 except:
@@ -11,15 +12,16 @@ except:
 
 from .Unit import *
 
-import sys
 import copy
 
-if sys.version_info > (2,):
-    xrange = range
+from IPython import get_ipython
+import numpy as np
 
-def isPhysicalQuantity(x):
+
+def isphysicalquantity(x):
     """ return true if x is a PhysicalQuantity """
     return hasattr(x, 'value') and hasattr(x, 'unit')
+
 
 class PhysicalQuantity(object):
     """Physical quantity with units.
@@ -32,7 +34,7 @@ class PhysicalQuantity(object):
     applicable as well.
     """
 
-    __array_priority__ = 1000 # make sure numpy arrays do not get iterated
+    __array_priority__ = 1000  # make sure numpy arrays do not get iterated
     
     def __init__(self, value, unit=None,  **kwargs):
         """There are two constructor calling patterns:
@@ -48,7 +50,7 @@ class PhysicalQuantity(object):
         self.format = '' # display format for number to string conversion
         if unit is not None:
             self.value = value
-            self.unit = findUnit(unit)
+            self.unit = findunit(unit)
         else:
             raise UnitError('No number found in %r' % value)
             
@@ -58,7 +60,7 @@ class PhysicalQuantity(object):
         u = unit_table.values()
         for _u in u:
             if isPhysicalUnit(_u):
-                if str(_u.baseunit) ==  str(self.unit.baseunit):
+                if str(_u.baseunit) == str(self.unit.baseunit):
                     ulist.append(_u.name)
         ulist.append('value')
         ulist.append('unit')
@@ -114,8 +116,8 @@ class PhysicalQuantity(object):
         """
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
-            format = self.ptformatter.float_format
-            return u"%s %s" % (format%self.value,  str(self.unit))
+            fmt = self.ptformatter.float_format
+            return u"%s %s" % (fmt%self.value,  str(self.unit))
         return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
 
     def __complex__(self):
@@ -133,20 +135,21 @@ class PhysicalQuantity(object):
         """
         return self.__str__()
 
+    @property
     def _repr_latex_(self):
         """ Return Latex representation for IPython notebook
         """
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
-            format = self.ptformatter.float_format
-            return u"%s %s" % (format%self.value,  self.unit._repr_latex_())
+            fmt = self.ptformatter.float_format
+            return u"%s %s" % (fmt%self.value,  self.unit._repr_latex_())
         if str(type(self.value)).find('sympy') > 0:
             # sympy
-            return '${0}$ {1}'.format( printing.latex(self.value), self.unit._repr_latex_())
-        return '{0:{format}} {1}'.format(self.value, self.unit._repr_latex_(),format=self.format)
+            return '${0}$ {1}'.format( printing.latex(self.value), self.unit.latex)
+        return '{0:{format}} {1}'.format(self.value, self.unit.latex,format=self.format)
 
     def _sum(self, other, sign1, sign2):
-        if not isPhysicalQuantity(other):
+        if not isphysicalquantity(other):
             raise UnitError('Incompatible types')
         new_value = sign1 * self.value + \
             sign2 * other.value * other.unit.conversion_factor_to(self.unit)
@@ -163,12 +166,8 @@ class PhysicalQuantity(object):
     def __rsub__(self, other):
         return self._sum(other, -1, 1)
 
-    def __cmp__(self, other):
-        diff = self._sum(other, 1, -1)
-        return cmp(diff.value, 0)
-
     def __mul__(self, other):
-        if not isPhysicalQuantity(other):
+        if not isphysicalquantity(other):
             return self.__class__(self.value * other, self.unit)
         value = self.value * other.value
         unit = self.unit * other.unit
@@ -180,7 +179,7 @@ class PhysicalQuantity(object):
     __rmul__ = __mul__
 
     def __div__(self, other):
-        if not isPhysicalQuantity(other):
+        if not isphysicalquantity(other):
             return self.__class__(self.value / other, self.unit)
         value = self.value / other.value
         unit = self.unit / other.unit
@@ -190,7 +189,7 @@ class PhysicalQuantity(object):
             return self.__class__(value, unit)
 
     def __rdiv__(self, other):
-        if not isPhysicalQuantity(other):
+        if not isphysicalquantity(other):
             return self.__class__(other / self.value, pow(self.unit, -1))
         value = other.value / self.value
         unit = other.unit / self.unit
@@ -203,7 +202,7 @@ class PhysicalQuantity(object):
     __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
-        if isPhysicalQuantity(other):
+        if isphysicalquantity(other):
             raise UnitError('Exponents must be dimensionless')
         return self.__class__(pow(self.value, other), pow(self.unit, other))
 
@@ -223,27 +222,27 @@ class PhysicalQuantity(object):
         return self.value != 0
         
     def __gt__(self, other):
-        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit == other.base.unit:
             return self.base.value > other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __ge__(self, other):
-        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit == other.base.unit:
             return self.base.value >= other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __lt__(self, other):
-        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit == other.base.unit:
             return self.base.value < other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __le__(self, other):
-        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit == other.base.unit:
             return self.base.value <= other.base.value
         raise UnitError('Cannot compare different dimensions')
 
     def __eq__(self, other):
-        if isPhysicalQuantity(other) and self.base.unit == other.base.unit:
+        if isphysicalquantity(other) and self.base.unit == other.base.unit:
             return self.base.value == other.base.value
         raise UnitError('Cannot compare different dimensions')
 
@@ -255,7 +254,7 @@ class PhysicalQuantity(object):
         equivalent to the original one. The new unit must be compatible with the
         previous unit of the object.
         """
-        unit = findUnit(unit)
+        unit = findunit(unit)
         self.value = convertValue(self.value, self.unit, unit)
         self.unit = unit
 
@@ -271,12 +270,12 @@ class PhysicalQuantity(object):
         """
         return copy.deepcopy(self)
 
+    @property
     def autoscale(self):
         """ autoscale if it has a simple unit """
         if len(self.unit.names) == 1:
             b = self.base
-            v = b.value
-            n = np.log10(v)
+            n = np.log10(b.value)
             # we want to be between 0..999 
             _scale = np.floor(n)
             # now search for unit
@@ -298,7 +297,7 @@ class PhysicalQuantity(object):
         all the values except for the last one are integers. This is used to
         convert to irregular unit systems like hour/minute/second.
         """
-        units = list(map(findUnit, units))
+        units = list(map(findunit, units))
         if len(units) == 1:
             unit = units[0]
             value = convertValue(self.value, self.unit, unit)
@@ -321,7 +320,7 @@ class PhysicalQuantity(object):
 
     @staticmethod
     def any_to(qty, unit):
-        if not isPhysicalQuantity(qty):
+        if not isphysicalquantity(qty):
             qty = PhysicalQuantity(qty, 'rad')
         return qty.to(unit)
 
@@ -331,7 +330,7 @@ class PhysicalQuantity(object):
         new_value = self.value * self.unit.factor
         num = ''
         denom = ''
-        for i in xrange(len(base_names)): 
+        for i in range(len(base_names)):
             unit = base_names[i]
             power = self.unit.powers[i]
             if power < 0:

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# Define additional units
-from .Unit import *
+""" Define additional units
+"""
+from .Unit import addUnit
 from .constants import *
 
 # Length units
@@ -41,6 +42,3 @@ addUnit('hp', '745.7*W', 'horsepower')
 addUnit('psi', '6894.75729317*Pa', 'pounds per square inch')
 
 addUnit('degF', PhysicalUnit(None,   5./9,    [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), comment='degree Fahrenheit')
-
-#addUnit('degF', PhysicalUnit(None, 5./9., kelvin.powers, 459.67),
-#         'degree Fahrenheit')

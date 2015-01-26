@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-""" Units """
+""" PhysicalUnit class definition
+ Original author: Georg Brandl <georg@python.org>.
+                  https://bitbucket.org/birkenfeld/ipython-physics
+"""
 
 import numpy as np
 import sys
@@ -14,16 +17,16 @@ class UnitError(ValueError):
     pass
 
 # Helper functions
-def findUnit(unit):
+def findunit(unit):
     """ Return PhysicalUnit class if given parameter is a valid unit
     
     Parameter:
         unit - string with unit name
      """   
     if isinstance(unit, string_types):
-        name = unit.strip().replace('^', '**') #.replace('µ', 'u').replace('°', 'deg')
+        name = unit.strip().replace('^', '**')
         if name[0:2] == '1/': 
-            name = '(' + name[2:] + ')**-1' # replace 1/x with x**-1
+            name = '(' + name[2:] + ')**-1'
         try:
             unit = eval(name, unit_table)
         except NameError:
@@ -106,8 +109,10 @@ class PhysicalUnit(object):
         else:
             num = num[1:]
         return num + denom
+
     def _text(self,unit):
-        return r'\text{' + unit + '}'
+        return '\\text{' + unit + '}'
+
     @property
     def _latex_name(self):
         num = ''
@@ -116,25 +121,25 @@ class PhysicalUnit(object):
             power = self.names[unit]
             if power < 0:
                 if denom is '':
-                    denom = self._text(unit)
+                    denom = '\\text{' + unit + '}'
                 else:
-                    denom = denom + r'\cdot ' + self._text(unit)
+                    denom = denom + '\\cdot \\text{' + unit + '}'
                 if power < -1:
                     denom = denom + '^' + str(-power)
             elif power > 0:
                 if num is '':
-                    num = self._text(unit)
+                    num = '\\text{' + unit + '}'
                 else:
-                    num = num + r'\cdot ' + self._text(unit)
+                    num = num + '\\cdot \\text{' + unit + '}'
                 if power > 1:
                     num = num + '^{' + str(power) + '}'
         if num is '':
             num = '1'
         if denom is not '':
-            name = r'\frac{' + num + '}{' + denom + '}'
+            name = '\\frac{' + num + '}{' + denom + '}'
         else:
             name = num
-        name = name.replace('u', u'µ').replace(r'\text{deg}', r'\,^{\circ}').replace(' pi', r' \pi ')        
+        name = name.replace('u', u'µ').replace('\\text{deg}', '\\,^{\\circ}').replace(' pi', ' \\pi ')
         return name
 
     @property
@@ -147,41 +152,67 @@ class PhysicalUnit(object):
             reduce(lambda a, b: a + b, self.powers) == 1
 
     def __str__(self):
-        name = self.name.strip().replace('**', u'^') #.replace('u', u'µ').replace('deg', u'°')
+        """ Return string text representation of unit
+        :return: Text representation of unit
+        """
+        name = self.name.strip().replace('**', u'^')
         return name
 
     def __repr__(self):
         return '<PhysicalUnit ' + self.name + '>'
 
     def _repr_latex_(self): 
-        """ Return latex representation of unit
-            TODO: more info for aggregate units 
+        """ IPython repr to display latex representation of unit
+        :return: Unit as LaTeX string
         """
         unit = self._latex_name
-        if self.prefixed == False:
+        if self.prefixed is False:
             if self.comment is not '':
-                info = '(<a href="' + self.url + '" target="_blank">'+ self.comment + '</a>)'
+                info = '(<a href="' + self.url + '" target="_blank">' + self.comment + '</a>)'
             else:
                 info = ''
         else:
             baseunit = self.baseunit
             if baseunit.comment == '':
-                info = r'$ = %s \cdot %s$ ' % (self.factor, self.baseunit)            
+                info = '$ = %s \\cdot %s$ ' % (self.factor, self.baseunit)
             else:
-                info = r'$ = %s \cdot %s$ (' % (self.factor, self.baseunit) +\
+                info = '$ = %s \\cdot %s$ (' % (self.factor, self.baseunit) +\
                     '<a href="' + baseunit.url + '" target="_blank">'+ baseunit.comment + '</a>)'            
         # s = r'$%s$ %s' % (unit, info) # TODO: too verbose ...
-        s = r'$%s$' % (unit)
+        s = '$%s$' % unit
         return s
 
     @property
     def latex(self):
-        return Latex(self._repr_latex_())
+        """ Return unit as a LaTeX formatted string
+        :return: Unit as LaTeX string
+        """
+        return self._repr_latex_()
 
-    def __cmp__(self, other):
-        if self.powers != other.powers:
-            raise UnitError('Incompatible units')
-        return cmp(self.factor, other.factor)
+    def __gt__(self, other):
+        if isPhysicalUnit(other) and self.powers is other.powers:
+            return self.factor > other.factor
+        raise UnitError('Cannot compare different dimensions')
+
+    def __ge__(self, other):
+        if isPhysicalUnit(other) and self.powers is other.powers:
+            return self.factor >= other.factor
+        raise UnitError('Cannot compare different dimensions')
+
+    def __lt__(self, other):
+        if isPhysicalUnit(other) and self.powers is other.powers:
+            return self.factor < other.factor
+        raise UnitError('Cannot compare different dimensions')
+
+    def __le__(self, other):
+        if isPhysicalUnit(other) and self.powers is other.powers:
+            return self.factor <= other.factor
+        raise UnitError('Cannot compare different dimensions')
+
+    def __eq__(self, other):
+        if isPhysicalUnit(other) and self.powers is other.powers:
+            return self.factor == other.factor
+        raise UnitError('Cannot compare different dimensions')
 
     def __mul__(self, other):
         if self.offset != 0 or (isPhysicalUnit(other) and other.offset != 0):
@@ -227,7 +258,7 @@ class PhysicalUnit(object):
             raise UnitError('Cannot exponentiate units with non-zero offset')
         if isinstance(other, int):
             p = list(map(lambda x, p=other: x*p, self.powers))
-            f =  pow(self.factor, other)
+            f = pow(self.factor, other)
             names = NumberDict((k, self.names[k] * other) for k in self.names)
             return PhysicalUnit(names, f, p)
         if isinstance(other, float):
@@ -290,7 +321,7 @@ class PhysicalUnit(object):
 
 def units_html_list():
     """ List all defined units """
-    from IPython.display import display, Math, Latex, HTML
+    from IPython.display import HTML
     str = "<table>"
     str += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
     for name in unit_table:
@@ -300,7 +331,7 @@ def units_html_list():
                 if isinstance(unit.baseunit, PhysicalUnit):
                     baseunit = '$ %s $' % unit.baseunit
                 else:
-                    baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', r' \cdot ').replace('pi', r' \pi ')
+                    baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', ' \\cdot ').replace('pi', r' \pi ')
                 str+= "<tr><td>" + unit.name + '</td><td>' + baseunit +\
                       '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
                       "</a></td></tr>"

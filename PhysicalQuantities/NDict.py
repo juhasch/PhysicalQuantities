@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-# Adapted from ScientificPython:
-# Written by Konrad Hinsen <hinsen@cnrs-orleans.fr>
-# with contributions from Greg Ward
-# last revision: 2007-5-25
+"""
+ Adapted from ScientificPython:
+ Written by Konrad Hinsen <hinsen@cnrs-orleans.fr>
+ with contributions from Greg Ward
+ last revision: 2007-5-25
+"""
 
 class NumberDict(dict):
     """Dictionary storing numerical values.

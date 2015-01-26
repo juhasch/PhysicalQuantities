@@ -1,18 +1,19 @@
 import os
 from setuptools import setup
 
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "PhysicalQuantities",
-    version = "0.1",
-    author = "Juergen Hasch",
-    author_email = "juergen.hasch@elbonia.de",
-    description = ("Allow calculations using physical quantities"),
-    license = "BSD",
-    keywords = "Physical Quantities IPython",
-    url = "http://packages.python.org/PhysicalQuantities",
+    name="PhysicalQuantities",
+    version="0.2",
+    author="Juergen Hasch",
+    author_email="juergen.hasch@elbonia.de",
+    description="Allow calculations using physical quantities",
+    license="BSD",
+    keywords="Physical Quantities IPython",
+    url="http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
     long_description=read('README.md'),
     classifiers=[

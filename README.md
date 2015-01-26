@@ -1,4 +1,5 @@
-PhysicalQuantities is a python module that allows calculations to be aware of physical units. Built-in unit conversion ensures that calculations will result in the correct unit.
+PhysicalQuantities is a python module that allows calculations to be aware of physical units. 
+Built-in unit conversion ensures that calculations will result in the correct unit.
 
 The module also contains an extension for IPython. This allows simplified usage, simply typing in physical quantities as number and unit.
 

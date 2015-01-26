@@ -6,7 +6,7 @@ Usage in Python:
 ================
 
     import PhysicalQuantities as pq
-    a = pq.PhysicalQuanty(1.0, 'm')
+    a = pq.PhysicalQuantity(1.0, 'm')
 or simply    
     a = pq.Q(1.0, 'm')
 
@@ -31,17 +31,13 @@ without explicitly calling a function constructor
 """
 from __future__ import absolute_import
 from .Quantity import *
+from numpy import pi
 
-version="0.2"
-# TODO
-# - initialize dBQuantity with a PhysicalQuantity
-# - plotting helper functions
-# - add annotation or name (e.g. 'Frequency')
-# - better engineering autoscaling -> 4e-6s -> 4 us
+import pkg_resources  # part of setuptools
+version = pkg_resources.require("MyProject")[0].version
 
-
-Q=PhysicalQuantity
-U=PhysicalUnit
+Q = PhysicalQuantity
+U = PhysicalUnit
 
 # Add additional units (SI units are predefined)
 addPrefixed(addUnit('Hz', '1/s', 'Hertz', url='https://en.wikipedia.org/wiki/Hertz'),range='engineering')
@@ -61,7 +57,7 @@ addPrefixed(addUnit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/L
 addPrefixed(addUnit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'),range='engineering')
 
 # Angle units
-unit_table['pi'] = pi #np.pi
+unit_table['pi'] = pi
 addUnit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
 addUnit('arcmin', 'pi*rad/180/60', 'minutes of arc')
 addUnit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
@@ -75,20 +71,21 @@ def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
     """ numpy.linespace with units
     
     """
-    if not isinstance(start,PhysicalQuantity) and not isinstance(stop,PhysicalQuantity):
+    if not isinstance(start, PhysicalQuantity) and not isinstance(stop, PhysicalQuantity):
         return np.linspace(start, stop, num,  endpoint, retstep)
 
-    if isinstance(start,PhysicalQuantity) and isinstance(stop,PhysicalQuantity):
+    if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
         if start.base.unit != stop.base.unit:
             raise UnitError("Cannot match units")
-    
-    if isinstance(start,PhysicalQuantity):
+
+    unit = None
+    if isinstance(start, PhysicalQuantity):
         start_value = start.value
         unit = start.unit
     else:
         start_value = start
 
-    if isinstance(stop,PhysicalQuantity):
+    if isinstance(stop, PhysicalQuantity):
         stop_value = stop.value
         unit = stop.unit
     else:

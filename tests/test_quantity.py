@@ -11,10 +11,10 @@ def test_decorators():
 def test_autoscale():
     """ Unit autoscaling """
     a = pq.Q(1e-3, 'm')
-    b = a.autoscale()
+    b = a.autoscale
     assert str(a.mm) == str(b)
     a = pq.Q(1e3, 'm')
-    b = a.autoscale()
+    b = a.autoscale
     assert str(a.km) == str(b)
 
 def test_comparison():
