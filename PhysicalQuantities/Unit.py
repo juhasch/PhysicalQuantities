@@ -337,18 +337,19 @@ def units_html_list():
                       "</a></td></tr>"
     str += "</table>"
     return HTML(str)
-    
+
+
 def units_list():
     """ List all defined units """
-    str=[]
+    units = []
     for name in unit_table:
         unit = unit_table[name]
-        if isinstance(unit,PhysicalUnit) and unit.prefixed == False:
-            str.append(unit.name)
-    return str
+        if isinstance(unit, PhysicalUnit) and unit.prefixed == False:
+            units.append(unit.name)
+    return units
 
 
-def addUnit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
+def addunit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
     """ Add new PhysicalUnit entry """
     if name in unit_table:
         raise KeyError('Unit ' + name + ' already defined')
@@ -363,7 +364,7 @@ def addUnit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
         newunit = unit
     newunit.set_name(name)
     newunit.comment = comment
-    if prefixed == True:
+    if prefixed is True:
         newunit.baseunit = baseunit
     else:
         newunit.baseunit = unit
@@ -373,7 +374,7 @@ def addUnit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
     return name
 
 
-def addPrefixed(unitname, range='full'):
+def addprefixed(unitname, range='full'):
     """ Add prefixes to already defined unit 
         unitname: name of unit to be prefixed
                   e.k. 'm' -> 'mm','cm','dm','km'...
@@ -388,7 +389,7 @@ def addPrefixed(unitname, range='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            addUnit(prefixedname, prefix[1]*unit,prefixed=True,baseunit=unit,comment=unit.comment,url=unit.url)
+            addunit(prefixedname, prefix[1]*unit,prefixed=True,baseunit=unit,comment=unit.comment,url=unit.url)
 
 # add scaling prefixes
 _full_prefixes = [
@@ -411,13 +412,13 @@ unit_table = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
-addUnit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
-addPrefixed(addUnit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'),range='engineering')
-addPrefixed(addUnit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Second', comment='Second'),range='engineering')
-addPrefixed(addUnit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'),range='engineering')
-addPrefixed(addUnit('K', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kelvin', comment='Kelvin'),range='engineering')
-addPrefixed(addUnit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Mole_(unit)', comment='Mol'),range='engineering')
-addPrefixed(addUnit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),url='https://en.wikipedia.org/wiki/Candela', comment='Candela'),range='engineering')
-addPrefixed(addUnit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),url='https://en.wikipedia.org/wiki/Radian', comment='Radian'),range='engineering')
-addPrefixed(addUnit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'),range='engineering')
-addPrefixed(addUnit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Metre', comment='Metre'),range='engineering')
+addunit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
+addprefixed(addunit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'),range='engineering')
+addprefixed(addunit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Second', comment='Second'),range='engineering')
+addprefixed(addunit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'),range='engineering')
+addprefixed(addunit('K', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kelvin', comment='Kelvin'),range='engineering')
+addprefixed(addunit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Mole_(unit)', comment='Mol'),range='engineering')
+addprefixed(addunit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),url='https://en.wikipedia.org/wiki/Candela', comment='Candela'),range='engineering')
+addprefixed(addunit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),url='https://en.wikipedia.org/wiki/Radian', comment='Radian'),range='engineering')
+addprefixed(addunit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'),range='engineering')
+addprefixed(addunit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Metre', comment='Metre'),range='engineering')

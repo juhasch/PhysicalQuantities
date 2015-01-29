@@ -18,19 +18,19 @@ from IPython import get_ipython
 
 
 def isphysicalquantity(x):
-    """ return true if x is a PhysicalQuantity """
+    """ Return true if x is a PhysicalQuantity """
     return hasattr(x, 'value') and hasattr(x, 'unit')
 
 
 class PhysicalQuantity(object):
-    """Physical quantity with units.
+    """ Physical quantity with units.
 
-    PhysicalQuantity instances allow addition, subtraction, multiplication, and
-    division with each other as well as multiplication, division, and
-    exponentiation with numbers.  Addition and subtraction check that the units
-    of the two operands are compatible and return the result in the units of the
-    first operand. A limited set of mathematical functions (from numpy) is
-    applicable as well.
+        PhysicalQuantity instances allow addition, subtraction, multiplication, and
+        division with each other as well as multiplication, division, and
+        exponentiation with numbers.  Addition and subtraction check that the units
+        of the two operands are compatible and return the result in the units of the
+        first operand. A limited set of mathematical functions (from numpy) is
+        applicable as well.
     """
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
@@ -134,7 +134,6 @@ class PhysicalQuantity(object):
         """
         return self.__str__()
 
-    @property
     def _repr_latex_(self):
         """ Return Latex representation for IPython notebook
         """
@@ -249,9 +248,9 @@ class PhysicalQuantity(object):
         return "{1:{0}} {2}".format(args[0], self.value, self.unit)
 
     def convert(self, unit):
-        """Change the unit and adjust the value such that the combination is
-        equivalent to the original one. The new unit must be compatible with the
-        previous unit of the object.
+        """ Change the unit and adjust the value such that the combination is
+            equivalent to the original one. The new unit must be compatible with the
+            previous unit of the object.
         """
         unit = findunit(unit)
         self.value = convertValue(self.value, self.unit, unit)
@@ -264,8 +263,8 @@ class PhysicalQuantity(object):
             return np.ceil(x)
 
     def copy(self):
-        """Return a copy of the PhysicalQuantity including the value.
-        Needs deepcopy to copy the value
+        """ Return a copy of the PhysicalQuantity including the value.
+            Needs deepcopy to copy the value
         """
         return copy.deepcopy(self)
 
@@ -288,13 +287,13 @@ class PhysicalQuantity(object):
         return self
     
     def to(self, *units):
-        """Express the quantity in different units. If one unit is specified, a
-        new PhysicalQuantity object is returned that expresses the quantity in
-        that unit. If several units are specified, the return value is a tuple
-        of PhysicalObject instances with with one element per unit such that the
-        sum of all quantities in the tuple equals the the original quantity and
-        all the values except for the last one are integers. This is used to
-        convert to irregular unit systems like hour/minute/second.
+        """ Express the quantity in different units. If one unit is specified, a
+            new PhysicalQuantity object is returned that expresses the quantity in
+            that unit. If several units are specified, the return value is a tuple
+            of PhysicalObject instances with with one element per unit such that the
+            sum of all quantities in the tuple equals the the original quantity and
+            all the values except for the last one are integers. This is used to
+            convert to irregular unit systems like hour/minute/second.
         """
         units = list(map(findunit, units))
         if len(units) is 1:
@@ -325,7 +324,7 @@ class PhysicalQuantity(object):
 
     @property
     def base(self):
-        """Returns the same quantity converted to base units."""
+        """ Returns the same quantity converted to base units."""
         new_value = self.value * self.unit.factor
         num = ''
         denom = ''
@@ -355,7 +354,7 @@ class PhysicalQuantity(object):
     def imag(self):
         return self.__class__(self.value.imag, self.unit)
 
-        # implementations of special functions, used by numpy ufuncs
+    # implementations of special functions, used by numpy ufuncs
     def sqrt(self):
         return self ** 0.5
 

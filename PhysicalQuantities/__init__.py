@@ -33,8 +33,8 @@ from __future__ import absolute_import
 from .Quantity import *
 import numpy as np
 
-import pkg_resources  # part of setuptools
-version = pkg_resources.require("MyProject")[0].version
+import pkg_resources
+version = pkg_resources.require("PhysicalQuantities")[0].version
 
 Q = PhysicalQuantity
 U = PhysicalUnit
