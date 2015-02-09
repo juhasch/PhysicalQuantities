@@ -13,6 +13,7 @@ from .NDict import *
 if sys.version_info > (2,):
     from functools import reduce
 
+
 class UnitError(ValueError):
     pass
 
@@ -34,7 +35,7 @@ def findunit(unit):
         for cruft in ['__builtins__', '__args__']:
             try:
                 del unit_table[cruft]
-            except:
+            except KeyError:
                 pass
     if not isPhysicalUnit(unit):
         raise UnitError(str(unit) + ' is not a unit')
@@ -53,6 +54,7 @@ def isPhysicalUnit(x):
     """ Return true if valid PhysicalUnit class """
     return hasattr(x, 'factor') and hasattr(x, 'powers')
 
+
 class PhysicalUnit(object):
     """Physical unit.
 
@@ -61,7 +63,7 @@ class PhysicalUnit(object):
     can be multiplied, divided, and raised to integer powers.
     """
 
-    def __init__(self, names, factor, powers, offset=0,url='',comment=''):
+    def __init__(self, names, factor, powers, offset=0, url='', comment=''):
         """
         @param names: a dictionary mapping each name component to its
                       associated integer power (e.g. C{{'m': 1, 's': -1}})
@@ -109,9 +111,6 @@ class PhysicalUnit(object):
         else:
             num = num[1:]
         return num + denom
-
-    def _text(self,unit):
-        return '\\text{' + unit + '}'
 
     @property
     def _latex_name(self):
@@ -166,19 +165,6 @@ class PhysicalUnit(object):
         :return: Unit as LaTeX string
         """
         unit = self._latex_name
-        if self.prefixed is False:
-            if self.comment is not '':
-                info = '(<a href="' + self.url + '" target="_blank">' + self.comment + '</a>)'
-            else:
-                info = ''
-        else:
-            baseunit = self.baseunit
-            if baseunit.comment == '':
-                info = '$ = %s \\cdot %s$ ' % (self.factor, self.baseunit)
-            else:
-                info = '$ = %s \\cdot %s$ (' % (self.factor, self.baseunit) +\
-                    '<a href="' + baseunit.url + '" target="_blank">'+ baseunit.comment + '</a>)'            
-        # s = r'$%s$ %s' % (unit, info) # TODO: too verbose ...
         s = '$%s$' % unit
         return s
 
@@ -266,12 +252,12 @@ class PhysicalUnit(object):
             rounded = int(np.floor(inv_exp + 0.5))
             if abs(inv_exp-rounded) < 1.e-10:
                 if reduce(lambda a, b: a and b,
-                          list(map(lambda x, e=rounded: x%e == 0, self.powers))):
+                          list(map(lambda x, e=rounded: x % e == 0, self.powers))):
                     f = pow(self.factor, other)
-                    p = list(map(lambda x, p=rounded: x/p, self.powers))
+                    p = list(map(lambda x, p = rounded: x/p, self.powers))
                     p = [ int(x) for x in p]
                     if reduce(lambda a, b: a and b,
-                              list(map(lambda x, e=rounded: x%e == 0,
+                              list(map(lambda x, e = rounded: x%e == 0,
                                   self.names.values()))):
                         names = NumberDict((k, self.names[k] / rounded) for k in self.names)
                     else:
@@ -319,6 +305,7 @@ class PhysicalUnit(object):
         offset = self.offset - (other.offset * other.factor / self.factor)
         return (factor, offset)
 
+
 def units_html_list():
     """ List all defined units """
     from IPython.display import HTML
@@ -327,12 +314,12 @@ def units_html_list():
     for name in unit_table:
         unit = unit_table[name]
         if isinstance(unit,PhysicalUnit):
-            if unit.prefixed == False:
+            if unit.prefixed is False:
                 if isinstance(unit.baseunit, PhysicalUnit):
                     baseunit = '$ %s $' % unit.baseunit
                 else:
                     baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', ' \\cdot ').replace('pi', r' \pi ')
-                str+= "<tr><td>" + unit.name + '</td><td>' + baseunit +\
+                str += "<tr><td>" + unit.name + '</td><td>' + baseunit +\
                       '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
                       "</a></td></tr>"
     str += "</table>"
@@ -344,12 +331,12 @@ def units_list():
     units = []
     for name in unit_table:
         unit = unit_table[name]
-        if isinstance(unit, PhysicalUnit) and unit.prefixed == False:
+        if isinstance(unit, PhysicalUnit) and unit.prefixed is False:
             units.append(unit.name)
     return units
 
 
-def addunit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
+def addunit(name, unit, comment='', prefixed=False, baseunit=None, url=''):
     """ Add new PhysicalUnit entry """
     if name in unit_table:
         raise KeyError('Unit ' + name + ' already defined')
@@ -358,7 +345,7 @@ def addunit(name, unit, comment='',prefixed=False, baseunit=None, url=''):
         for cruft in ['__builtins__', '__args__']:
             try:
                 del unit_table[cruft]
-            except:
+            except KeyError:
                 pass
     else:
         newunit = unit
@@ -389,7 +376,7 @@ def addprefixed(unitname, range='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            addunit(prefixedname, prefix[1]*unit,prefixed=True,baseunit=unit,comment=unit.comment,url=unit.url)
+            addunit(prefixedname, prefix[1]*unit, prefixed=True,baseunit=unit, comment=unit.comment, url=unit.url)
 
 # add scaling prefixes
 _full_prefixes = [
@@ -412,13 +399,23 @@ unit_table = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
-addunit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
-addprefixed(addunit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'),range='engineering')
-addprefixed(addunit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Second', comment='Second'),range='engineering')
-addprefixed(addunit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'),range='engineering')
-addprefixed(addunit('K', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Kelvin', comment='Kelvin'),range='engineering')
-addprefixed(addunit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Mole_(unit)', comment='Mol'),range='engineering')
-addprefixed(addunit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),url='https://en.wikipedia.org/wiki/Candela', comment='Candela'),range='engineering')
-addprefixed(addunit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),url='https://en.wikipedia.org/wiki/Radian', comment='Radian'),range='engineering')
-addprefixed(addunit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'),range='engineering')
-addprefixed(addunit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),url='https://en.wikipedia.org/wiki/Metre', comment='Metre'),range='engineering')
+addunit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
+addprefixed(addunit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'), range='engineering')
+addprefixed(addunit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Second', comment='Second'), range='engineering')
+addprefixed(addunit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'), range='engineering')
+addprefixed(addunit('K', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Kelvin', comment='Kelvin'), range='engineering')
+addprefixed(addunit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Mole_(unit)', comment='Mol'), range='engineering')
+addprefixed(addunit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Candela', comment='Candela'), range='engineering')
+addprefixed(addunit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),
+                    url='https://en.wikipedia.org/wiki/Radian', comment='Radian'), range='engineering')
+addprefixed(addunit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),
+                    url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'), range='engineering')
+addprefixed(addunit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Metre', comment='Metre'), range='engineering')
