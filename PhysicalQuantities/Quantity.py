@@ -148,7 +148,7 @@ class PhysicalQuantity(object):
 
     def _sum(self, other, sign1, sign2):
         if not isphysicalquantity(other):
-            raise UnitError('Incompatible types')
+            raise UnitError('Incompatible types %s' % type(other))
         new_value = sign1 * self.value + \
             sign2 * other.value * other.unit.conversion_factor_to(self.unit)
         return self.__class__(new_value, self.unit)
@@ -218,31 +218,60 @@ class PhysicalQuantity(object):
 
     def __nonzero__(self):
         return self.value != 0
-        
+
     def __gt__(self, other):
-        if isphysicalquantity(other) and self.base.unit is other.base.unit:
-            return self.base.value > other.base.value
-        raise UnitError('Cannot compare different dimensions')
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return self.base.value > other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __ge__(self, other):
-        if isphysicalquantity(other) and self.base.unit is other.base.unit:
-            return self.base.value >= other.base.value
-        raise UnitError('Cannot compare different dimensions')
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return self.base.value >= other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __lt__(self, other):
-        if isphysicalquantity(other) and self.base.unit is other.base.unit:
-            return self.base.value < other.base.value
-        raise UnitError('Cannot compare different dimensions')
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return self.base.value < other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __le__(self, other):
-        if isphysicalquantity(other) and self.base.unit is other.base.unit:
-            return self.base.value <= other.base.value
-        raise UnitError('Cannot compare different dimensions')
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return self.base.value <= other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __eq__(self, other):
-        if isphysicalquantity(other) and self.base.unit is other.base.unit:
-            return self.base.value is other.base.value
-        raise UnitError('Cannot compare different dimensions')
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return self.base.value == other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+
+    def __ne__(self, other):
+        if isphysicalquantity(other):
+            if self.base.unit is other.base.unit:
+                return not self.base.value == other.base.value
+            else:
+                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+        else:
+            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __format__(self, *args, **kw):
         return "{1:{0}} {2}".format(args[0], self.value, self.unit)
