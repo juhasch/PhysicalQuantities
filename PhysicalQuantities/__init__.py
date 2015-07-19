@@ -97,3 +97,18 @@ def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
         return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
     else:
         return array * PhysicalQuantity(1, unit)
+
+# Override NumPy ufuncs so we can use PhysicalQuantities object just like NumPy arrays
+#def override(name):
+#    def ufunc(x,y):
+#        if isinstance(y, PhysicalQuantity): return NotImplemented
+#        return np.__getattribute__(name)(x,y)
+#    return ufunc
+
+#np.set_numeric_ops(
+#    ** {
+#        ufunc : override(ufunc) for ufunc in (
+#            "less", "less_equal"
+#    )
+#    }
+#)

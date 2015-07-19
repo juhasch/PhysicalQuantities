@@ -254,10 +254,10 @@ class PhysicalUnit(object):
                 if reduce(lambda a, b: a and b,
                           list(map(lambda x, e=rounded: x % e == 0, self.powers))):
                     f = pow(self.factor, other)
-                    p = list(map(lambda x, p = rounded: x/p, self.powers))
+                    p = list(map(lambda x, p=rounded: x/p, self.powers))
                     p = [ int(x) for x in p]
                     if reduce(lambda a, b: a and b,
-                              list(map(lambda x, e = rounded: x%e == 0,
+                              list(map(lambda x, e = rounded: x % e == 0,
                                   self.names.values()))):
                         names = NumberDict((k, self.names[k] / rounded) for k in self.names)
                     else:

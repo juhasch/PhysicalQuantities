@@ -14,9 +14,9 @@ def test_list_1():
     
 def test_list_2(): # BUG!
     """ assign list via index """
-    a = [1,2,3] * pq.Q(1,'m')
+    a = [1.0, 2.0, 3.0] * pq.Q(1,'m')
     a[1] = a[2]
-    assert str(a[1]) == '3 m'
+    assert str(a[1]) == '3.0 m'
 
 def test_list_3():
     """ index range """
