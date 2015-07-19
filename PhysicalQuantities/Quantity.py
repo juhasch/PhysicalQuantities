@@ -46,7 +46,7 @@ class PhysicalQuantity(object):
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         except:
             self.ptformatter = None
-        self.format = '' # display format for number to string conversion
+        self.format = ''  # display format for number to string conversion
         if unit is not None:
             self.value = value
             self.unit = findunit(unit)
@@ -65,7 +65,7 @@ class PhysicalQuantity(object):
         ulist.append('unit')
         return ulist
     
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit after rescaling and return value only.
         """
@@ -88,7 +88,7 @@ class PhysicalQuantity(object):
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return self.__class__(self.value[key], self.unit)
-        raise AttributeError('Not a PhysicalQuantity array or list')
+        raise AttributeError('Not a PhysicalQuantity array or list', list)
 
     def __setitem__(self, key, value):
         """ Set quantities if underlying object is array or list
@@ -99,7 +99,7 @@ class PhysicalQuantity(object):
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             self.value[key] = value.to(self.unit).value
             return self.__class__(self.value[key], self.unit)
-        raise AttributeError('Not a PhysicalQuantity array or list')
+        raise AttributeError('Not a PhysicalQuantity array or list', list)
         
     def __len__(self):
         """ Return length of quantity if underlying object is array or list
@@ -113,7 +113,7 @@ class PhysicalQuantity(object):
         """ Return string representation as 'value unit'
             e.g. str(obj)
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt%self.value, str(self.unit))
@@ -129,6 +129,11 @@ class PhysicalQuantity(object):
         """
         return self.base.value
 
+    def __array__(self):
+        """ Return array without units converted to base units
+        """
+        return np.array(self.base.value)
+
     def __repr__(self):
         """ Simply return string representation
         """
@@ -137,13 +142,13 @@ class PhysicalQuantity(object):
     def _repr_latex_(self):
         """ Return Latex representation for IPython notebook
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_latex_())
         if str(type(self.value)).find('sympy') > 0:
             # sympy
-            return '${0}$ {1}'.format( printing.latex(self.value), self.unit.latex)
+            return '${0}$ {1}'.format(printing.latex(self.value), self.unit.latex)
         return '{0:{format}} {1}'.format(self.value, self.unit.latex,format=self.format)
 
     def _sum(self, other, sign1, sign2):
@@ -285,6 +290,7 @@ class PhysicalQuantity(object):
         self.value = convertValue(self.value, self.unit, unit)
         self.unit = unit
 
+    @staticmethod
     def _round(self, x):
         if np.greater(x, 0.):
             return np.floor(x)
@@ -308,7 +314,7 @@ class PhysicalQuantity(object):
             # now search for unit
             for i in unit_table:
                 u = unit_table[i]
-                if isinstance(u,PhysicalUnit):
+                if isinstance(u, PhysicalUnit):
                     if u.baseunit is self.unit.baseunit:
                         f = np.log10(u.factor) - _scale
                         if (f > -3) and (f < 1):
