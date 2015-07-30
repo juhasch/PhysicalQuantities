@@ -11,18 +11,18 @@ except ImportError:
     pass
 
 from .Unit import *
-
 import copy
-
 from IPython import get_ipython
 
 
 def isphysicalquantity(x):
-    """ Return true if x is a PhysicalQuantity """
+    """
+    :return: true if x is a PhysicalQuantity
+    """
     return hasattr(x, 'value') and hasattr(x, 'unit')
 
 
-class PhysicalQuantity(object):
+class PhysicalQuantity:
     """ Physical quantity with units.
 
         PhysicalQuantity instances allow addition, subtraction, multiplication, and
@@ -37,28 +37,29 @@ class PhysicalQuantity(object):
     
     def __init__(self, value, unit=None,  **kwargs):
         """There are two constructor calling patterns:
-
-        PhysicalQuantity(value, unit), where value is any number and unit is
-        a string defining the unit
+        :param value: numerical value
+        :param unit: unit as string or PhysicalUnit class
         """
-        try:
-            ip = get_ipython()
+        ip = get_ipython()
+        if ip is not None:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
-        except:
+        else:
             self.ptformatter = None
         self.format = ''  # display format for number to string conversion
         if unit is not None:
             self.value = value
             self.unit = findunit(unit)
         else:
-            raise UnitError('No number found in %r' % value)
+            raise UnitError('No unit given in %s' % unit)
             
     def __dir__(self):
-        """ return list of units for tab completion """
+        """
+        :return: list of units for tab completion
+        """
         ulist = []
         u = unit_table.values()
         for _u in u:
-            if isPhysicalUnit(_u):
+            if isphysicalunit(_u):
                 if str(_u.baseunit) is str(self.unit.baseunit):
                     ulist.append(_u.name)
         ulist.append('value')
@@ -68,6 +69,8 @@ class PhysicalQuantity(object):
     def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit after rescaling and return value only.
+            :param:
+            :return:
         """
         dropunit = (attr[-1] is '_')
         attr = attr.strip('_')
@@ -75,7 +78,7 @@ class PhysicalQuantity(object):
             attrunit = unit_table[attr]
         except:
             raise AttributeError
-        if isPhysicalUnit(attrunit):
+        if isphysicalunit(attrunit):
             if dropunit is True:
                 return self.to(attrunit.name).value
             else:
@@ -116,7 +119,7 @@ class PhysicalQuantity(object):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
-            return u"%s %s" % (fmt%self.value, str(self.unit))
+            return u"%s %s" % (fmt % self.value, str(self.unit))
         return '{0:{format}} {1}'.format(self.value, str(self.unit), format=self.format)
 
     def __complex__(self):
@@ -243,6 +246,7 @@ class PhysicalQuantity(object):
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __lt__(self, other):
+        print("less")
         if isphysicalquantity(other):
             if self.base.unit is other.base.unit:
                 return self.base.value < other.base.value
@@ -287,11 +291,11 @@ class PhysicalQuantity(object):
             previous unit of the object.
         """
         unit = findunit(unit)
-        self.value = convertValue(self.value, self.unit, unit)
+        self.value = convertvalue(self.value, self.unit, unit)
         self.unit = unit
 
     @staticmethod
-    def _round(self, x):
+    def _round(x):
         if np.greater(x, 0.):
             return np.floor(x)
         else:
@@ -333,7 +337,7 @@ class PhysicalQuantity(object):
         units = list(map(findunit, units))
         if len(units) is 1:
             unit = units[0]
-            value = convertValue(self.value, self.unit, unit)
+            value = convertvalue(self.value, self.unit, unit)
             return self.__class__(value, unit)
         else:
             units.sort()
@@ -390,7 +394,8 @@ class PhysicalQuantity(object):
         return self.__class__(self.value.imag, self.unit)
 
     # implementations of special functions, used by numpy ufuncs
-    def sqrt(self):
+    def __sqrt__(self):
+        print("sq")
         return self ** 0.5
 
     def sin(self):

@@ -66,13 +66,11 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
+
 # numpy linspace wrapper for units
-def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
-    """ numpy.linespace with units
-    
-    """
+def newlinspace(start, stop, num = 50,  endpoint=True, retstep=False):
     if not isinstance(start, PhysicalQuantity) and not isinstance(stop, PhysicalQuantity):
-        return np.linspace(start, stop, num,  endpoint, retstep)
+        return oldlinspace(start, stop, num,  endpoint, retstep)
 
     if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
         if start.base.unit != stop.base.unit:
@@ -91,24 +89,20 @@ def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
     else:
         stop_value = stop
 
-    array = np.linspace(start_value, stop_value, num,  endpoint, retstep)
+    array = oldlinspace(start_value, stop_value, num,  endpoint, retstep)
 
     if retstep:
         return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
     else:
         return array * PhysicalQuantity(1, unit)
 
-# Override NumPy ufuncs so we can use PhysicalQuantities object just like NumPy arrays
-#def override(name):
-#    def ufunc(x,y):
-#        if isinstance(y, PhysicalQuantity): return NotImplemented
-#        return np.__getattribute__(name)(x,y)
-#    return ufunc
+oldlinspace = np.linspace
+np.linspace = newlinspace
 
-#np.set_numeric_ops(
-#    ** {
-#        ufunc : override(ufunc) for ufunc in (
-#            "less", "less_equal"
-#    )
-#    }
-#)
+# Override NumPy sqrt function by monkeypatching.
+def mysqrt(x):
+    if isinstance(x, PhysicalQuantity): return x ** 0.5
+    return oldsqrt(x)
+
+oldsqrt = np.sqrt
+np.sqrt = mysqrt

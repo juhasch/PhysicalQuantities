@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
 """ Class for dB calculations 
 
-Example:
-    from PhysicalQuantities.dBQuantitys import dBQuantity
-    a = dBQuantity(0.1,'dBm', islog=True)
-    print(a)
+ >>> from PhysicalQuantities.dBQuantitys import dBQuantity
+ >>> a = dBQuantity(0.1,'dBm', islog=True)
+ >>> print(a)
 
 """
-
-# TODO:
-# Conversion from a PhysicalQuantity to correct dB<x> value
-
-def dB(x,scale=10):
-    """ Convert value to scale*log10 """
-    return dBQuantity(scale*np.log10(x),'dB',islog=True)
 
 import numpy as np
 import copy
 
 import re
-import PhysicalQuantities as pq
+from PhysicalQuantities import PhysicalQuantity
 
 # list of tuples: (base unit, correction factor to base unit, conversion factor to linear)
 dB_units = {'dB':  ('', 0, 1),
@@ -36,16 +28,43 @@ dB_units = {'dB':  ('', 0, 1),
             'dBi':  ('', 0, 10),    # Antenna gain G
             'dBd':  ('', 2.15, 10)}
 
-           
+
+# Conversion from a PhysicalQuantity to correct dB<x> value
+def dB(x):
+    if isinstance(x, PhysicalQuantity):
+        dbconv = { 'V': 20, 'A': 20, 'Ohm': 20, 'W':10}
+        if x.unit.prefixed:
+            base = x.unit.baseunit.name
+        else:
+            base = x.unit.name
+        try:
+            value = dbconv[base] * np.log10(x.base.value )
+        except:
+            raise UnitError('Cannot handle unit %s' % x.unit)
+        return dBQuantity(value,'dB'+base,islog=True)
+    raise UnitError('Cannot handle unitless quantity %s' % x)
+
+
+def dB10(x):
+    return dBQuantity(10*np.log10(x),'dB',islog=True)
+
+def dB20(x):
+    return dBQuantity(20*np.log10(x),'dB',islog=True)
+
+
 class UnitError(ValueError):
     pass
 
 
-class dBQuantity(object):
+class dBQuantity:
     """ dB unit calculations """
 
     def __init__(self, value, unit, **kwargs):
+        """
         # initialize and convert to logarithm if islog=False
+        :param value: value
+        :param unit: unit
+        """
         islog = False
         self.z0 = 50.
         try:
@@ -103,7 +122,7 @@ class dBQuantity(object):
 
         if islinunit:
             if dropunit is False:
-                return pq.Q(self.__float__(),dB_units[self.unit][0] )
+                return PhysicalQuantity(self.__float__(),dB_units[self.unit][0] )
             else:
                 return self.__float__()
         

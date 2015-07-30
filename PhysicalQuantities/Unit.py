@@ -6,8 +6,7 @@
 
 import numpy as np
 import sys
-from math import pi
-from six import string_types
+import six
 from .NDict import *
 
 if sys.version_info > (2,):
@@ -17,16 +16,18 @@ if sys.version_info > (2,):
 class UnitError(ValueError):
     pass
 
+
 # Helper functions
 def findunit(unit):
     """ Return PhysicalUnit class if given parameter is a valid unit
-    
-    Parameter:
-        unit - string with unit name
-     """   
-    if isinstance(unit, string_types):
-        name = unit.strip().replace('^', '**')
-        if name[0:2] == '1/': 
+    :param unit: unit to check if valid
+    :type unit: str
+    :return: unit
+    :rtype: PhysicalUnit
+    """
+    if isinstance(unit, six.string_types):
+        name = str(unit).strip().replace('^', '**')
+        if name[0:2] == '1/':
             name = '(' + name[2:] + ')**-1'
         try:
             unit = eval(name, unit_table)
@@ -37,25 +38,35 @@ def findunit(unit):
                 del unit_table[cruft]
             except KeyError:
                 pass
-    if not isPhysicalUnit(unit):
-        raise UnitError(str(unit) + ' is not a unit')
+    if not isphysicalunit(unit):
+        raise UnitError('%s is not a unit' % str(unit))
     return unit
 
 
-def convertValue(value, src_unit, target_unit):
-    """ Convert between units, if possible """
+def convertvalue(value, src_unit, target_unit):
+    """ Convert between units, if possible
+    :param value: value in source units
+    :param src_unit: source unit
+    :type src_unit: PhysicalUnit
+    :param target_unit: target unit
+    :type target_unit: PhysicalUnit
+    :return: value in target unit
+    """
     (factor, offset) = src_unit.conversion_tuple_to(target_unit)
     if isinstance(value, list):
         raise UnitError('Cannot convert units for a list')
     return (value + offset) * factor
 
 
-def isPhysicalUnit(x):
-    """ Return true if valid PhysicalUnit class """
+def isphysicalunit(x):
+    """ Return true if valid PhysicalUnit class
+    :param x: unit
+    :type x: PhysicalUnit
+    """
     return hasattr(x, 'factor') and hasattr(x, 'powers')
 
 
-class PhysicalUnit(object):
+class PhysicalUnit:
     """Physical unit.
 
     A physical unit is defined by a name (possibly composite), a scaling factor,
@@ -63,23 +74,24 @@ class PhysicalUnit(object):
     can be multiplied, divided, and raised to integer powers.
     """
 
-    def __init__(self, names, factor, powers, offset=0, url='', comment=''):
+    def __init__(self, names, factor, powers, offset=0, url='', verbosename=''):
         """
-        @param names: a dictionary mapping each name component to its
+        :param names: a dictionary mapping each name component to its
                       associated integer power (e.g. C{{'m': 1, 's': -1}})
                       for M{m/s}). As a shorthand, a string may be passed
                       which is assigned an implicit power 1.
-        @param factor: a scaling factor
-        @param powers: the integer powers for each of the nine base units
-        @param offset: an additive offset to the base unit (used only for
-                       temperatures)
+        :param factor: a scaling factor
+        :param powers: the integer powers for each of the nine base units
+        :param offset: an additive offset to the base unit (used only for temperatures)
+        :param url: URL describing the unit
+        :param verbosename: the verbose name of the unit (e.g. Coulomb)
         """
 
         self.prefixed = False
         self.baseunit = self
-        self.comment = comment
-        self.url = url        
-        if isinstance(names, string_types):
+        self.verbosename = verbosename
+        self.url = url
+        if isinstance(names, six.string_types):
             self.names = NumberDict()
             self.names[names] = 1
         else:
@@ -94,6 +106,10 @@ class PhysicalUnit(object):
 
     @property
     def name(self):
+        """ Return name of unit
+        :return: name of unit
+        :rtype: str
+        """
         num = ''
         denom = ''
         for unit in self.names.keys():
@@ -114,6 +130,10 @@ class PhysicalUnit(object):
 
     @property
     def _latex_name(self):
+        """ Return name of unit as latex string
+        :return: name of unit as latex string
+        :type: str
+        """
         num = ''
         denom = ''
         for unit in self.names.keys():
@@ -143,12 +163,20 @@ class PhysicalUnit(object):
 
     @property
     def is_dimensionless(self):
+        """ Check if no dimension is given
+        :return: true if dimensionless
+        :rtype: bool
+        """
         return not reduce(lambda a, b: a or b, self.powers)
 
     @property
     def is_angle(self):
+        """ Check if unit is an angle
+        :return: true if unit is an angle
+        :rtype: bool
+        """
         return self.powers[7] == 1 and \
-            reduce(lambda a, b: a + b, self.powers) == 1
+               reduce(lambda a, b: a + b, self.powers) == 1
 
     def __str__(self):
         """ Return string text representation of unit
@@ -160,7 +188,7 @@ class PhysicalUnit(object):
     def __repr__(self):
         return '<PhysicalUnit ' + self.name + '>'
 
-    def _repr_latex_(self): 
+    def _repr_latex_(self):
         """ IPython repr to display latex representation of unit
         :return: Unit as LaTeX string
         """
@@ -176,37 +204,37 @@ class PhysicalUnit(object):
         return self._repr_latex_()
 
     def __gt__(self, other):
-        if isPhysicalUnit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers is other.powers:
             return self.factor > other.factor
-        raise UnitError('Cannot compare different dimensions')
+        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __ge__(self, other):
-        if isPhysicalUnit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers is other.powers:
             return self.factor >= other.factor
-        raise UnitError('Cannot compare different dimensions')
+        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __lt__(self, other):
-        if isPhysicalUnit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers is other.powers:
             return self.factor < other.factor
-        raise UnitError('Cannot compare different dimensions')
+        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __le__(self, other):
-        if isPhysicalUnit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers is other.powers:
             return self.factor <= other.factor
-        raise UnitError('Cannot compare different dimensions')
+        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __eq__(self, other):
-        if isPhysicalUnit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers is other.powers:
             return self.factor == other.factor
-        raise UnitError('Cannot compare different dimensions')
+        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __mul__(self, other):
-        if self.offset != 0 or (isPhysicalUnit(other) and other.offset != 0):
-            raise UnitError('Cannot multiply units with non-zero offset')
-        if isPhysicalUnit(other):
+        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
+            raise UnitError('Cannot multiply units %s and %s with non-zero offset' % (self, other))
+        if isphysicalunit(other):
             return PhysicalUnit(self.names + other.names,
                                 self.factor * other.factor,
-                                list(map(lambda a, b: a+b, self.powers, other.powers)))
+                                list(map(lambda a, b: a + b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
                                 self.factor * other, self.powers,
@@ -215,50 +243,51 @@ class PhysicalUnit(object):
     __rmul__ = __mul__
 
     def __div__(self, other):
-        if self.offset != 0 or (isPhysicalUnit(other) and other.offset != 0):
-            raise UnitError('Cannot divide units with non-zero offset')
-        if isPhysicalUnit(other):
+        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
+            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self,other))
+        if isphysicalunit(other):
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
-                                list(map(lambda a, b: a-b, self.powers, other.powers)))
+                                list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
-            return PhysicalUnit(self.names+NumberDict({str(other): -1}),
-                                self.factor/other, self.powers)
+            return PhysicalUnit(self.names + NumberDict({str(other): -1}),
+                                self.factor / other, self.powers)
 
     def __rdiv__(self, other):
-        if self.offset != 0 or (isPhysicalUnit(other) and other.offset != 0):
-            raise UnitError('Cannot divide units with non-zero offset')
-        if isPhysicalUnit(other):
+        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
+            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self,other))
+        if isphysicalunit(other):
             return PhysicalUnit(other.names - self.names,
-                                other.factor/self.factor,
-                                list(map(lambda a, b: a-b, other.powers, self.powers)))
+                                other.factor / self.factor,
+                                list(map(lambda a, b: a - b, other.powers, self.powers)))
         else:
             return PhysicalUnit(NumberDict({str(other): 1}) - self.names,
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
+
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
     def __pow__(self, other):
         if self.offset != 0:
-            raise UnitError('Cannot exponentiate units with non-zero offset')
+            raise UnitError('Cannot exponentiate units %s and %s with non-zero offset' % (self,other))
         if isinstance(other, int):
-            p = list(map(lambda x, p=other: x*p, self.powers))
+            p = list(map(lambda x, p=other: x * p, self.powers))
             f = pow(self.factor, other)
             names = NumberDict((k, self.names[k] * other) for k in self.names)
             return PhysicalUnit(names, f, p)
         if isinstance(other, float):
-            inv_exp = 1./other
+            inv_exp = 1. / other
             rounded = int(np.floor(inv_exp + 0.5))
-            if abs(inv_exp-rounded) < 1.e-10:
+            if abs(inv_exp - rounded) < 1.e-10:
                 if reduce(lambda a, b: a and b,
                           list(map(lambda x, e=rounded: x % e == 0, self.powers))):
                     f = pow(self.factor, other)
-                    p = list(map(lambda x, p=rounded: x/p, self.powers))
-                    p = [ int(x) for x in p]
+                    p = list(map(lambda x, p=rounded: x / p, self.powers))
+                    p = [int(x) for x in p]
                     if reduce(lambda a, b: a and b,
-                              list(map(lambda x, e = rounded: x % e == 0,
-                                  self.names.values()))):
+                              list(map(lambda x, e=rounded: x % e == 0,
+                                       self.names.values()))):
                         names = NumberDict((k, self.names[k] / rounded) for k in self.names)
                     else:
                         names = NumberDict()
@@ -272,17 +301,25 @@ class PhysicalUnit(object):
         raise UnitError('Only integer and inverse integer exponents allowed')
 
     def conversion_factor_to(self, other):
-        """Return conversion factor to another unit."""
+        """Return conversion factor to another unit.
+        :param other: other unit
+        :type other: PhysicalUnit
+        :return: float
+        """
         if self.powers != other.powers:
             raise UnitError('Incompatible units')
         if self.offset != other.offset and self.factor != other.factor:
             raise UnitError(('Unit conversion (%s to %s) cannot be expressed ' +
-                            'as a simple multiplicative factor') %
+                             'as a simple multiplicative factor') %
                             (self.name, other.name))
-        return self.factor/other.factor
+        return self.factor / other.factor
 
     def conversion_tuple_to(self, other):
-        """Return conversion factor and offset to another unit."""
+        """Return conversion factor and offset to another unit.
+        :param other: other unit
+        :type other: PhysicalUnit
+        :return: float tuple
+        """
         if self.powers != other.powers:
             raise UnitError('Incompatible units')
 
@@ -303,27 +340,38 @@ class PhysicalUnit(object):
         # thus, D = d1 - d2*s2/s1 and S = s1/s2
         factor = self.factor / other.factor
         offset = self.offset - (other.offset * other.factor / self.factor)
-        return (factor, offset)
+        return factor, offset
+
+
+def pretty(text):
+    """ Pretty up unit name string
+    :param text: input string
+    :return: string with replaced characters
+    """
+    rep = {'**': '^', 'deg': '°', '*': '·', 'pi': 'π'}
+    for k, v in rep.items():
+        text = text.replace(k, v)
+    return text
 
 
 def units_html_list():
-    """ List all defined units """
+    """ List all defined units in a HTML table """
     from IPython.display import HTML
-    str = "<table>"
-    str += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
+    table = "<table>"
+    table += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
     for name in unit_table:
         unit = unit_table[name]
-        if isinstance(unit,PhysicalUnit):
+        if isinstance(unit, PhysicalUnit):
             if unit.prefixed is False:
                 if isinstance(unit.baseunit, PhysicalUnit):
                     baseunit = '$ %s $' % unit.baseunit
                 else:
-                    baseunit = '$ %s $' % unit.baseunit.replace('**', '^').replace('u', 'µ').replace('deg', '°').replace('*', ' \\cdot ').replace('pi', r' \pi ')
-                str += "<tr><td>" + unit.name + '</td><td>' + baseunit +\
-                      '</td><td><a href="' + unit.url+'" target="_blank">'+ unit.comment +\
-                      "</a></td></tr>"
-    str += "</table>"
-    return HTML(str)
+                    baseunit = '$ %s $' % pretty(unit.baseunit.name)
+                table += "<tr><td>" + unit.name + '</td><td>' + baseunit + \
+                       '</td><td><a href="' + unit.url + '" target="_blank">' + unit.verbosename + \
+                       "</a></td></tr>"
+    table += "</table>"
+    return HTML(table)
 
 
 def units_list():
@@ -336,8 +384,15 @@ def units_list():
     return units
 
 
-def addunit(name, unit, comment='', prefixed=False, baseunit=None, url=''):
-    """ Add new PhysicalUnit entry """
+def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
+    """ Add new PhysicalUnit entry
+     :param name:
+     :param unit:
+     :param verbosename:
+     :param prefixed:
+     :param baseunit:
+     :param url: URL with information about unit
+    """
     if name in unit_table:
         raise KeyError('Unit ' + name + ' already defined')
     if isinstance(unit, str):
@@ -350,7 +405,7 @@ def addunit(name, unit, comment='', prefixed=False, baseunit=None, url=''):
     else:
         newunit = unit
     newunit.set_name(name)
-    newunit.comment = comment
+    newunit.verbosename = verbosename
     if prefixed is True:
         newunit.baseunit = baseunit
     else:
@@ -362,13 +417,11 @@ def addunit(name, unit, comment='', prefixed=False, baseunit=None, url=''):
 
 
 def addprefixed(unitname, range='full'):
-    """ Add prefixes to already defined unit 
-        unitname: name of unit to be prefixed
-                  e.k. 'm' -> 'mm','cm','dm','km'...
-        range: 'engineering' -> 1e-18 to 1e12
-               'full' -> 1e-24 to 1e24
+    """ Add prefixes to already defined unit
+    :param unitname: name of unit to be prefixed, e.k. 'm' -> 'mm','cm','dm','km'
+    :param range: 'engineering' -> 1e-18 to 1e12 or 'full' -> 1e-24 to 1e24
     """
-    if range =='engineering':
+    if range == 'engineering':
         _prefixes = _engineering_prefixes
     else:
         _prefixes = _full_prefixes
@@ -376,46 +429,47 @@ def addprefixed(unitname, range='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            addunit(prefixedname, prefix[1]*unit, prefixed=True,baseunit=unit, comment=unit.comment, url=unit.url)
+            addunit(prefixedname, prefix[1] * unit, prefixed=True, baseunit=unit, verbosename=unit.verbosename, url=unit.url)
+
 
 # add scaling prefixes
 _full_prefixes = [
-    ('Y',  1.e24), ('Z',  1.e21), ('E',  1.e18), ('P',  1.e15), ('T',  1.e12),
-    ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3),  ('h',  1.e2),  ('da', 1.e1),
-    ('d',  1.e-1), ('c',  1.e-2), ('m',  1.e-3), ('u', 1.e-6), ('n',  1.e-9),
-    ('p',  1.e-12), ('f',  1.e-15), ('a',  1.e-18), ('z',  1.e-21),
-    ('y',  1.e-24),
+    ('Y', 1.e24), ('Z', 1.e21), ('E', 1.e18), ('P', 1.e15), ('T', 1.e12),
+    ('G', 1.e9), ('M', 1.e6), ('k', 1.e3), ('h', 1.e2), ('da', 1.e1),
+    ('d', 1.e-1), ('c', 1.e-2), ('m', 1.e-3), ('u', 1.e-6), ('n', 1.e-9),
+    ('p', 1.e-12), ('f', 1.e-15), ('a', 1.e-18), ('z', 1.e-21),
+    ('y', 1.e-24),
 ]
 
 # actually, use a reduced set of scaling prefixes for engineering purposes:
 _engineering_prefixes = [
-    ('T',  1.e12),
-    ('G',  1.e9),  ('M',  1.e6),  ('k',  1.e3), 
-    ('c',  1.e-2), ('m',  1.e-3), ('u', 1.e-6), ('n',  1.e-9),
-    ('p',  1.e-12), ('f',  1.e-15), ('a',  1.e-18),
+    ('T', 1.e12),
+    ('G', 1.e9), ('M', 1.e6), ('k', 1.e3),
+    ('c', 1.e-2), ('m', 1.e-3), ('u', 1.e-6), ('n', 1.e-9),
+    ('p', 1.e-12), ('f', 1.e-15), ('a', 1.e-18),
 ]
 
 unit_table = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
-addunit('kg', PhysicalUnit('kg', 1,     [0, 1, 0, 0, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram')
-addprefixed(addunit('g', PhysicalUnit('g',   0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Kilogram', comment='Kilogram'), range='engineering')
-addprefixed(addunit('s', PhysicalUnit('s',   1.,    [0, 0, 1, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Second', comment='Second'), range='engineering')
-addprefixed(addunit('A', PhysicalUnit('A',   1.,    [0, 0, 0, 1, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Ampere', comment='Ampere'), range='engineering')
-addprefixed(addunit('K', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Kelvin', comment='Kelvin'), range='engineering')
-addprefixed(addunit('mol', PhysicalUnit('mol', 1.,    [0, 0, 0, 0, 0, 1, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Mole_(unit)', comment='Mol'), range='engineering')
-addprefixed(addunit('cd', PhysicalUnit('cd',  1.,    [0, 0, 0, 0, 0, 0, 1, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Candela', comment='Candela'), range='engineering')
-addprefixed(addunit('rad', PhysicalUnit('rad', 1.,    [0, 0, 0, 0, 0, 0, 0, 1, 0]),
-                    url='https://en.wikipedia.org/wiki/Radian', comment='Radian'), range='engineering')
-addprefixed(addunit('sr', PhysicalUnit('sr',  1.,    [0, 0, 0, 0, 0, 0, 0, 0, 1]),
-                    url='https://en.wikipedia.org/wiki/Steradian', comment='Streradian'), range='engineering')
-addprefixed(addunit('m', PhysicalUnit('m',   1.,    [1, 0, 0, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Metre', comment='Metre'), range='engineering')
+addunit('kg', PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram')
+addprefixed(addunit('g', PhysicalUnit('g', 0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram'), range='engineering')
+addprefixed(addunit('s', PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Second', verbosename='Second'), range='engineering')
+addprefixed(addunit('A', PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere'), range='engineering')
+addprefixed(addunit('K', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin'), range='engineering')
+addprefixed(addunit('mol', PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol'), range='engineering')
+addprefixed(addunit('cd', PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela'), range='engineering')
+addprefixed(addunit('rad', PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
+                    url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian'), range='engineering')
+addprefixed(addunit('sr', PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
+                    url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian'), range='engineering')
+addprefixed(addunit('m', PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
+                    url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre'), range='engineering')
