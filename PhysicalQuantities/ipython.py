@@ -5,12 +5,7 @@
 #                  https://bitbucket.org/birkenfeld/ipython-physics
 
 import re
-import sys
-
 from IPython.core.inputtransformer import StatelessInputTransformer
-from IPython.core.inputtransformer import CoroutineInputTransformer
-from IPython.display import display, Math, Latex, HTML
-
 import PhysicalQuantities as pq
 
 name = r'([_a-zA-Z]\w*)'
@@ -46,14 +41,15 @@ line_match1 = re.compile(match1)
 line_match2 = re.compile(match2)
 line_match3 = re.compile(match3)
 
+
 def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
     if (m):
-#        print(m.groups())
         if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + '\')'
+
 
 def replace_inline1(m):
     """Replace an inline unit expression by valid Python code
@@ -62,7 +58,8 @@ def replace_inline1(m):
         if m.group(3) == None or m.group(3) == '':
             return m.group(0)
     return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
-    
+
+
 def replace_inline2(m):
     """Replace an inline unit expression by valid Python code
     """
@@ -74,13 +71,9 @@ def replace_inline2(m):
 @StatelessInputTransformer.wrap
 def _transform(line):
     line = line_match3.sub(replace_inline2, line) # unit/unit
-#    print("3:%s" % line)
     line = line_match2.sub(replace_inline1, line) # unit**n
-#    print("2:%s" % line)
     line = line_match1.sub(replace_inline, line)
-#    print("1:%s" % line)
     line = line_match0.sub(replace_inline, line)
-#    print("0:%s" % line)
     return line
 
 __transformer = _transform()
