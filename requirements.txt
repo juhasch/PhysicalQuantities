@@ -3,4 +3,4 @@ six
 numpy
 IPython >= 2.0
 sympy
-
+wrapt

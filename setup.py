@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name="PhysicalQuantities",
-    version="0.3",
+    version="0.4",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
@@ -15,6 +15,7 @@ setup(
     keywords="Physical Quantities IPython",
     url="http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
+    install_requires=[ 'six', 'numpy', 'IPython', 'wrapt' ],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 4 - Beta",
