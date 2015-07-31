@@ -409,7 +409,7 @@ def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
     if prefixed is True:
         newunit.baseunit = baseunit
     else:
-        newunit.baseunit = unit
+        newunit.baseunit = name
     newunit.prefixed = prefixed
     newunit.url = url
     unit_table[name] = newunit
