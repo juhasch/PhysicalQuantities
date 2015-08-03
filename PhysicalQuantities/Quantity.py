@@ -393,11 +393,6 @@ class PhysicalQuantity:
     def imag(self):
         return self.__class__(self.value.imag, self.unit)
 
-    # implementations of special functions, used by numpy ufuncs
-    def __sqrt__(self):
-        print("sq")
-        return self ** 0.5
-
     def sin(self):
         if self.unit.is_angle:
             return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))

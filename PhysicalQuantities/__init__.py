@@ -98,11 +98,3 @@ def newlinspace(start, stop, num = 50,  endpoint=True, retstep=False):
 
 oldlinspace = np.linspace
 np.linspace = newlinspace
-
-# Override NumPy sqrt function by monkeypatching.
-def mysqrt(x):
-    if isinstance(x, PhysicalQuantity): return x ** 0.5
-    return oldsqrt(x)
-
-oldsqrt = np.sqrt
-np.sqrt = mysqrt
