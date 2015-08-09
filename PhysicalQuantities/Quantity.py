@@ -64,6 +64,7 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         ulist.append('value')
         ulist.append('unit')
+        ulist.append('autoscale')
         ulist.append('pow')
         ulist.append('sqrt')
         return ulist
@@ -316,7 +317,12 @@ class PhysicalQuantity:
 
     @property
     def autoscale(self):
-        """ autoscale if it has a simple unit """
+        """ Autoscale to a reasonable unit, if possible
+
+        >>> b = PhysicalQuantity(4e-9, 'F')
+        >>> b.autoscale
+        >>> 4 nF
+        """
         if len(self.unit.names) is 1:
             b = self.base
             n = np.log10(b.value)
@@ -340,6 +346,9 @@ class PhysicalQuantity:
             sum of all quantities in the tuple equals the the original quantity and
             all the values except for the last one are integers. This is used to
             convert to irregular unit systems like hour/minute/second.
+
+            >>> b = PhysicalQuantity(4, 'J/s')
+            >>> b.to('W')
         """
         units = list(map(findunit, units))
         if len(units) is 1:
@@ -364,13 +373,23 @@ class PhysicalQuantity:
 
     @staticmethod
     def any_to(qty, unit):
+        """ I don't know what this really does TODO
+        :param qty:
+        :param unit:
+        :return:
+        """
         if not isphysicalquantity(qty):
             qty = PhysicalQuantity(qty, 'rad')
         return qty.to(unit)
 
     @property
     def base(self):
-        """ Returns the same quantity converted to base units."""
+        """ Returns the same quantity converted to base units.
+
+        >>> a = PhysicalQuantity(1, 'V')
+        >>> a.base
+        >>> 1.0 m^2*kg/s^3
+        """
         new_value = self.value * self.unit.factor
         num = ''
         denom = ''
@@ -394,14 +413,40 @@ class PhysicalQuantity:
     # make it easier using complex numbers
     @property
     def real(self):
+        """ Return real part of a complex PhysicalQuantity
+        :return: real part
+        :rtype: PhysicalQuantity
+
+        >>> b = PhysicalQuantity(2 + 1j, 'V')
+        >>> b.real
+        >>> 2.0 V
+        """
         return self.__class__(self.value.real, self.unit)
 
     @property
     def imag(self):
+        """ Return imaginary part of a complex PhysicalQuantity
+        :return: imaginary part
+        :rtype: PhysicalQuantity
+
+        >>> b = PhysicalQuantity(2 + 1j, 'V')
+        >>> b.imag
+        >>> 1.0 V
+        """
         return self.__class__(self.value.imag, self.unit)
 
     def sqrt(self):
+        """ Return the positive square-root
+        :return: positive square-root
+        :rtype: PhysicalQuantity
+        """
         return self.__pow__(0.5)
 
     def pow(self, exponent):
+        """ Return PhysicalQuantity raised to power of exponent
+        :param exponent: power to be raised
+        :type exponent: real number
+        :return:
+        :rtype: PhysicalQuantity
+        """
         return self.__pow__(exponent)
