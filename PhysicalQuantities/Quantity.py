@@ -34,7 +34,7 @@ class PhysicalQuantity:
     """
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
-    
+
     def __init__(self, value, unit=None,  **kwargs):
         """There are two constructor calling patterns:
         :param value: numerical value
@@ -266,7 +266,7 @@ class PhysicalQuantity:
 
     def __eq__(self, other):
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit.name == other.base.unit.name:
                 return self.base.value == other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
