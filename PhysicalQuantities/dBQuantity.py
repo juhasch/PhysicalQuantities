@@ -175,7 +175,6 @@ class dBQuantity:
         elif unit in dB_units.keys():
             # convert to same base unit, only scaling
             scaling = self.factor * np.log10( dB_units[self.unit][0].factor / dB_units[unit][0].factor)
-            print("S", scaling)
             value = self.value + scaling
             if dropunit is False:
                 return self.__class__(value, unit, islog=True)
