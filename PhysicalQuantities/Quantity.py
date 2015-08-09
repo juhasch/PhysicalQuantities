@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ PhysicalQuantity class definition
- Original author: Georg Brandl <georg@python.org>.
+    Original author: Georg Brandl <georg@python.org>.
                   https://bitbucket.org/birkenfeld/ipython-physics
 """
 from __future__ import division
@@ -16,10 +16,10 @@ from IPython import get_ipython
 
 
 def isphysicalquantity(x):
-    """
+    """ Test if parameter is a PhysicalQuantity object
     :return: true if x is a PhysicalQuantity
     """
-    return hasattr(x, 'value') and hasattr(x, 'unit')
+    return isinstance(x, PhysicalQuantity)
 
 
 class PhysicalQuantity:
@@ -64,6 +64,8 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         ulist.append('value')
         ulist.append('unit')
+        ulist.append('pow')
+        ulist.append('sqrt')
         return ulist
     
     def __getattr__(self, attr):
@@ -83,7 +85,7 @@ class PhysicalQuantity:
                 return self.to(attrunit.name).value
             else:
                 return self.to(attrunit.name)
-        raise AttributeError
+        raise AttributeError('Unknown attribute %s' % attr)
         
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list
@@ -133,7 +135,7 @@ class PhysicalQuantity:
         return self.base.value
 
     def __array__(self):
-        """ Return array without units converted to base units
+        """ Return array with units converted to base units
         """
         return np.array(self.base.value)
 
@@ -207,13 +209,19 @@ class PhysicalQuantity:
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
+    def __round__(self, n=None):
+        value = round(self.value)
+        unit = self.unit
+        return self.__class__(value, unit)
+
+
     def __pow__(self, other):
         if isphysicalquantity(other):
-            raise UnitError('Exponents must be dimensionless')
+            raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
         return self.__class__(pow(self.value, other), pow(self.unit, other))
 
     def __rpow__(self, other):
-        raise UnitError('Exponents must be dimensionless')
+        raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
 
     def __abs__(self):
         return self.__class__(abs(self.value), self.unit)
@@ -246,7 +254,6 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __lt__(self, other):
-        print("less")
         if isphysicalquantity(other):
             if self.base.unit is other.base.unit:
                 return self.base.value < other.base.value
@@ -393,20 +400,8 @@ class PhysicalQuantity:
     def imag(self):
         return self.__class__(self.value.imag, self.unit)
 
-    def sin(self):
-        if self.unit.is_angle:
-            return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of sin must be an angle')
+    def sqrt(self):
+        return self.__pow__(0.5)
 
-    def cos(self):
-        if self.unit.is_angle:
-            return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of cos must be an angle')
-
-    def tan(self):
-        if self.unit.is_angle:
-            return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of tan must be an angle')
+    def pow(self, exponent):
+        return self.__pow__(exponent)
