@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ PhysicalQuantity class definition
- Original author: Georg Brandl <georg@python.org>.
+    Original author: Georg Brandl <georg@python.org>.
                   https://bitbucket.org/birkenfeld/ipython-physics
 """
 from __future__ import division
@@ -16,10 +16,10 @@ from IPython import get_ipython
 
 
 def isphysicalquantity(x):
-    """
+    """ Test if parameter is a PhysicalQuantity object
     :return: true if x is a PhysicalQuantity
     """
-    return hasattr(x, 'value') and hasattr(x, 'unit')
+    return isinstance(x, PhysicalQuantity)
 
 
 class PhysicalQuantity:
@@ -64,6 +64,9 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         ulist.append('value')
         ulist.append('unit')
+        ulist.append('autoscale')
+        ulist.append('pow')
+        ulist.append('sqrt')
         return ulist
     
     def __getattr__(self, attr):
@@ -83,7 +86,7 @@ class PhysicalQuantity:
                 return self.to(attrunit.name).value
             else:
                 return self.to(attrunit.name)
-        raise AttributeError
+        raise AttributeError('Unknown attribute %s' % attr)
         
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list
@@ -133,7 +136,7 @@ class PhysicalQuantity:
         return self.base.value
 
     def __array__(self):
-        """ Return array without units converted to base units
+        """ Return array with units converted to base units
         """
         return np.array(self.base.value)
 
@@ -207,13 +210,19 @@ class PhysicalQuantity:
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
+    def __round__(self, n=None):
+        value = round(self.value)
+        unit = self.unit
+        return self.__class__(value, unit)
+
+
     def __pow__(self, other):
         if isphysicalquantity(other):
-            raise UnitError('Exponents must be dimensionless')
+            raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
         return self.__class__(pow(self.value, other), pow(self.unit, other))
 
     def __rpow__(self, other):
-        raise UnitError('Exponents must be dimensionless')
+        raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
 
     def __abs__(self):
         return self.__class__(abs(self.value), self.unit)
@@ -246,7 +255,6 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __lt__(self, other):
-        print("less")
         if isphysicalquantity(other):
             if self.base.unit is other.base.unit:
                 return self.base.value < other.base.value
@@ -309,7 +317,12 @@ class PhysicalQuantity:
 
     @property
     def autoscale(self):
-        """ autoscale if it has a simple unit """
+        """ Autoscale to a reasonable unit, if possible
+
+        >>> b = PhysicalQuantity(4e-9, 'F')
+        >>> b.autoscale
+        >>> 4 nF
+        """
         if len(self.unit.names) is 1:
             b = self.base
             n = np.log10(b.value)
@@ -333,6 +346,9 @@ class PhysicalQuantity:
             sum of all quantities in the tuple equals the the original quantity and
             all the values except for the last one are integers. This is used to
             convert to irregular unit systems like hour/minute/second.
+
+            >>> b = PhysicalQuantity(4, 'J/s')
+            >>> b.to('W')
         """
         units = list(map(findunit, units))
         if len(units) is 1:
@@ -357,13 +373,23 @@ class PhysicalQuantity:
 
     @staticmethod
     def any_to(qty, unit):
+        """ I don't know what this really does TODO
+        :param qty:
+        :param unit:
+        :return:
+        """
         if not isphysicalquantity(qty):
             qty = PhysicalQuantity(qty, 'rad')
         return qty.to(unit)
 
     @property
     def base(self):
-        """ Returns the same quantity converted to base units."""
+        """ Returns the same quantity converted to base units.
+
+        >>> a = PhysicalQuantity(1, 'V')
+        >>> a.base
+        >>> 1.0 m^2*kg/s^3
+        """
         new_value = self.value * self.unit.factor
         num = ''
         denom = ''
@@ -387,26 +413,40 @@ class PhysicalQuantity:
     # make it easier using complex numbers
     @property
     def real(self):
+        """ Return real part of a complex PhysicalQuantity
+        :return: real part
+        :rtype: PhysicalQuantity
+
+        >>> b = PhysicalQuantity(2 + 1j, 'V')
+        >>> b.real
+        >>> 2.0 V
+        """
         return self.__class__(self.value.real, self.unit)
 
     @property
     def imag(self):
+        """ Return imaginary part of a complex PhysicalQuantity
+        :return: imaginary part
+        :rtype: PhysicalQuantity
+
+        >>> b = PhysicalQuantity(2 + 1j, 'V')
+        >>> b.imag
+        >>> 1.0 V
+        """
         return self.__class__(self.value.imag, self.unit)
 
-    def sin(self):
-        if self.unit.is_angle:
-            return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of sin must be an angle')
+    def sqrt(self):
+        """ Return the positive square-root
+        :return: positive square-root
+        :rtype: PhysicalQuantity
+        """
+        return self.__pow__(0.5)
 
-    def cos(self):
-        if self.unit.is_angle:
-            return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of cos must be an angle')
-
-    def tan(self):
-        if self.unit.is_angle:
-            return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of tan must be an angle')
+    def pow(self, exponent):
+        """ Return PhysicalQuantity raised to power of exponent
+        :param exponent: power to be raised
+        :type exponent: real number
+        :return:
+        :rtype: PhysicalQuantity
+        """
+        return self.__pow__(exponent)
