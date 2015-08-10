@@ -21,26 +21,54 @@ def test_conversion():
     assert g.W_ == 0.001
 
 
-def test_comparison_dB():
+def test_gt_dB():
     g1 = dBQuantity(0,'dB')
     g2 = dBQuantity(1,'dB')
     g3 = dBQuantity(-1,'dB')
     assert g1 > g3
-    assert g1 < g2
-    assert g1 == g1
-    assert g1 >= g3
-    assert g1 <= g2
+    assert g2 > g3
+    assert not g3 > g1
 
 
-def test_comparison_dBm():
-    g1 = dBQuantity(0,'dBm')
-    g2 = dBQuantity(1,'dBm')
-    g3 = dBQuantity(-1,'dBm')
-    assert g1 > g3
+def test_lt_dB():
+    g1 = dBQuantity(0,'dB')
+    g2 = dBQuantity(1,'dB')
+    g3 = dBQuantity(-1,'dB')
     assert g1 < g2
+    assert g3 < g2
+    assert not g1 > g2
+
+
+def test_eq_dB():
+    g1 = dBQuantity(0,'dB')
+    g2 = dBQuantity(1,'dB')
     assert g1 == g1
-    assert g1 >= g3
-    assert g1 <= g2
+    assert not g1 == g2
+
+
+def test_ne_db():
+    g1 = dBQuantity(0,'dB')
+    g2 = dBQuantity(1,'dB')
+    assert g1 != g2
+    assert not g1 != g1
+
+
+def test_ge_dB():
+    g1 = dBQuantity(0,'dB')
+    g2 = dBQuantity(1,'dB')
+    g3 = dBQuantity(-1,'dB')
+    assert g2 >= g1
+    assert g1 >= g1
+    assert not g3 >= g1
+
+
+def test_le_dB():
+    g1 = dBQuantity(0,'dB')
+    g2 = dBQuantity(1,'dB')
+    g3 = dBQuantity(-1,'dB')
+    assert g3 <= g3
+    assert g3 <= g1
+    assert not g2 <= g1
 
 
 def test_calculation():
@@ -51,17 +79,46 @@ def test_calculation():
     assert g + a == ga
 
 
-def test_dB():
-    assert dB10(10) ==  dBQuantity(10,'dB')
-    assert dB20(10) ==  dBQuantity(20,'dB')
-    a = PhysicalQuantity(10, 'V')
-    b = dBQuantity(20,'dBV')
-    c = dB(a)
-    assert b == c
-
-
 def test_numpy_dB():
     a = np.array([1, 2, 3])
     b = a * PhysicalQuantity(1, 'V')
     c = dB(b)
     assert_almost_equal(c.lin.value, a)
+
+
+def test_add_dB():
+    g1 = dBQuantity(1,'dB')
+    g2 = dBQuantity(2,'dB')
+    assert (g1 + g2).value == 3
+
+
+def test_sub_dB():
+    g1 = dBQuantity(1,'dB')
+    g2 = dBQuantity(2,'dB')
+    assert (g1 - g2).value == -1
+
+
+def test_dB10():
+    a = dB10(100)
+    b = dB10(0.1)
+    assert a.value == 20
+    assert b.value == -10
+
+
+def test_dB20():
+    a = dB20(100)
+    b = dB20(0.1)
+    assert a.value == 40
+    assert b.value == -20
+
+
+def test_dB_1():
+    a = PhysicalQuantity(10, 'V')
+    b = dB(a)
+    assert b == dBQuantity(20, 'dBV')
+
+
+def test_dB_2():
+    a = PhysicalQuantity(10, 'nV')
+    b = dB(a)
+    assert b == dBQuantity(20, 'dBnV')
