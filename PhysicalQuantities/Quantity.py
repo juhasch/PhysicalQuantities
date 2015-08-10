@@ -135,10 +135,10 @@ class PhysicalQuantity:
         """
         return self.base.value
 
-    def __array__(self):
-        """ Return array with units converted to base units
-        """
-        return np.array(self.base.value)
+    #def __array__(self):
+        #""" Return array with units converted to base units
+        #"""
+        #return np.array(self.base.value)
 
     def __repr__(self):
         """ Simply return string representation
@@ -450,3 +450,21 @@ class PhysicalQuantity:
         :rtype: PhysicalQuantity
         """
         return self.__pow__(exponent)
+
+    def sin(self):
+        if self.unit.is_angle:
+            return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of sin must be an angle')
+
+    def cos(self):
+        if self.unit.is_angle:
+            return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of cos must be an angle')
+
+    def tan(self):
+        if self.unit.is_angle:
+            return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
+        else:
+            raise UnitError('Argument of tan must be an angle')
