@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ PhysicalQuantity class definition
     Original author: Georg Brandl <georg@python.org>.
-                  https://bitbucket.org/birkenfeld/ipython-physics
+    https://bitbucket.org/birkenfeld/ipython-physics
 """
 from __future__ import division
 
@@ -80,7 +80,7 @@ class PhysicalQuantity:
         try:
             attrunit = unit_table[attr]
         except:
-            raise AttributeError
+            raise AttributeError('Unit %s not found' % attr)
         if isphysicalunit(attrunit):
             if dropunit is True:
                 return self.to(attrunit.name).value
@@ -158,6 +158,16 @@ class PhysicalQuantity:
         return '{0:{format}} {1}'.format(self.value, self.unit.latex,format=self.format)
 
     def _sum(self, other, sign1, sign2):
+        """ Add two quantities
+        :param other: quantity to add
+        :type other: PhysicalQuantity
+        :param sign1: factor +1 or -1 with sign for self
+        :type sign1: float
+        :param sign2: factor +1 or -1 with sign for other
+        :type sign2: float
+        :return: sum of the two quantities
+        :rtype: PhysicalQuantity
+        """
         if not isphysicalquantity(other):
             raise UnitError('Incompatible types %s' % type(other))
         new_value = sign1 * self.value + \
@@ -210,13 +220,23 @@ class PhysicalQuantity:
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
-    def __round__(self, n=None):
-        value = round(self.value)
-        unit = self.unit
-        return self.__class__(value, unit)
+    def __round__(self, ndigits=None):
+        """ Return rounded values
+        :param ndigits: number of digits to round to
+        :type ndigits:  int
+        :return: rounded quantity
+        :rtype: PhysicalQuantity
+        """
+        value = round(self.value, ndigits)
+        return self.__class__(value, self.unit)
 
 
     def __pow__(self, other):
+        """ Return power of other for quantity
+        :param other: exponent
+        :return: power of other for quantity
+        :rtype: PhysicalQuantity
+        """
         if isphysicalquantity(other):
             raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
         return self.__class__(pow(self.value, other), pow(self.unit, other))
@@ -225,20 +245,47 @@ class PhysicalQuantity:
         raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
 
     def __abs__(self):
+        """ Return quantity with absolute value
+        :return: absolute value of quantity
+        :rtype: PhysicalQuantity
+        """
         return self.__class__(abs(self.value), self.unit)
 
     def __pos__(self):
-        return self
+        """ Return quantity with positive sign
+        :return: positive value of quantity
+        :rtype: PhysicalQuantity
+        """
+        if isinstance(self.value, np.array):
+            return self.__class__(np.ndarray.__pos__(self.value), self.unit)
+        return self.__class__(self.value, self.unit)
 
     def __neg__(self):
+        """ Return quantity with negative sign
+        :return: negative value of quantity
+        :rtype: PhysicalQuantity
+        """
+        if isinstance(self.value, np.array):
+            return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
 
     def __nonzero__(self):
+        """ Test if quantity is not zero
+            :return: true if quantity is not zero
+            :rtype: bool
+        """
+        if isinstance(self.value, np.array):
+            return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.value != 0
 
     def __gt__(self, other):
+        """ Test if quantity is greater than other
+         :param other: other PhysicalQuantity
+            :return: true if quantity is greater than other
+            :rtype: bool
+        """
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit == other.base.unit:
                 return self.base.value > other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -246,8 +293,13 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __ge__(self, other):
+        """ Test if quantity is greater or equal than other
+         :param other: other PhysicalQuantity
+            :return: true if quantity is greater or equal than other
+            :rtype: bool
+        """
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit == other.base.unit:
                 return self.base.value >= other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -255,8 +307,13 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __lt__(self, other):
+        """ Test if quantity is less than other
+         :param other: other PhysicalQuantity
+            :return: true if quantity is less than other
+            :rtype: bool
+        """
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit == other.base.unit:
                 return self.base.value < other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -264,8 +321,13 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __le__(self, other):
+        """ Test if quantity is less or equal than other
+         :param other: other PhysicalQuantity
+            :return: true if quantity is less or equal than other
+            :rtype: bool
+        """
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit == other.base.unit:
                 return self.base.value <= other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -273,6 +335,10 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __eq__(self, other):
+        """ Test if two quantities are equal
+            :return: true if quantities are equal
+            :rtype: bool
+        """
         if isphysicalquantity(other):
             if self.base.unit.name == other.base.unit.name:
                 return self.base.value == other.base.value
@@ -282,8 +348,12 @@ class PhysicalQuantity:
             raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
 
     def __ne__(self, other):
+        """ Test if two quantities are not equal
+            :return: true if quantities are not equal
+            :rtype: bool
+        """
         if isphysicalquantity(other):
-            if self.base.unit is other.base.unit:
+            if self.base.unit == other.base.unit:
                 return not self.base.value == other.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -321,7 +391,7 @@ class PhysicalQuantity:
 
         >>> b = PhysicalQuantity(4e-9, 'F')
         >>> b.autoscale
-        >>> 4 nF
+        4 nF
         """
         if len(self.unit.names) is 1:
             b = self.base
@@ -371,24 +441,14 @@ class PhysicalQuantity:
                 unit = units[i]
             return tuple(result)
 
-    @staticmethod
-    def any_to(qty, unit):
-        """ I don't know what this really does TODO
-        :param qty:
-        :param unit:
-        :return:
-        """
-        if not isphysicalquantity(qty):
-            qty = PhysicalQuantity(qty, 'rad')
-        return qty.to(unit)
-
     @property
     def base(self):
-        """ Returns the same quantity converted to base units.
+        """ Returns the same quantity converted to SI base units.
+        :return: value in base unit
 
         >>> a = PhysicalQuantity(1, 'V')
         >>> a.base
-        >>> 1.0 m^2*kg/s^3
+        1.0 m^2*kg/s^3
         """
         new_value = self.value * self.unit.factor
         num = ''
@@ -419,7 +479,7 @@ class PhysicalQuantity:
 
         >>> b = PhysicalQuantity(2 + 1j, 'V')
         >>> b.real
-        >>> 2.0 V
+        2.0 V
         """
         return self.__class__(self.value.real, self.unit)
 
@@ -431,7 +491,7 @@ class PhysicalQuantity:
 
         >>> b = PhysicalQuantity(2 + 1j, 'V')
         >>> b.imag
-        >>> 1.0 V
+        1.0 V
         """
         return self.__class__(self.value.imag, self.unit)
 
@@ -452,18 +512,27 @@ class PhysicalQuantity:
         return self.__pow__(exponent)
 
     def sin(self):
+        """ Return sine of given PhysicalQuantity with angle unit
+        :return: sine values
+        """
         if self.unit.is_angle:
             return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         else:
             raise UnitError('Argument of sin must be an angle')
 
     def cos(self):
+        """ Return cosine of given PhysicalQuantity with angle unit
+        :return: cosine values
+        """
         if self.unit.is_angle:
             return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         else:
             raise UnitError('Argument of cos must be an angle')
 
     def tan(self):
+        """ Return tangens of given PhysicalQuantity with angle unit
+        :return: tangens values
+        """
         if self.unit.is_angle:
             return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         else:

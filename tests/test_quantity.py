@@ -98,13 +98,14 @@ def test_div():
     assert b/b == 1
 
 
-def test_pow():
-    a = PhysicalQuantity(4, 'mm')
-    b = PhysicalQuantity(16, 'mm**2')
-    assert pow(a, 2) == b
-
-
 def test_eq():
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(2, 'm')
+    assert a == a
+    assert not a == b
+
+
+def test_eq_prefixed():
     a = PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(2, 'mm')
     assert a == a
@@ -112,6 +113,13 @@ def test_eq():
 
 
 def test_ne():
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(2, 'm')
+    assert a != b
+    assert not a != a
+
+
+def test_ne_prefixed():
     a = PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(2, 'mm')
     assert a != b
@@ -125,9 +133,23 @@ def test_lt():
     assert not a < a
 
 
+def test_lt_prefixed():
+    a = PhysicalQuantity(1, 'mm')
+    b = PhysicalQuantity(2, 'mm')
+    assert a < b
+    assert not a < a
+
+
 def test_le():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 'm')
+    assert a <= b
+    assert a <= a
+
+
+def test_le_prefixed():
+    a = PhysicalQuantity(1, 'mm')
+    b = PhysicalQuantity(2, 'mm')
     assert a <= b
     assert a <= a
 
@@ -139,9 +161,23 @@ def test_gt():
     assert not a > a
 
 
+def test_gt_prefixed():
+    a = PhysicalQuantity(2, 'mm')
+    b = PhysicalQuantity(1, 'mm')
+    assert a > b
+    assert not a > a
+
+
 def test_ge():
     a = PhysicalQuantity(2, 'm')
     b = PhysicalQuantity(1, 'm')
+    assert a >= b
+    assert a >= a
+
+
+def test_ge_prefixed():
+    a = PhysicalQuantity(2, 'mm')
+    b = PhysicalQuantity(1, 'mm')
     assert a >= b
     assert a >= a
 
@@ -168,18 +204,30 @@ def test_imag():
     assert b.imag == PhysicalQuantity(1, 'V')
 
 
-def test_pow():
+def test_pow_builtin():
     a = PhysicalQuantity(2, 'm')
     b = PhysicalQuantity(4, 'm**2')
     assert a.pow(2) == b
     assert a**2 == b
 
 
+def test_pow_builtin_prefixed():
+    a = PhysicalQuantity(4, 'mm')
+    b = PhysicalQuantity(16, 'mm**2')
+    assert pow(a, 2) == b
+
+
 def test_sqrt():
-    a = PhysicalQuantity(2, 'm')
-    b = PhysicalQuantity(4, 'm**2')
+    a = PhysicalQuantity(2, 'mm')
+    b = PhysicalQuantity(4, 'mm**2')
     assert b.pow(0.5) == a
     assert b**0.5 == a
+
+
+def test_sqrt2():
+    a = PhysicalQuantity(2, 'mm')
+    b = PhysicalQuantity(4, 'mm**2')
+    assert b.sqrt() == a
 
 
 def test_autoscale():

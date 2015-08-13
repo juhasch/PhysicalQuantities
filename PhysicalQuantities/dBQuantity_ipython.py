@@ -2,9 +2,10 @@
 """ IPython extension for dB calculations 
 
 Example:
-    from PhysicalQuantities.dB_units import dBQuantity
-    a = dBQuantity(0.1,'dBm', islog=True)
-    print(a)
+    >>> %load_ext PhysicalQuantities.dBQuantity_ipython
+    >>> a = 1 dBm
+    >>> a
+    1 dBm
 
 """
 
@@ -26,7 +27,6 @@ _unit_list = '('
 for x in _li[0:-1]:
     _unit_list += x + '|'
 _unit_list += _li[-1] + ')'
-match = number + r'(\s*)' + _unit_list
 
 # regex for finding units and quoted strings
 number = r'(?<!\w)(-?[\d0-9.]+[\d0-9eE-|x]*)'
@@ -38,6 +38,7 @@ line_match = re.compile(match)
 number = r'(-?[\d0-9-]+' +r'-?[\d0-9.eE-]*)'
 match = number + r'(.\s|\s*)' + _unit_list
 unit_match = re.compile(match)
+
 
 def replace_inline(ml):
     """Replace an inline unit expression by valid Python code
