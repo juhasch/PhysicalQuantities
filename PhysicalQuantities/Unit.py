@@ -204,27 +204,27 @@ class PhysicalUnit:
         return self._repr_latex_()
 
     def __gt__(self, other):
-        if isphysicalunit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers == other.powers:
             return self.factor > other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __ge__(self, other):
-        if isphysicalunit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers == other.powers:
             return self.factor >= other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __lt__(self, other):
-        if isphysicalunit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers == other.powers:
             return self.factor < other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __le__(self, other):
-        if isphysicalunit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers == other.powers:
             return self.factor <= other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __eq__(self, other):
-        if isphysicalunit(other) and self.powers is other.powers:
+        if isphysicalunit(other) and self.powers == other.powers:
             return self.factor == other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 

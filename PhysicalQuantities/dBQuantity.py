@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Class for dB calculations 
 
- >>> from PhysicalQuantities.dBQuantity import dBQuantity
- >>> a = dBQuantity(0.1,'dBm', islog=True)
- >>> print(a)
+Example:
+    >>> from PhysicalQuantities.dBQuantity import dBQuantity
+    >>> a = dBQuantity(1,'dBm')
+    >>> print(a)
+    1 dBm
 
 """
 
