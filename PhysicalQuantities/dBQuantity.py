@@ -67,11 +67,19 @@ def dB(x):
 
 
 def dB10(x):
-    return dBQuantity(10*np.log10(x),'dB',islog=True, factor=10)
+    if isinstance(x, PhysicalQuantity):
+        val = x.base.value
+    else:
+        val = x
+    return dBQuantity(10*np.log10(val),'dB',islog=True, factor=10)
 
 
 def dB20(x):
-    return dBQuantity(20*np.log10(x),'dB',islog=True, factor=20)
+    if isinstance(x, PhysicalQuantity):
+        val = x.base.value
+    else:
+        val = x
+    return dBQuantity(20*np.log10(val),'dB',islog=True, factor=20)
 
 
 def isdbquantity(q):
@@ -261,8 +269,8 @@ class dBQuantity:
     __rsub__ = __sub__
     
     def __mul__(self, other):
-        if self.unit is 'dB' and not hasattr(other,'unit'):
-            # dB without physical dimension can be multiplied with a factor
+        if  not hasattr(other,'unit'):
+            # dB values will be multiplied with a factor to enable "a = 2 * q.dBm"
             value = self.value * other
             return self.__class__(value, self.unit, islog=True)
 
@@ -276,6 +284,9 @@ class dBQuantity:
 
     __rdiv__ = __div__
 
+    def __neg__(self):
+        return self.__class__(-self.value, self.unit, islog=True)
+    
     def __float__(self):
         # return linear value in base unit
         dbw = self.value + dB_units[self.unit][1]

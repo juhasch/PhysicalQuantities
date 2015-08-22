@@ -63,7 +63,7 @@ def isphysicalunit(x):
     :param x: unit
     :type x: PhysicalUnit
     """
-    return hasattr(x, 'factor') and hasattr(x, 'powers')
+    return isinstance(x, PhysicalUnit)
 
 
 class PhysicalUnit:
