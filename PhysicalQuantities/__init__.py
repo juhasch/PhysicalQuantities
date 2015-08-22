@@ -103,3 +103,34 @@ def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
         return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
     else:
         return array * PhysicalQuantity(1, unit)
+
+        
+from PhysicalQuantities import PhysicalQuantity, unit_table
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+from PhysicalQuantities.Unit import isphysicalunit
+
+class _q:
+    def __init__(self):
+        self.table = {}
+        for key in dB_units:
+            self.table[key] = dBQuantity(1, key)
+        for key in unit_table:
+            self.table[key] = unit_table[key] # for some reason directly using a PhysicalQuantity bombs
+            
+    def __dir__(self):
+        return self.table.keys
+    
+    def __getattr__(self, attr):
+        try:
+            Q = self.table[attr]
+        except:
+            raise AttributeError('Unit %s not found' % Q)
+        if isphysicalunit(Q):
+            return PhysicalQuantity(1, Q)
+        elif isdbquantity(Q):
+            return Q
+        else:
+            raise AttributeError('Unknown unit %s' % attr)
+            
+
+q = _q()
