@@ -14,15 +14,16 @@ def checkbaseunit(arg, unit):
         raise UnitError('%s is not a PhysicalQuantitiy' % arg)
     try:
         arg.unit.conversion_tuple_to(unit_table[unit])
+        return True
     except UnitError:
         raise UnitError('%s is not of unit %s' % (arg, unit))
 
 
 def dropunit(arg, unit):
-    """
+    """ Drop unit of a given argument
     :param arg: argument with unit to be checked
     :param unit: reference unit
-    :return: True if argument has requested unit
+    :return: value without unit
     """
     if not isinstance(arg, PhysicalQuantity):
         return arg
@@ -33,10 +34,20 @@ def dropunit(arg, unit):
         raise UnitError('%s is not of unit %s' % (arg, unit))
 
 
-def require_units(*units):
+def require_units(*units, **kunits):
     """ Decorator to check arguments of a function call
-     TODO: kwargs
-    :param units: list of units for arguments
+
+    :param *units: list of units for arguments
+    :param **kwunits: list of keyword units for arguments
+
+    >>> @require_units('V', 'A')
+    >>> def power(u, i):
+    >>>     return (u*i).W
+
+    >>> @require_units(u='V', u='A')
+    >>> def power(u, i):
+    >>>     return (u*i).W
+
     """
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
@@ -52,6 +63,15 @@ def require_units(*units):
 def optional_units(*units, **kunits):
     """ Decorator to check arguments of a function call
     :param units: list of units for arguments
+
+    >>> @optional_units('V','A', return_unit='W')
+    >>> def powero(u, i):
+    >>>     return u*i
+
+    >>> @optional_units(u='V', u='A', return_unit='W')
+    >>> def power(u,i):
+    >>>     return (u*i).W
+
     """
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
@@ -67,17 +87,3 @@ def optional_units(*units, **kunits):
             return_value = PhysicalQuantity(return_value, return_unit)
         return return_value
     return wrapper
-
-
-# Examples:
-#@require_units('V','A')
-#def power(u,i):
-#    return u*i
-
-#@optional_units(u='V',i='A', return_unit='W')
-#def powero(u, i):
-#    return u*i
-
-#@optional_units('V','A', return_unit='W')
-#def powerx(u, i):
-#    return u*i
