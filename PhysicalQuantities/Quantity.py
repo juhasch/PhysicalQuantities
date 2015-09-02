@@ -265,7 +265,7 @@ class PhysicalQuantity:
         :return: negative value of quantity
         :rtype: PhysicalQuantity
         """
-        if isinstance(self.value, np.array):
+        if isinstance(self.value, np.ndarray):
             return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
 
