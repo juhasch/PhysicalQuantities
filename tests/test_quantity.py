@@ -240,12 +240,14 @@ def test_autoscale():
     assert str(a.km) == str(b)
 
 
-def test_any_to():
-    pass # TODO
-
-
 def test_format():
     a = PhysicalQuantity(1.123123, 'm')
     assert str(a) == '1.123123 m'
     a.format = '.3f'
     assert str(a) == '1.123 m'
+
+
+def test_round():
+    a = PhysicalQuantity(1.123123, 'm')
+    b = round(a)
+    assert b.value == 1

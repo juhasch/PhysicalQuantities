@@ -3,6 +3,7 @@ from PhysicalQuantities.Quantity import PhysicalQuantity, isphysicalquantity
 from numpy.testing import assert_almost_equal
 import numpy as np
 
+
 def test_numpy_multiplication():
     a = np.array([1,1])
     b = PhysicalQuantity(1, 'm')
