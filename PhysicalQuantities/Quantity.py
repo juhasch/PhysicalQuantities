@@ -115,6 +115,14 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError
 
+    def rint(self):
+        """ Round elements to the nearest integer.
+        :return: rounded elements
+        """
+        value = np.rint(self.value)
+        return self.__class__(value, self.unit)
+
+
     def __str__(self):
         """ Return string representation as 'value unit'
             e.g. str(obj)
@@ -220,7 +228,7 @@ class PhysicalQuantity:
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
-    def __round__(self, ndigits=None):
+    def __round__(self, ndigits=0):
         """ Return rounded values
         :param ndigits: number of digits to round to
         :type ndigits:  int
@@ -229,7 +237,6 @@ class PhysicalQuantity:
         """
         value = round(self.value, ndigits)
         return self.__class__(value, self.unit)
-
 
     def __pow__(self, other):
         """ Return power of other for quantity
