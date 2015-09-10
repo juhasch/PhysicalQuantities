@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """ PhysicalUnit class definition
- Original author: Georg Brandl <georg@python.org>.
-                  https://bitbucket.org/birkenfeld/ipython-physics
+
+Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
 
 import numpy as np
 import sys
 import six
 from .NDict import *
+
+#__all__ = ['UnitError', 'findunit', 'convertvalue', 'isphysicalunit', 'PhysicalUnit', 'unit_table', 'addprefixed']
 
 if sys.version_info > (2,):
     from functools import reduce
@@ -75,7 +77,8 @@ class PhysicalUnit:
     """
 
     def __init__(self, names, factor, powers, offset=0, url='', verbosename=''):
-        """
+        """ Initialize unit object
+
         :param names: a dictionary mapping each name component to its
                       associated integer power (e.g. C{{'m': 1, 's': -1}})
                       for M{m/s}). As a shorthand, a string may be passed
@@ -107,6 +110,7 @@ class PhysicalUnit:
     @property
     def name(self):
         """ Return name of unit
+
         :return: name of unit
         :rtype: str
         """
@@ -131,6 +135,7 @@ class PhysicalUnit:
     @property
     def _latex_name(self):
         """ Return name of unit as latex string
+
         :return: name of unit as latex string
         :type: str
         """
@@ -164,6 +169,7 @@ class PhysicalUnit:
     @property
     def is_dimensionless(self):
         """ Check if no dimension is given
+
         :return: true if dimensionless
         :rtype: bool
         """
@@ -172,6 +178,7 @@ class PhysicalUnit:
     @property
     def is_angle(self):
         """ Check if unit is an angle
+
         :return: true if unit is an angle
         :rtype: bool
         """
@@ -180,6 +187,7 @@ class PhysicalUnit:
 
     def __str__(self):
         """ Return string text representation of unit
+
         :return: Text representation of unit
         """
         name = self.name.strip().replace('**', u'^')
@@ -190,6 +198,7 @@ class PhysicalUnit:
 
     def _repr_latex_(self):
         """ IPython repr to display latex representation of unit
+
         :return: Unit as LaTeX string
         """
         unit = self._latex_name
@@ -199,6 +208,7 @@ class PhysicalUnit:
     @property
     def latex(self):
         """ Return unit as a LaTeX formatted string
+
         :return: Unit as LaTeX string
         """
         return self._repr_latex_()
@@ -301,7 +311,8 @@ class PhysicalUnit:
         raise UnitError('Only integer and inverse integer exponents allowed')
 
     def conversion_factor_to(self, other):
-        """Return conversion factor to another unit.
+        """Return conversion factor to another unit
+
         :param other: other unit
         :type other: PhysicalUnit
         :return: float
@@ -315,7 +326,8 @@ class PhysicalUnit:
         return self.factor / other.factor
 
     def conversion_tuple_to(self, other):
-        """Return conversion factor and offset to another unit.
+        """Return conversion factor and offset to another unit
+
         :param other: other unit
         :type other: PhysicalUnit
         :return: float tuple
@@ -345,6 +357,7 @@ class PhysicalUnit:
 
 def pretty(text):
     """ Pretty up unit name string
+
     :param text: input string
     :return: string with replaced characters
     """
@@ -386,6 +399,7 @@ def units_list():
 
 def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
     """ Add new PhysicalUnit entry
+
      :param name:
      :param unit:
      :param verbosename:
@@ -418,6 +432,7 @@ def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
 
 def addprefixed(unitname, range='full'):
     """ Add prefixes to already defined unit
+
     :param unitname: name of unit to be prefixed, e.k. 'm' -> 'mm','cm','dm','km'
     :param range: 'engineering' -> 1e-18 to 1e12 or 'full' -> 1e-24 to 1e24
     """

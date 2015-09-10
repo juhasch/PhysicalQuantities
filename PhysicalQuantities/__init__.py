@@ -31,10 +31,11 @@ without explicitly calling a function constructor
 """
 from __future__ import absolute_import
 from .Quantity import *
+from .Unit import *
 import numpy as np
 
 import pkg_resources
-version = pkg_resources.require("PhysicalQuantities")[0].version
+__version__ = pkg_resources.require("PhysicalQuantities")[0].version
 
 Q = PhysicalQuantity
 U = PhysicalUnit
