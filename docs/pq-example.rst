@@ -17,6 +17,14 @@ Example: Calculating an RC Circuit
       %reload_ext PhysicalQuantities.ipython
 
 
+
+
+.. parsed-literal::
+
+    '%.2f'
+
+
+
 We have a simple RC circuit, consisting of a voltage source :math:`U_0`,
 a resistor with a value :math:`R` and a capacitor with value :math:`C`:
 
@@ -32,19 +40,7 @@ capacitor:
     eps_r = 3       # Permittivity of dielectric material
     C  = (eps0*eps_r*A) / d
 
-The capacitor value is :math:`C` =
-
-.. raw:: html
-
-   <p>
-
-26.562564 :math:`\text{pF}`
-
-.. raw:: html
-
-   </p>
-
-26.562564 :math:`\text{pF}`
+The capacitor value is :math:`C` = 26.56 :math:`\text{pF}`
 
 The resistor is a thick film resistor:
 
