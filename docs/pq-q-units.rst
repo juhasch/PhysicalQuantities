@@ -30,9 +30,7 @@ The convenience class 'q' can be used to specify units:
 
 
 
-.. math::
-
-    2 $\text{mm}^{2}
+2 :math:`\text{mm}^{2}`
 
 
 
@@ -44,9 +42,7 @@ The convenience class 'q' can be used to specify units:
 
 
 
-.. math::
-
-    108.00 $\frac{\text{km}}{\text{h}}
+108.00 :math:`\frac{\text{km}}{\text{h}}`
 
 
 

@@ -9,9 +9,6 @@ Example: Calculating an RC Circuit
     %load_ext PhysicalQuantities.ipython
     from PhysicalQuantities.constants import eps0
     %precision 2
-    from IPython.display import display, Math, Latex
-    def disp(str):
-        display(Latex(str))  
 
 
 .. parsed-literal::
@@ -34,14 +31,20 @@ capacitor:
     d = 1 um        # Plate distance
     eps_r = 3       # Permittivity of dielectric material
     C  = (eps0*eps_r*A) / d
-    disp("Capacitor value $C$ = %s" % C.pF)
 
+The capacitor value is :math:`C` =
 
+.. raw:: html
 
-.. math::
+   <p>
 
-    Capacitor value $C$ = 26.56 pF
+26.562564 :math:`\text{pF}`
 
+.. raw:: html
+
+   </p>
+
+26.562564 :math:`\text{pF}`
 
 The resistor is a thick film resistor:
 
@@ -57,9 +60,7 @@ The resistor is a thick film resistor:
 
 
 
-.. math::
-
-    Resistor value $R$ = 15.00 kOhm
+Resistor value :math:`R` = 15.00 kOhm
 
 
 Calculate transient response of circuit
@@ -79,9 +80,7 @@ Calculate transient response of circuit
 
 
 
-.. math::
-
-    Initial current is $i_0$ = 66.67 uA
+Initial current is :math:`i_0` = 66.67 uA
 
 
 Plot Current and Voltage over Time
@@ -97,7 +96,7 @@ Plot Current and Voltage over Time
 
 
 
-.. image:: pq-example_files/pq-example_12_0.png
+.. image:: pq-example_files/pq-example_13_0.png
 
 
 .. code:: python
@@ -111,6 +110,6 @@ Plot Current and Voltage over Time
 
 
 
-.. image:: pq-example_files/pq-example_13_0.png
+.. image:: pq-example_files/pq-example_14_0.png
 
 

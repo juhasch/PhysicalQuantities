@@ -12,9 +12,7 @@ Sometimes numerical calculation results don't look too pretty:
 
 
 
-.. math::
-
-    2.3333333333333335 $1/m
+2.3333333333333335 :math:`\frac{1}{\text{m}}`
 
 
 
@@ -32,9 +30,7 @@ prettier:
 
 
 
-.. math::
-
-    2.3 $1/m
+2.3 :math:`\frac{1}{\text{m}}`
 
 
 
@@ -80,15 +76,13 @@ class. **Attention** The ``format`` property is taking Python
 
 .. code:: python
 
-    a.format = '.2'
+    a.format = '.3f'
     a
 
 
 
 
-.. math::
-
-    2.3 $1/m
+1.235 :math:`\text{mm}`
 
 
 
@@ -99,7 +93,7 @@ Printing Output with Quantities
 
     a=1.23456 mm
     print(a)
-    print("{:.2}".format(a))
+    print("{:.3f}".format(a))
     print("%s" % a)
     print("%f" % a) # this returns base unit: m
     print("%.2f" % a.mm_)
@@ -108,7 +102,7 @@ Printing Output with Quantities
 .. parsed-literal::
 
     1.2 mm
-    1.2 mm
+    1.235 mm
     1.2 mm
     0.001235
     1.23
@@ -130,19 +124,14 @@ little trick because of the ``{}``\ brackets.
 
 
 
-.. math::
-
-    v_{min}$ is 1.2 m
+:math:`v_{min}` is 1.2 m
 
 
 
-.. math::
-
-    v_{min}$ is 1.23 m
+:math:`v_{min}` is 1.23 m
 
 
 
-.. math::
+:math:`v_{min}` is 1.23 m
 
-    v_{min}$ is 1.23 m
 

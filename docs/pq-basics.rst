@@ -1,6 +1,4 @@
 
-Back to `Index <Index.ipynb>`__
-
 PhysicalQuantities - Basics
 ===========================
 
@@ -89,7 +87,7 @@ unit. The ``.base`` property will convert
 
     g = 1.1 m
     g in mm = 1100.0 mm
-    x = 2 m*kg/s^2
+    x = 2 kg*m/s^2
     x in N = 2.0 N
     u = 1 V
     u in base units = 1.0 kg*m^2/A/s^3
@@ -172,9 +170,7 @@ complex numbers \* uncertainties \* numpy arrays \* lists
 
 
 
-.. math::
-
-    m^2 \cdot s^3/kg/A^2
+:math:`\frac{\text{m}^{2}\cdot \text{s}^{3}}{\text{A}^2\cdot \text{kg}}`
 
 
 
@@ -220,6 +216,6 @@ is a scaled version of a base unit
 
     ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
     [2, -1, 3, -2, 0, 0, 0, 0, 0]
-    m^2*s^3/kg/A^2
+    m^2*s^3/A^2/kg
 
 

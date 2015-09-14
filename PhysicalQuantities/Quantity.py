@@ -6,7 +6,6 @@
 """
 
 from __future__ import division
-__all__ = ['PhysicalQuantity']
 
 try:
     from sympy import printing
@@ -16,6 +15,8 @@ except ImportError:
 from .Unit import *
 import copy
 from IPython import get_ipython
+
+__all__ = ['isphysicalquantity', 'PhysicalQuantity']
 
 
 def isphysicalquantity(x):
@@ -163,21 +164,26 @@ class PhysicalQuantity:
         #return np.array(self.base.value)
 
     def __repr__(self):
-        """ Simply return string representation
+        """ Return string representation
         """
         return self.__str__()
 
-    def _repr_latex_(self):
-        """ Return Latex representation for IPython notebook
+    def _repr_markdown_(self):
+        """ Return markdown representation for IPython notebook
         """
         if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
-            return u"%s %s" % (fmt % self.value, self.unit._repr_latex_())
+            return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())
         if str(type(self.value)).find('sympy') > 0:
             # sympy
-            return '${0}$ {1}'.format(printing.latex(self.value), self.unit.latex)
-        return '{0:{format}} {1}'.format(self.value, self.unit.latex,format=self.format)
+            return '${0}$ {1}'.format(printing.latex(self.value), self.unit.markdown)
+        return '{0:{format}} {1}'.format(self.value, self.unit.markdown,format=self.format)
+
+    def _repr_latex_(self):
+        """ Return latex representation for IPython notebook
+        """
+        return self._repr_markdown_()
 
     def _sum(self, other, sign1, sign2):
         """ Add two quantities

@@ -8,6 +8,21 @@ This is still work in progress.
 
     from uncertainties import ufloat
 
+
+::
+
+
+    ---------------------------------------------------------------------------
+
+    ImportError                               Traceback (most recent call last)
+
+    <ipython-input-1-caf4a16ea7e8> in <module>()
+    ----> 1 from uncertainties import ufloat
+    
+
+    ImportError: No module named 'uncertainties'
+
+
 .. code:: python
 
     x = ufloat(2, 0.25) * 1 m
@@ -16,9 +31,7 @@ This is still work in progress.
 
 
 
-.. math::
-
-    2.00+/-0.25 $m
+2.00+/-0.25 :math:`m`
 
 
 
@@ -30,9 +43,7 @@ This is still work in progress.
 
 
 
-.. math::
-
-    4.0+/-1.0 $m^2
+4.0+/-1.0 :math:`m^2`
 
 
 
@@ -43,9 +54,7 @@ This is still work in progress.
 
 
 
-.. math::
-
-    0.0+/-0 $m^2
+0.0+/-0 :math:`m^2`
 
 
 

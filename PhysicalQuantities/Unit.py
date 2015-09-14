@@ -9,7 +9,8 @@ import sys
 import six
 from .NDict import *
 
-#__all__ = ['UnitError', 'findunit', 'convertvalue', 'isphysicalunit', 'PhysicalUnit', 'unit_table', 'addprefixed']
+#__all__ = ['UnitError', 'findunit', 'convertvalue', 'isphysicalunit', 'PhysicalUnit', 'unit_table', 'addprefixed',
+#           'unit_table']
 
 if sys.version_info > (2,):
     from functools import reduce
@@ -133,7 +134,7 @@ class PhysicalUnit:
         return num + denom
 
     @property
-    def _latex_name(self):
+    def _markdown_name(self):
         """ Return name of unit as latex string
 
         :return: name of unit as latex string
@@ -196,14 +197,31 @@ class PhysicalUnit:
     def __repr__(self):
         return '<PhysicalUnit ' + self.name + '>'
 
-    def _repr_latex_(self):
-        """ IPython repr to display latex representation of unit
+    def _repr_markdown_(self):
+        """ Return markdown representation for IPython notebook
 
         :return: Unit as LaTeX string
         """
-        unit = self._latex_name
+        unit = self._markdown_name
         s = '$%s$' % unit
         return s
+
+    def _repr_latex_(self):
+        """ Return latex representation for IPython notebook
+
+        :return: Unit as LaTeX string
+        """
+        unit = self._markdown_name
+        s = '%s' % unit
+        return s
+
+    @property
+    def markdown(self):
+        """ Return unit as a LaTeX formatted string
+
+        :return: Unit as LaTeX string
+        """
+        return self._repr_markdown_()
 
     @property
     def latex(self):
