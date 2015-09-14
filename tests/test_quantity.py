@@ -68,9 +68,9 @@ def test_float():
     assert_almost_equal(float(b), 5e-3)
 
 
-def test_repr_latex():
+def test_repr_markdown():
     b = PhysicalQuantity(1, 'mm')
-    assert b._repr_latex_() == '1 $\\text{mm}$'
+    assert b._repr_markdown_() == '1 $\\text{mm}$'
 
 
 def test_sum():

@@ -130,9 +130,9 @@ def test_is_angle():
     assert c.unit.is_angle == True
 
 
-def test_latex():
+def test_markdown():
     a = PhysicalQuantity(1, 'm')
-    assert a.unit.latex == '$\\text{m}$'
+    assert a.unit.markdown == '$\\text{m}$'
 
 
 def test_name():

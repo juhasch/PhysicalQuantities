@@ -1,0 +1,387 @@
+
+Using PhysicalQuantites in Python
+=================================
+
+.. code:: python
+
+    %precision 2
+    from PhysicalQuantities import q
+
+The convenience class 'q' can be used to specify units:
+-------------------------------------------------------
+
+.. code:: python
+
+    q.mm, q.m, q.km
+
+
+
+
+.. parsed-literal::
+
+    (1 mm, 1 m, 1 km)
+
+
+
+.. code:: python
+
+    2 * q.mm**2
+
+
+
+
+2 :math:`\text{mm}^{2}`
+
+
+
+.. code:: python
+
+    v = 30 * q.m / q.s
+    v.to('km/h')
+
+
+
+
+108.00 :math:`\frac{\text{km}}{\text{h}}`
+
+
+
+.. code:: python
+
+    p = 20*q.dBm + 3*q.dB
+
+.. code:: python
+
+    p, p.W
+
+
+
+
+.. parsed-literal::
+
+    (23 dBm, 0.20 W)
+
+
+
+List of defined units
+---------------------
+
+.. code:: python
+
+    q.table
+
+
+
+
+.. parsed-literal::
+
+    {'A': <PhysicalUnit A>,
+     'C': <PhysicalUnit C>,
+     'F': <PhysicalUnit F>,
+     'GA': <PhysicalUnit GA>,
+     'GC': <PhysicalUnit GC>,
+     'GF': <PhysicalUnit GF>,
+     'GH': <PhysicalUnit GH>,
+     'GHz': <PhysicalUnit GHz>,
+     'GJ': <PhysicalUnit GJ>,
+     'GK': <PhysicalUnit GK>,
+     'GN': <PhysicalUnit GN>,
+     'GOhm': <PhysicalUnit GOhm>,
+     'GPa': <PhysicalUnit GPa>,
+     'GS': <PhysicalUnit GS>,
+     'GT': <PhysicalUnit GT>,
+     'GV': <PhysicalUnit GV>,
+     'GW': <PhysicalUnit GW>,
+     'GWb': <PhysicalUnit GWb>,
+     'Gcd': <PhysicalUnit Gcd>,
+     'Gg': <PhysicalUnit Gg>,
+     'Glm': <PhysicalUnit Glm>,
+     'Glx': <PhysicalUnit Glx>,
+     'Gm': <PhysicalUnit Gm>,
+     'Gmol': <PhysicalUnit Gmol>,
+     'Grad': <PhysicalUnit Grad>,
+     'Gs': <PhysicalUnit Gs>,
+     'Gsr': <PhysicalUnit Gsr>,
+     'H': <PhysicalUnit H>,
+     'Hz': <PhysicalUnit Hz>,
+     'J': <PhysicalUnit J>,
+     'K': <PhysicalUnit K>,
+     'MA': <PhysicalUnit MA>,
+     'MC': <PhysicalUnit MC>,
+     'MF': <PhysicalUnit MF>,
+     'MH': <PhysicalUnit MH>,
+     'MHz': <PhysicalUnit MHz>,
+     'MJ': <PhysicalUnit MJ>,
+     'MK': <PhysicalUnit MK>,
+     'MN': <PhysicalUnit MN>,
+     'MOhm': <PhysicalUnit MOhm>,
+     'MPa': <PhysicalUnit MPa>,
+     'MS': <PhysicalUnit MS>,
+     'MT': <PhysicalUnit MT>,
+     'MV': <PhysicalUnit MV>,
+     'MW': <PhysicalUnit MW>,
+     'MWb': <PhysicalUnit MWb>,
+     'Mcd': <PhysicalUnit Mcd>,
+     'Mg': <PhysicalUnit Mg>,
+     'Mlm': <PhysicalUnit Mlm>,
+     'Mlx': <PhysicalUnit Mlx>,
+     'Mm': <PhysicalUnit Mm>,
+     'Mmol': <PhysicalUnit Mmol>,
+     'Mrad': <PhysicalUnit Mrad>,
+     'Ms': <PhysicalUnit Ms>,
+     'Msr': <PhysicalUnit Msr>,
+     'N': <PhysicalUnit N>,
+     'Ohm': <PhysicalUnit Ohm>,
+     'Pa': <PhysicalUnit Pa>,
+     'S': <PhysicalUnit S>,
+     'T': <PhysicalUnit T>,
+     'TA': <PhysicalUnit TA>,
+     'TC': <PhysicalUnit TC>,
+     'TF': <PhysicalUnit TF>,
+     'TH': <PhysicalUnit TH>,
+     'THz': <PhysicalUnit THz>,
+     'TJ': <PhysicalUnit TJ>,
+     'TK': <PhysicalUnit TK>,
+     'TN': <PhysicalUnit TN>,
+     'TOhm': <PhysicalUnit TOhm>,
+     'TPa': <PhysicalUnit TPa>,
+     'TS': <PhysicalUnit TS>,
+     'TT': <PhysicalUnit TT>,
+     'TV': <PhysicalUnit TV>,
+     'TW': <PhysicalUnit TW>,
+     'TWb': <PhysicalUnit TWb>,
+     'Tcd': <PhysicalUnit Tcd>,
+     'Tg': <PhysicalUnit Tg>,
+     'Tlm': <PhysicalUnit Tlm>,
+     'Tlx': <PhysicalUnit Tlx>,
+     'Tm': <PhysicalUnit Tm>,
+     'Tmol': <PhysicalUnit Tmol>,
+     'Trad': <PhysicalUnit Trad>,
+     'Ts': <PhysicalUnit Ts>,
+     'Tsr': <PhysicalUnit Tsr>,
+     'V': <PhysicalUnit V>,
+     'W': <PhysicalUnit W>,
+     'Wb': <PhysicalUnit Wb>,
+     'aA': <PhysicalUnit aA>,
+     'aC': <PhysicalUnit aC>,
+     'aF': <PhysicalUnit aF>,
+     'aH': <PhysicalUnit aH>,
+     'aHz': <PhysicalUnit aHz>,
+     'aJ': <PhysicalUnit aJ>,
+     'aK': <PhysicalUnit aK>,
+     'aN': <PhysicalUnit aN>,
+     'aOhm': <PhysicalUnit aOhm>,
+     'aPa': <PhysicalUnit aPa>,
+     'aS': <PhysicalUnit aS>,
+     'aT': <PhysicalUnit aT>,
+     'aV': <PhysicalUnit aV>,
+     'aW': <PhysicalUnit aW>,
+     'aWb': <PhysicalUnit aWb>,
+     'acd': <PhysicalUnit acd>,
+     'ag': <PhysicalUnit ag>,
+     'alm': <PhysicalUnit alm>,
+     'alx': <PhysicalUnit alx>,
+     'am': <PhysicalUnit am>,
+     'amol': <PhysicalUnit amol>,
+     'arad': <PhysicalUnit arad>,
+     'arcmin': <PhysicalUnit arcmin>,
+     'arcsec': <PhysicalUnit arcsec>,
+     'as': <PhysicalUnit as>,
+     'asr': <PhysicalUnit asr>,
+     'cA': <PhysicalUnit cA>,
+     'cC': <PhysicalUnit cC>,
+     'cF': <PhysicalUnit cF>,
+     'cH': <PhysicalUnit cH>,
+     'cHz': <PhysicalUnit cHz>,
+     'cJ': <PhysicalUnit cJ>,
+     'cK': <PhysicalUnit cK>,
+     'cN': <PhysicalUnit cN>,
+     'cOhm': <PhysicalUnit cOhm>,
+     'cPa': <PhysicalUnit cPa>,
+     'cS': <PhysicalUnit cS>,
+     'cT': <PhysicalUnit cT>,
+     'cV': <PhysicalUnit cV>,
+     'cW': <PhysicalUnit cW>,
+     'cWb': <PhysicalUnit cWb>,
+     'ccd': <PhysicalUnit ccd>,
+     'cd': <PhysicalUnit cd>,
+     'cg': <PhysicalUnit cg>,
+     'clm': <PhysicalUnit clm>,
+     'clx': <PhysicalUnit clx>,
+     'cm': <PhysicalUnit cm>,
+     'cmol': <PhysicalUnit cmol>,
+     'crad': <PhysicalUnit crad>,
+     'cs': <PhysicalUnit cs>,
+     'csr': <PhysicalUnit csr>,
+     'dB': 1 dB,
+     'dBA': 1 dBA,
+     'dBV': 1 dBV,
+     'dBW': 1 dBW,
+     'dBd': 1 dBd,
+     'dBi': 1 dBi,
+     'dBm': 1 dBm,
+     'dBmA': 1 dBmA,
+     'dBmV': 1 dBmV,
+     'dBnA': 1 dBnA,
+     'dBnV': 1 dBnV,
+     'dBsm': 1 dBsm,
+     'dBuA': 1 dBuA,
+     'dBuV': 1 dBuV,
+     'deg': <PhysicalUnit deg>,
+     'fA': <PhysicalUnit fA>,
+     'fC': <PhysicalUnit fC>,
+     'fF': <PhysicalUnit fF>,
+     'fH': <PhysicalUnit fH>,
+     'fHz': <PhysicalUnit fHz>,
+     'fJ': <PhysicalUnit fJ>,
+     'fK': <PhysicalUnit fK>,
+     'fN': <PhysicalUnit fN>,
+     'fOhm': <PhysicalUnit fOhm>,
+     'fPa': <PhysicalUnit fPa>,
+     'fS': <PhysicalUnit fS>,
+     'fT': <PhysicalUnit fT>,
+     'fV': <PhysicalUnit fV>,
+     'fW': <PhysicalUnit fW>,
+     'fWb': <PhysicalUnit fWb>,
+     'fcd': <PhysicalUnit fcd>,
+     'fg': <PhysicalUnit fg>,
+     'flm': <PhysicalUnit flm>,
+     'flx': <PhysicalUnit flx>,
+     'fm': <PhysicalUnit fm>,
+     'fmol': <PhysicalUnit fmol>,
+     'frad': <PhysicalUnit frad>,
+     'fs': <PhysicalUnit fs>,
+     'fsr': <PhysicalUnit fsr>,
+     'g': <PhysicalUnit g>,
+     'h': <PhysicalUnit h>,
+     'kA': <PhysicalUnit kA>,
+     'kC': <PhysicalUnit kC>,
+     'kF': <PhysicalUnit kF>,
+     'kH': <PhysicalUnit kH>,
+     'kHz': <PhysicalUnit kHz>,
+     'kJ': <PhysicalUnit kJ>,
+     'kK': <PhysicalUnit kK>,
+     'kN': <PhysicalUnit kN>,
+     'kOhm': <PhysicalUnit kOhm>,
+     'kPa': <PhysicalUnit kPa>,
+     'kS': <PhysicalUnit kS>,
+     'kT': <PhysicalUnit kT>,
+     'kV': <PhysicalUnit kV>,
+     'kW': <PhysicalUnit kW>,
+     'kWb': <PhysicalUnit kWb>,
+     'kcd': <PhysicalUnit kcd>,
+     'kg': <PhysicalUnit kg>,
+     'klm': <PhysicalUnit klm>,
+     'klx': <PhysicalUnit klx>,
+     'km': <PhysicalUnit km>,
+     'kmol': <PhysicalUnit kmol>,
+     'krad': <PhysicalUnit krad>,
+     'ks': <PhysicalUnit ks>,
+     'ksr': <PhysicalUnit ksr>,
+     'lm': <PhysicalUnit lm>,
+     'lx': <PhysicalUnit lx>,
+     'm': <PhysicalUnit m>,
+     'mA': <PhysicalUnit mA>,
+     'mC': <PhysicalUnit mC>,
+     'mF': <PhysicalUnit mF>,
+     'mH': <PhysicalUnit mH>,
+     'mHz': <PhysicalUnit mHz>,
+     'mJ': <PhysicalUnit mJ>,
+     'mK': <PhysicalUnit mK>,
+     'mN': <PhysicalUnit mN>,
+     'mOhm': <PhysicalUnit mOhm>,
+     'mPa': <PhysicalUnit mPa>,
+     'mS': <PhysicalUnit mS>,
+     'mT': <PhysicalUnit mT>,
+     'mV': <PhysicalUnit mV>,
+     'mW': <PhysicalUnit mW>,
+     'mWb': <PhysicalUnit mWb>,
+     'mcd': <PhysicalUnit mcd>,
+     'mg': <PhysicalUnit mg>,
+     'min': <PhysicalUnit min>,
+     'mlm': <PhysicalUnit mlm>,
+     'mlx': <PhysicalUnit mlx>,
+     'mm': <PhysicalUnit mm>,
+     'mmol': <PhysicalUnit mmol>,
+     'mol': <PhysicalUnit mol>,
+     'mrad': <PhysicalUnit mrad>,
+     'ms': <PhysicalUnit ms>,
+     'msr': <PhysicalUnit msr>,
+     'nA': <PhysicalUnit nA>,
+     'nC': <PhysicalUnit nC>,
+     'nF': <PhysicalUnit nF>,
+     'nH': <PhysicalUnit nH>,
+     'nHz': <PhysicalUnit nHz>,
+     'nJ': <PhysicalUnit nJ>,
+     'nK': <PhysicalUnit nK>,
+     'nN': <PhysicalUnit nN>,
+     'nOhm': <PhysicalUnit nOhm>,
+     'nPa': <PhysicalUnit nPa>,
+     'nS': <PhysicalUnit nS>,
+     'nT': <PhysicalUnit nT>,
+     'nV': <PhysicalUnit nV>,
+     'nW': <PhysicalUnit nW>,
+     'nWb': <PhysicalUnit nWb>,
+     'ncd': <PhysicalUnit ncd>,
+     'ng': <PhysicalUnit ng>,
+     'nlm': <PhysicalUnit nlm>,
+     'nlx': <PhysicalUnit nlx>,
+     'nm': <PhysicalUnit nm>,
+     'nmol': <PhysicalUnit nmol>,
+     'nrad': <PhysicalUnit nrad>,
+     'ns': <PhysicalUnit ns>,
+     'nsr': <PhysicalUnit nsr>,
+     'pA': <PhysicalUnit pA>,
+     'pC': <PhysicalUnit pC>,
+     'pF': <PhysicalUnit pF>,
+     'pH': <PhysicalUnit pH>,
+     'pHz': <PhysicalUnit pHz>,
+     'pJ': <PhysicalUnit pJ>,
+     'pK': <PhysicalUnit pK>,
+     'pN': <PhysicalUnit pN>,
+     'pOhm': <PhysicalUnit pOhm>,
+     'pPa': <PhysicalUnit pPa>,
+     'pS': <PhysicalUnit pS>,
+     'pT': <PhysicalUnit pT>,
+     'pV': <PhysicalUnit pV>,
+     'pW': <PhysicalUnit pW>,
+     'pWb': <PhysicalUnit pWb>,
+     'pcd': <PhysicalUnit pcd>,
+     'pg': <PhysicalUnit pg>,
+     'plm': <PhysicalUnit plm>,
+     'plx': <PhysicalUnit plx>,
+     'pm': <PhysicalUnit pm>,
+     'pmol': <PhysicalUnit pmol>,
+     'prad': <PhysicalUnit prad>,
+     'ps': <PhysicalUnit ps>,
+     'psr': <PhysicalUnit psr>,
+     'rad': <PhysicalUnit rad>,
+     's': <PhysicalUnit s>,
+     'sr': <PhysicalUnit sr>,
+     'uA': <PhysicalUnit uA>,
+     'uC': <PhysicalUnit uC>,
+     'uF': <PhysicalUnit uF>,
+     'uH': <PhysicalUnit uH>,
+     'uHz': <PhysicalUnit uHz>,
+     'uJ': <PhysicalUnit uJ>,
+     'uK': <PhysicalUnit uK>,
+     'uN': <PhysicalUnit uN>,
+     'uOhm': <PhysicalUnit uOhm>,
+     'uPa': <PhysicalUnit uPa>,
+     'uS': <PhysicalUnit uS>,
+     'uT': <PhysicalUnit uT>,
+     'uV': <PhysicalUnit uV>,
+     'uW': <PhysicalUnit uW>,
+     'uWb': <PhysicalUnit uWb>,
+     'ucd': <PhysicalUnit ucd>,
+     'ug': <PhysicalUnit ug>,
+     'ulm': <PhysicalUnit ulm>,
+     'ulx': <PhysicalUnit ulx>,
+     'um': <PhysicalUnit um>,
+     'umol': <PhysicalUnit umol>,
+     'urad': <PhysicalUnit urad>,
+     'us': <PhysicalUnit us>,
+     'usr': <PhysicalUnit usr>}
+
+
+

@@ -2,7 +2,7 @@
 
 import wrapt
 from .Quantity import *
-
+from .Unit import *
 
 def checkbaseunit(arg, unit):
     """ Check if an argument is of a certain unit
