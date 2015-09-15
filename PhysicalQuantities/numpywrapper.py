@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from .Quantity import *
+from .Unit import UnitError
 
 
 def floor(q):
     """ Return the floor of the input, element-wise.
+
     :return: The floor of each element
     :rtype: PhysicalQuantity
     """
@@ -14,6 +16,9 @@ def floor(q):
 
 def ceil(q):
     """ Return the ceiling of the input, element-wise.
+
+    :param q:
+    :type q: numpy array
     :return: The ceiling of each element
     :rtype: PhysicalQuantity
     """
@@ -23,6 +28,7 @@ def ceil(q):
 
 def sqrt(q):
     """ Return the square root of the input, element-wise.
+
     :return: The floor of each element
     :rtype: PhysicalQuantity
     """
@@ -30,14 +36,21 @@ def sqrt(q):
     return q.__class__(value, q.unit)
 
 
-def linspace(start, stop, num = 50,  endpoint=True, retstep=False):
+def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     """ A units-enabled linspace
+
     :param start: start value
+    :type start: PhysicalQuantity or float
     :param stop:  stop value
+    :type stop: PhysicalQuantity or float
     :param num: number of points
+    :type num: int
     :param endpoint: include stop point
     :param retstep: if true, return (samples, step)
     :return: return equally spaced samples between start and stop
+
+    >>> import PhysicalQuantities.numpywrapper as nw
+    >>> nw.linspace(0 GHz, 100 GHz, 200)
     """
     if not isinstance(start, PhysicalQuantity) and not isinstance(stop, PhysicalQuantity):
         return np.linspace(start, stop, num,  endpoint, retstep)

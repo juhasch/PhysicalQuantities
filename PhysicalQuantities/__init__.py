@@ -30,9 +30,12 @@ without explicitly calling a function constructor
 
 """
 from __future__ import absolute_import
+import numpy as np
 from .Quantity import *
 from .Unit import *
-import numpy as np
+from PhysicalQuantities import PhysicalQuantity, unit_table
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+from PhysicalQuantities.Unit import isphysicalunit
 
 import pkg_resources
 __version__ = pkg_resources.require("PhysicalQuantities")[0].version
@@ -41,21 +44,21 @@ Q = PhysicalQuantity
 U = PhysicalUnit
 
 # Add additional units (SI units are predefined)
-addprefixed(addunit('Hz', '1/s', 'Hertz', url='https://en.wikipedia.org/wiki/Hertz'),range='engineering')
-addprefixed(addunit('N', 'm*kg/s**2', 'Newton', url='https://en.wikipedia.org/wiki/Newton_(unit)'),range='engineering')
-addprefixed(addunit('Pa', 'N/m**2', 'Pascal', url='https://en.wikipedia.org/wiki/Pascal_(unit)'),range='engineering')
-addprefixed(addunit('J', 'N*m', 'Joule', url='https://en.wikipedia.org/wiki/Joule'),range='engineering')
-addprefixed(addunit('W', 'J/s', 'Watt', url='https://en.wikipedia.org/wiki/Watt'),range='engineering')
-addprefixed(addunit('C', 's*A', 'Coulomb', url='https://en.wikipedia.org/wiki/Coulomb'),range='engineering')
-addprefixed(addunit('V', 'W/A', 'Volt', url='https://en.wikipedia.org/wiki/Volt'),range='engineering')
-addprefixed(addunit('F', 'C/V', 'Farad', url='https://en.wikipedia.org/wiki/Farad'),range='engineering')
-addprefixed(addunit('Ohm', 'V/A', 'Ohm', url='https://en.wikipedia.org/wiki/Ohm_(unit)'),range='engineering')
-addprefixed(addunit('S', 'A/V', 'Siemens', url='https://en.wikipedia.org/wiki/Siemens_(unit)'),range='engineering')
-addprefixed(addunit('Wb', 'V*s', 'Weber', url='https://en.wikipedia.org/wiki/Weber_(unit)'),range='engineering')
-addprefixed(addunit('T', 'Wb/m**2', 'Tesla', url='https://en.wikipedia.org/wiki/Tesla_(unit)'),range='engineering')
-addprefixed(addunit('H', 'Wb/A', 'Henry', url='https://en.wikipedia.org/wiki/Henry_(unit)'),range='engineering')
-addprefixed(addunit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/Lumen_(unit)'),range='engineering')
-addprefixed(addunit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'),range='engineering')
+addprefixed(addunit('Hz', '1/s', 'Hertz', url='https://en.wikipedia.org/wiki/Hertz'), range='engineering')
+addprefixed(addunit('N', 'm*kg/s**2', 'Newton', url='https://en.wikipedia.org/wiki/Newton_(unit)'), range='engineering')
+addprefixed(addunit('Pa', 'N/m**2', 'Pascal', url='https://en.wikipedia.org/wiki/Pascal_(unit)'), range='engineering')
+addprefixed(addunit('J', 'N*m', 'Joule', url='https://en.wikipedia.org/wiki/Joule'), range='engineering')
+addprefixed(addunit('W', 'J/s', 'Watt', url='https://en.wikipedia.org/wiki/Watt'), range='engineering')
+addprefixed(addunit('C', 's*A', 'Coulomb', url='https://en.wikipedia.org/wiki/Coulomb'), range='engineering')
+addprefixed(addunit('V', 'W/A', 'Volt', url='https://en.wikipedia.org/wiki/Volt'), range='engineering')
+addprefixed(addunit('F', 'C/V', 'Farad', url='https://en.wikipedia.org/wiki/Farad'), range='engineering')
+addprefixed(addunit('Ohm', 'V/A', 'Ohm', url='https://en.wikipedia.org/wiki/Ohm_(unit)'), range='engineering')
+addprefixed(addunit('S', 'A/V', 'Siemens', url='https://en.wikipedia.org/wiki/Siemens_(unit)'), range='engineering')
+addprefixed(addunit('Wb', 'V*s', 'Weber', url='https://en.wikipedia.org/wiki/Weber_(unit)'), range='engineering')
+addprefixed(addunit('T', 'Wb/m**2', 'Tesla', url='https://en.wikipedia.org/wiki/Tesla_(unit)'), range='engineering')
+addprefixed(addunit('H', 'Wb/A', 'Henry', url='https://en.wikipedia.org/wiki/Henry_(unit)'), range='engineering')
+addprefixed(addunit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/Lumen_(unit)'), range='engineering')
+addprefixed(addunit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'), range='engineering')
 
 # Angle units
 unit_table['pi'] = np.pi
@@ -67,10 +70,6 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-
-from PhysicalQuantities import PhysicalQuantity, unit_table
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
-from PhysicalQuantities.Unit import isphysicalunit
 
 class _q:
     def __init__(self):
@@ -85,16 +84,14 @@ class _q:
     
     def __getattr__(self, attr):
         try:
-            Q = self.table[attr]
+            _Q = self.table[attr]
         except:
-            raise AttributeError('Unit %s not found' % Q)
-        if isphysicalunit(Q):
-            return PhysicalQuantity(1, Q)
-        elif isdbquantity(Q):
-            return Q
+            raise AttributeError('Unit %s not found' % attr)
+        if isphysicalunit(_Q):
+            return PhysicalQuantity(1, _Q)
+        elif isdbquantity(_Q):
+            return _Q
         else:
             raise AttributeError('Unknown unit %s' % attr)
-            
 
 q = _q()
-
