@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Define additional units
 """
-from .Unit import addunit
-from .constants import *
+from .Unit import PhysicalUnit, addunit
 
 # Length units
 addunit('inch', '2.54*cm', verbosename='inch', url='https://en.wikipedia.org/wiki/Inch')
@@ -41,4 +40,5 @@ addunit('hp', '745.7*W', verbosename='horsepower')
 # Pressure units
 addunit('psi', '6894.75729317*Pa', verbosename='pounds per square inch')
 
-addunit('degF', PhysicalUnit(None, 5./9, [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), verbosename='degree Fahrenheit', url='https://en.wikipedia.org/wiki/Fahrenheit')
+addunit('degF', PhysicalUnit(None, 5./9, [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), verbosename='degree Fahrenheit',
+        url='https://en.wikipedia.org/wiki/Fahrenheit')

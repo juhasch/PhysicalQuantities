@@ -6,6 +6,7 @@
  last revision: 2007-5-25
 """
 
+
 class NumberDict(dict):
     """Dictionary storing numerical values.
 

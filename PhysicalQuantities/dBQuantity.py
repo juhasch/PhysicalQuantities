@@ -35,6 +35,7 @@ dB_units = {'dB' : (None, 0, 0),
 
 def dB(x):
     """ Conversion from a PhysicalQuantity to correct dB<x> value
+
     :param x: convert a linear physical quanitiy into a dB quantitiy
     :type x: PhysicalQuantity
     :return: converted dB quantity
@@ -67,6 +68,11 @@ def dB(x):
 
 
 def dB10(x):
+    """ Convert linear value to 10*log10() dB value
+
+    :param x: linear value
+    :return: 10*log10(x)
+    """
     if isinstance(x, PhysicalQuantity):
         val = x.base.value
     else:
@@ -75,6 +81,11 @@ def dB10(x):
 
 
 def dB20(x):
+    """ Convert linear value to 20*log10() dB value
+
+    :param x: linear value
+    :return: 20*log10(x)
+    """
     if isinstance(x, PhysicalQuantity):
         val = x.base.value
     else:
@@ -84,6 +95,7 @@ def dB20(x):
 
 def isdbquantity(q):
     """ Test if quantity is a dBQuantity class
+
     :param q: test quantity
     :return: True if dBQuantity class
     """
@@ -103,8 +115,8 @@ class dBQuantity:
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
     def __init__(self, value, unit, **kwargs):
-        """
-        # initialize and convert to logarithm if islog=False
+        """ Initialize and convert to logarithm if islog=False
+
         :param value: value
         :param unit: unit
         """

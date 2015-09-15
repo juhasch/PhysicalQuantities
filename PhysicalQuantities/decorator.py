@@ -4,8 +4,10 @@ import wrapt
 from .Quantity import *
 from .Unit import *
 
+
 def checkbaseunit(arg, unit):
     """ Check if an argument is of a certain unit
+
     :param arg: argument with unit to be checked
     :param unit: reference unit
     :return: True if argument has requested unit
@@ -21,6 +23,7 @@ def checkbaseunit(arg, unit):
 
 def dropunit(arg, unit):
     """ Drop unit of a given argument
+
     :param arg: argument with unit to be checked
     :param unit: reference unit
     :return: value without unit
@@ -62,6 +65,7 @@ def require_units(*units, **kunits):
 
 def optional_units(*units, **kunits):
     """ Decorator to check arguments of a function call
+
     :param units: list of units for arguments
 
     >>> @optional_units('V','A', return_unit='W')

@@ -20,7 +20,7 @@ quantity_re = re.compile(quantity)
 subst_re = re.compile(r'\?' + name)
 
 # sort units after length for Regex matching
-_li = sorted(pq.unit_table,key=len)
+_li = sorted(pq.unit_table, key=len)
 _unit_list = ''
 for unit in _li[::-1]:
     _unit_list += unit + '|'
@@ -45,33 +45,33 @@ line_match3 = re.compile(match3)
 def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
-    if (m):
-        if m.group(3) == None or m.group(3) == '':
+    if m:
+        if m.group(3) is None or m.group(3) == '':
             return m.group(0)
-    return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + '\')'
+    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '\')'
 
 
 def replace_inline1(m):
     """Replace an inline unit expression by valid Python code
     """
-    if (m):
-        if m.group(3) == None or m.group(3) == '':
+    if m:
+        if m.group(3) is None or m.group(3) == '':
             return m.group(0)
-    return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
+    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
 
 
 def replace_inline2(m):
     """Replace an inline unit expression by valid Python code
     """
-    if (m):
-        if m.group(3) == None or m.group(3) == '':
+    if m:
+        if m.group(3) is None or m.group(3) == '':
             return m.group(0)
-    return 'PhysicalQuantity('+ m.group(3)+',\'' + m.group(5) +  '/' + m.group(6) + '\')'
+    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '/' + m.group(6) + '\')'
 
 @StatelessInputTransformer.wrap
 def _transform(line):
-    line = line_match3.sub(replace_inline2, line) # unit/unit
-    line = line_match2.sub(replace_inline1, line) # unit**n
+    line = line_match3.sub(replace_inline2, line)  # unit/unit
+    line = line_match2.sub(replace_inline1, line)  # unit**n
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
     return line
@@ -84,6 +84,7 @@ def load_ipython_extension(ip):
     ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
 
     ip.user_ns['PhysicalQuantity'] = pq.PhysicalQuantity
+
 
 def unload_ipython_extension(ip):
     global __transformer
