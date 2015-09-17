@@ -323,8 +323,7 @@ class PhysicalUnit:
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
-                                self.factor * other.factor, self.powers,
-                                self.offset * other.offset)
+                                self.factor*other, self.powers, self.offset)
 
     __rmul__ = __mul__
 
@@ -348,7 +347,7 @@ class PhysicalUnit:
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + NumberDict({str(other): -1}),
-                                self.factor / other.factor, self.powers)
+                                self.factor/other, self.powers)
 
     def __rdiv__(self, other):
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
@@ -440,7 +439,7 @@ class PhysicalUnit:
         (1000.0, 0.0)
         """
         if self.powers != other.powers:
-            raise UnitError('Incompatible units')
+            raise UnitError('Incompatible unit for conversion %s' % other.unit)
 
         # let (s1,d1) be the conversion tuple from 'self' to base units
         #   (ie. (x+d1)*s1 converts a value x from 'self' to base units,

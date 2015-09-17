@@ -2,6 +2,7 @@
 from PhysicalQuantities import PhysicalQuantity
 from numpy.testing import assert_almost_equal
 
+
 def test_complex_assign():
     """ wrap complex number with quantity """
     a = (1+2j) * PhysicalQuantity(1,'V')

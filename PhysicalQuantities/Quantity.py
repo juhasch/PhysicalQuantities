@@ -16,17 +16,7 @@ from .Unit import *
 import copy
 from IPython import get_ipython
 
-__all__ = ['isphysicalquantity', 'PhysicalQuantity']
-
-
-def isphysicalquantity(x):
-    """ Test if parameter is a PhysicalQuantity object
-
-    :param x: parameter to test
-    :return: true if x is a PhysicalQuantity
-    :rtype: bool
-    """
-    return isinstance(x, PhysicalQuantity)
+__all__ = ['PhysicalQuantity']
 
 
 class PhysicalQuantity:
@@ -197,7 +187,7 @@ class PhysicalQuantity:
         :return: sum of the two quantities
         :rtype: PhysicalQuantity
         """
-        if not isphysicalquantity(other):
+        if not isinstance(other, PhysicalQuantity):
             raise UnitError('Incompatible types %s' % type(other))
         new_value = sign1 * self.value + \
             sign2 * other.value * other.unit.conversion_factor_to(self.unit)
@@ -215,7 +205,7 @@ class PhysicalQuantity:
         return self._sum(other, -1, 1)
 
     def __mul__(self, other):
-        if not isphysicalquantity(other):
+        if not isinstance(other, PhysicalQuantity):
             return self.__class__(self.value * other, self.unit)
         value = self.value * other.value
         unit = self.unit * other.unit
@@ -227,7 +217,7 @@ class PhysicalQuantity:
     __rmul__ = __mul__
 
     def __div__(self, other):
-        if not isphysicalquantity(other):
+        if not isinstance(other, PhysicalQuantity):
             return self.__class__(self.value / other, self.unit)
         value = self.value / other.value
         unit = self.unit / other.unit
@@ -237,7 +227,7 @@ class PhysicalQuantity:
             return self.__class__(value, unit)
 
     def __rdiv__(self, other):
-        if not isphysicalquantity(other):
+        if not isinstance(other, PhysicalQuantity):
             return self.__class__(other / self.value, pow(self.unit, -1))
         value = other.value / self.value
         unit = other.unit / self.unit
@@ -267,7 +257,7 @@ class PhysicalQuantity:
         :return: power of other for quantity
         :rtype: PhysicalQuantity
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             raise UnitError('Exponents must be dimensionless not of unit %s' % other.unit)
         return self.__class__(pow(self.value, other), pow(self.unit, other))
 
@@ -318,7 +308,7 @@ class PhysicalQuantity:
             :return: true if quantity is greater than other
             :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit == other.base.unit:
                 return self.base.value > other.base.value
             else:
@@ -333,7 +323,7 @@ class PhysicalQuantity:
         :return: true if quantity is greater or equal than other
         :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit == other.base.unit:
                 return self.base.value >= other.base.value
             else:
@@ -348,7 +338,7 @@ class PhysicalQuantity:
             :return: true if quantity is less than other
             :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit == other.base.unit:
                 return self.base.value < other.base.value
             else:
@@ -363,7 +353,7 @@ class PhysicalQuantity:
             :return: true if quantity is less or equal than other
             :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit == other.base.unit:
                 return self.base.value <= other.base.value
             else:
@@ -378,7 +368,7 @@ class PhysicalQuantity:
             :return: true if quantities are equal
             :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit.name == other.base.unit.name:
                 return self.base.value == other.base.value
             else:
@@ -393,7 +383,7 @@ class PhysicalQuantity:
             :return: true if quantities are not equal
             :rtype: bool
         """
-        if isphysicalquantity(other):
+        if isinstance(other, PhysicalQuantity):
             if self.base.unit == other.base.unit:
                 return not self.base.value == other.base.value
             else:

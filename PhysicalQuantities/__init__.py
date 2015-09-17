@@ -30,11 +30,10 @@ without explicitly calling a function constructor
 
 """
 from __future__ import absolute_import
-import numpy as np
 from .Quantity import *
 from .Unit import *
 from PhysicalQuantities import PhysicalQuantity, unit_table
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+#from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
 from PhysicalQuantities.Unit import isphysicalunit
 
 import pkg_resources
@@ -70,14 +69,14 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
 class _q:
     def __init__(self):
         self.table = {}
         for key in dB_units:
             self.table[key] = dBQuantity(1, key)
         for key in unit_table:
-            self.table[key] = unit_table[key] # for some reason directly using a PhysicalQuantity bombs
+            self.table[key] = unit_table[key]  # for some reason directly using a PhysicalQuantity bombs
             
     def __dir__(self):
         return self.table.keys
@@ -95,3 +94,12 @@ class _q:
             raise AttributeError('Unknown unit %s' % attr)
 
 q = _q()
+
+def isphysicalquantity(x):
+    """ Test if parameter is a PhysicalQuantity object
+
+    :param x: parameter to test
+    :return: true if x is a PhysicalQuantity
+    :rtype: bool
+    """
+    return isinstance(x, PhysicalQuantity)#or isinstance(x, dBQuantity)

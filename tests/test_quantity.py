@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.Quantity import PhysicalQuantity, isphysicalquantity
+from PhysicalQuantities.Quantity import PhysicalQuantity
+from PhysicalQuantities import isphysicalquantity
 from numpy.testing import assert_almost_equal
 
 
