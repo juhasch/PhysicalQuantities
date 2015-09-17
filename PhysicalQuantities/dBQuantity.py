@@ -14,6 +14,9 @@ import copy
 from IPython import get_ipython
 from PhysicalQuantities import PhysicalQuantity, PhysicalUnit, unit_table
 
+__all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
+
+
 _m2unit = PhysicalQuantity(1,'m**2').unit
 
 # list of tuples: (base unit, correction factor to linear unit, conversion factor to linear)
@@ -151,7 +154,6 @@ class dBQuantity:
         else:
             raise UnitError('Unknown unit %s' % unit)
 
-
     def __dir__(self):
         """ return list for tab completion
             Include conversions to linear and ther dB units
@@ -205,6 +207,17 @@ class dBQuantity:
         else:
             raise UnitError('No conversion between units %s and %s' % (self.unit, unit))
 
+    def to(self, unit):
+        """ Convert to differently scaled dB unit
+        :param unit:
+        :return:
+        """
+        if unit in dB_units.keys():
+            # convert to same base unit, only scaling
+            scaling = self.factor * np.log10( dB_units[self.unit][0].factor / dB_units[unit][0].factor)
+            value = self.value + scaling
+            return self.__class__(value, unit, islog=True)
+
     def copy(self):
         """Return a copy of the PhysicalQuantity including the value.
         Needs deepcopy to copy the value
@@ -221,12 +234,15 @@ class dBQuantity:
 
     def __setitem__(self, key, value):
         """ Set quantities if underlying object is array or list
-            e.g. obj[0] = 1m
+
+            >>> obj = np.linspace(0,10,10) * 1 dBm
+            >>> obj[0] = 0 dBm
         """
         if not isinstance(value, dBQuantity):
             raise AttributeError('Not a dBQuantity')
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
-            self.value[key] = value.to(self.unit)
+            print("New:", value.to(self.unit))
+            self.value[key] = value.to(self.unit).value
             return self.__class__(self.value[key], self.unit)
         raise AttributeError('Not a dBQuantity array or list')
 

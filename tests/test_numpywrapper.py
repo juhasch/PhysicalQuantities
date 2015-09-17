@@ -18,6 +18,7 @@ def test_ceil():
 def test_sqrt():
     a = np.array([4, 9]) * PhysicalQuantity(1, 'm^2')
     assert_almost_equal(nw.sqrt(a).value, np.array([2, 3]))
+    assert nw.sqrt(a).unit == PhysicalQuantity(1, 'm').unit
 
 
 def test_linspace():
@@ -26,3 +27,7 @@ def test_linspace():
     assert_almost_equal(a.value, b)
 
 
+def test_tophysicalquantity():
+    a = [ PhysicalQuantity(1, 'mm'), PhysicalQuantity(2, 'm'), PhysicalQuantity(3, 'mm')]
+    b = nw.toPhysicalQuantity(a)
+    assert_almost_equal(b.value, np.array([1, 2000, 3]))

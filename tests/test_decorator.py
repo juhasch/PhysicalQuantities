@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import PhysicalQuantities as pq
 from PhysicalQuantities.decorator import *
-import numpy as np
 
 
 def test_checkbaseunit():
@@ -30,6 +28,7 @@ def test_optional_units():
     u = PhysicalQuantity(2, 'V')
     i = PhysicalQuantity(3, 'A')
     w = PhysicalQuantity(1, 'W')
+
     @optional_units('V', 'A', return_unit='W')
     def power(u, i):
         return u*i

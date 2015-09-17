@@ -122,3 +122,9 @@ def test_dB_2():
     a = PhysicalQuantity(10, 'nV')
     b = dB(a)
     assert b == dBQuantity(20, 'dBnV')
+
+
+def setitem():
+    a = np.ones(2) * dBQuantity(1, 'dBm')
+    a[0] = dBQuantity(2, 'dBm')
+    assert a[0] == dBQuantity(2, 'dBm')
