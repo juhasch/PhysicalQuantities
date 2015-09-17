@@ -252,3 +252,10 @@ def test_round():
     a = PhysicalQuantity(1.123123, 'm')
     b = round(a)
     assert b.value == 1
+
+
+def test_floordiv():
+    a = PhysicalQuantity(4.0, 'm')
+    b = PhysicalQuantity(2.0, 'm')
+    c = a // b
+    assert c == 2

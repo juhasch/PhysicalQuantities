@@ -158,7 +158,7 @@ class dBQuantity:
         """ return list for tab completion
             Include conversions to linear and ther dB units
         """
-        x=[]
+        x = super().__dir__()
         if self.sourceunit is not None:
             base = self.sourceunit.baseunit
             # add PhysicalUnits
@@ -171,11 +171,6 @@ class dBQuantity:
                     if isinstance(unit, PhysicalUnit):
                         if unit.baseunit is base:
                             x.append(key)
-        x.append('value')
-        x.append('unit')
-        if self.factor != 0:
-            x.append('lin')
-            x.append('factor')
         return filter(None,[str(_x) for _x in x])
     
     def __getattr__(self,attr):
