@@ -59,17 +59,12 @@ class PhysicalQuantity:
 
         :return: list of units for tab completion
         """
-        ulist = []
+        ulist = super().__dir__()
         u = unit_table.values()
         for _u in u:
             if isphysicalunit(_u):
                 if str(_u.baseunit) is str(self.unit.baseunit):
                     ulist.append(_u.name)
-        ulist.append('value')
-        ulist.append('unit')
-        ulist.append('autoscale')
-        ulist.append('pow')
-        ulist.append('sqrt')
         return ulist
     
     def __getattr__(self, attr):
@@ -126,7 +121,6 @@ class PhysicalQuantity:
         """
         value = np.rint(self.value)
         return self.__class__(value, self.unit)
-
 
     def __str__(self):
         """ Return string representation as 'value unit'
@@ -216,6 +210,20 @@ class PhysicalQuantity:
 
     __rmul__ = __mul__
 
+    def __floordiv__(self, other):
+        """ self // other
+        :param other:
+        :return:
+        """
+        if not isinstance(other, PhysicalQuantity):
+            return self.__class__(self.value / other, self.unit)
+        value = self.value // other.value
+        unit = self.unit / other.unit
+        if unit.is_dimensionless:
+            return value * unit.factor
+        else:
+            return self.__class__(value, unit)
+
     def __div__(self, other):
         if not isinstance(other, PhysicalQuantity):
             return self.__class__(self.value / other, self.unit)
@@ -247,8 +255,10 @@ class PhysicalQuantity:
         :return: rounded quantity
         :rtype: PhysicalQuantity
         """
-        value = round(self.value, ndigits)
-        return self.__class__(value, self.unit)
+        if isinstance(self.value, np.ndarray):
+            return self.__class__(np.round(self.value, ndigits), self.unit)
+        else:
+            return self.__class__(round(self.value, ndigits), self.unit)
 
     def __pow__(self, other):
         """ Return power of other for quantity
