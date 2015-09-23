@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name="PhysicalQuantities",
-    version="0.6.1",
+    version="0.6.3",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",

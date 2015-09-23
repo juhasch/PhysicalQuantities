@@ -4,6 +4,8 @@ from .Quantity import *
 from .Unit import UnitError
 from . import isphysicalquantity
 
+__all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
+
 
 def floor(q):
     """ Return the floor of the input, element-wise.
@@ -12,7 +14,7 @@ def floor(q):
     :rtype: PhysicalQuantity
 
     >>> import PhysicalQuantities.numpywrapper as nw
-    >>> nw.floor( 1.3 mm)
+    >>> nw.floor(1.3 mm)
     1 mm
     """
     value = np.floor(q.value)
@@ -28,7 +30,7 @@ def ceil(q):
     :rtype: PhysicalQuantity
 
     >>> import PhysicalQuantities.numpywrapper as nw
-    >>> nw.ceil( 1.3 mm)
+    >>> nw.ceil(1.3 mm)
     2.0 mm
     """
     value = np.ceil(q.value)
@@ -42,7 +44,7 @@ def sqrt(q):
     :rtype: PhysicalQuantity
 
     >>> import PhysicalQuantities.numpywrapper as nw
-    >>> nw.sqrt( 4 m**2)
+    >>> nw.sqrt(4 m**2)
     2.0 m
     """
     value = np.sqrt(q.value)
@@ -93,7 +95,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return array * PhysicalQuantity(1, unit)
 
 
-def toPhysicalQuantity(arr):
+def tophysicalquantity(arr):
     """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
 
     :param arr: input array

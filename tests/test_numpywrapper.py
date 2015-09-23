@@ -29,5 +29,5 @@ def test_linspace():
 
 def test_tophysicalquantity():
     a = [ PhysicalQuantity(1, 'mm'), PhysicalQuantity(2, 'm'), PhysicalQuantity(3, 'mm')]
-    b = nw.toPhysicalQuantity(a)
+    b = nw.tophysicalquantity(a)
     assert_almost_equal(b.value, np.array([1, 2000, 3]))
