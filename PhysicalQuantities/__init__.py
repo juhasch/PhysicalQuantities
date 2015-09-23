@@ -33,9 +33,7 @@ from __future__ import absolute_import
 from .Quantity import *
 from .Unit import *
 from PhysicalQuantities import PhysicalQuantity, unit_table
-#from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
 from PhysicalQuantities.Unit import isphysicalunit
-
 import pkg_resources
 __version__ = pkg_resources.require("PhysicalQuantities")[0].version
 
@@ -70,6 +68,7 @@ addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+
 class _q:
     def __init__(self):
         self.table = {}
@@ -95,6 +94,7 @@ class _q:
 
 q = _q()
 
+
 def isphysicalquantity(x):
     """ Test if parameter is a PhysicalQuantity object
 
@@ -102,4 +102,4 @@ def isphysicalquantity(x):
     :return: true if x is a PhysicalQuantity
     :rtype: bool
     """
-    return isinstance(x, PhysicalQuantity)#or isinstance(x, dBQuantity)
+    return isinstance(x, PhysicalQuantity) or isinstance(x, dBQuantity)

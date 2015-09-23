@@ -294,6 +294,7 @@ class PhysicalQuantity:
 
     def __neg__(self):
         """ Return quantity with negative sign
+
         :return: negative value of quantity
         :rtype: PhysicalQuantity
         """
