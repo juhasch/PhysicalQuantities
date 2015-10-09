@@ -202,6 +202,14 @@ class dBQuantity:
         else:
             raise UnitError('No conversion between units %s and %s' % (self.unit, unit))
 
+    def __len__(self):
+        """ Return length of quantity if underlying object is array or list
+            e.g. len(obj)
+        """
+        if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
+            return len(self.value)
+        raise TypeError
+
     def to(self, unit):
         """ Convert to differently scaled dB unit
         :param unit:
@@ -236,7 +244,6 @@ class dBQuantity:
         if not isinstance(value, dBQuantity):
             raise AttributeError('Not a dBQuantity')
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
-            print("New:", value.to(self.unit))
             self.value[key] = value.to(self.unit).value
             return self.__class__(self.value[key], self.unit)
         raise AttributeError('Not a dBQuantity array or list')
