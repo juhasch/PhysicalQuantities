@@ -495,7 +495,10 @@ class PhysicalQuantity:
         >>> a.base
         1.0 m^2*kg/s^3
         """
-        new_value = self.value * self.unit.factor
+        if type(self.value) is list:
+            new_value = [value * self.unit.factor for value in self.value] 
+        else:
+            new_value = self.value * self.unit.factor
         num = ''
         denom = ''
         for i in range(len(base_names)):
