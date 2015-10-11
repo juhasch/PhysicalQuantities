@@ -35,6 +35,7 @@ from .Unit import *
 from PhysicalQuantities import PhysicalQuantity, unit_table
 from PhysicalQuantities.Unit import isphysicalunit
 import pkg_resources
+
 __version__ = pkg_resources.require("PhysicalQuantities")[0].version
 
 Q = PhysicalQuantity
@@ -67,7 +68,8 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units
+
 
 class _q:
     def __init__(self):
@@ -85,9 +87,9 @@ class _q:
             _Q = self.table[attr]
         except:
             raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(_Q):
+        if isinstance(_Q, PhysicalQuantity):
             return PhysicalQuantity(1, _Q)
-        elif isdbquantity(_Q):
+        elif isinstance(_Q, dBQuantity):
             return _Q
         else:
             raise AttributeError('Unknown unit %s' % attr)
