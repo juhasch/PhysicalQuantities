@@ -73,7 +73,16 @@ class PhysicalQuantity:
 
             :param: attribute
             :raises AttributeError: If unit is not a valid attribute
+
+            >>> a = 1 mm
+            >>> a.m_
+            0.001
+            >>> a._
+            1
         """
+        if attr is '_':
+            return self.value
+
         dropunit = (attr[-1] is '_')
         attr = attr.strip('_')
         try:
@@ -109,6 +118,10 @@ class PhysicalQuantity:
     def __len__(self):
         """ Return length of quantity if underlying object is array or list
             e.g. len(obj)
+
+            >>> a = [1, 2, 3] * 1 mm
+            >>> len(a)
+            3
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return len(self.value)
@@ -133,19 +146,14 @@ class PhysicalQuantity:
         return '{0:{format}} {1}'.format(self.value, str(self.unit), format=self.format)
 
     def __complex__(self):
-        """ Return complex number without units converted to base units 
+        """ Return complex number with value converted to base units
         """
         return self.base.value
 
     def __float__(self):
-        """ Return float number without units converted to base units 
+        """ Return float number with value converted to base units
         """
         return self.base.value
-
-    #def __array__(self):
-        #""" Return array with units converted to base units
-        #"""
-        #return np.array(self.base.value)
 
     def __repr__(self):
         """ Return string representation
@@ -162,7 +170,7 @@ class PhysicalQuantity:
         if str(type(self.value)).find('sympy') > 0:
             # sympy
             return '${0}$ {1}'.format(printing.latex(self.value), self.unit.markdown)
-        return '{0:{format}} {1}'.format(self.value, self.unit.markdown,format=self.format)
+        return '{0:{format}} {1}'.format(self.value, self.unit.markdown, format=self.format)
 
     def _repr_latex_(self):
         """ Return latex representation for IPython notebook

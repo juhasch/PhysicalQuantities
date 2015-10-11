@@ -95,8 +95,9 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return array * PhysicalQuantity(1, unit)
 
 
-def tophysicalquantity(arr):
-    """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
+def pull(arr):
+    """ Pull PhysicalQuantity elements in a numpy array or list and convert it to a single PhysicalQuantity object
+    containing the array or list of unitless values
 
     :param arr: input array
     :return: PhysicalQuantity wrapped numpy array
