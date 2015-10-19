@@ -7,7 +7,7 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 import numpy as np
 import sys
 import six
-from .NDict import *
+from .NDict import NumberDict
 
 
 if sys.version_info > (2,):

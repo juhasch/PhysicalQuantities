@@ -12,7 +12,8 @@ try:
 except ImportError:
     pass
 
-from .Unit import *
+from .Unit import PhysicalUnit, unit_table, findunit, UnitError, convertvalue, base_names
+import numpy as np
 import copy
 from IPython import get_ipython
 
@@ -62,7 +63,7 @@ class PhysicalQuantity:
         ulist = super().__dir__()
         u = unit_table.values()
         for _u in u:
-            if isphysicalunit(_u):
+            if isinstance(_u, PhysicalQuantity):
                 if str(_u.baseunit) is str(self.unit.baseunit):
                     ulist.append(_u.name)
         return ulist
@@ -89,7 +90,7 @@ class PhysicalQuantity:
             attrunit = unit_table[attr]
         except:
             raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(attrunit):
+        if isinstance(attrunit, PhysicalQuantity):
             if dropunit is True:
                 return self.to(attrunit.name).value
             else:
