@@ -30,11 +30,11 @@ without explicitly calling a function constructor
 
 """
 from __future__ import absolute_import
-from .Quantity import *
-from .Unit import *
-from PhysicalQuantities import PhysicalQuantity, unit_table
-from PhysicalQuantities.Unit import isphysicalunit
+from .Quantity import PhysicalQuantity
+from .Unit import PhysicalUnit, unit_table, addprefixed, addunit
+from math import pi
 import pkg_resources
+
 __version__ = pkg_resources.require("PhysicalQuantities")[0].version
 
 Q = PhysicalQuantity
@@ -58,7 +58,7 @@ addprefixed(addunit('lm', 'cd*sr', 'Lumen', url='https://en.wikipedia.org/wiki/L
 addprefixed(addunit('lx', 'lm/m**2', 'Lux', url='https://en.wikipedia.org/wiki/Lux'), range='engineering')
 
 # Angle units
-unit_table['pi'] = np.pi
+unit_table['pi'] = pi
 addunit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
 addunit('arcmin', 'pi*rad/180/60', 'minutes of arc')
 addunit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
@@ -67,7 +67,8 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units
+
 
 class _q:
     def __init__(self):
@@ -85,9 +86,9 @@ class _q:
             _Q = self.table[attr]
         except:
             raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(_Q):
+        if isinstance(_Q, PhysicalQuantity):
             return PhysicalQuantity(1, _Q)
-        elif isdbquantity(_Q):
+        elif isinstance(_Q, dBQuantity):
             return _Q
         else:
             raise AttributeError('Unknown unit %s' % attr)

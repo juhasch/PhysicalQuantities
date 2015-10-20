@@ -66,7 +66,7 @@ def dB(x):
             dbvalue = factor * np.log10(value)
         except:
             raise UnitError('Cannot handle unit %s' % x.unit)
-        return dBQuantity(dbvalue, dbbase ,islog=True, factor=factor)
+        return dBQuantity(dbvalue, dbbase, islog=True, factor=factor)
     raise UnitError('Cannot handle unitless quantity %s' % x)
 
 
@@ -80,7 +80,7 @@ def dB10(x):
         val = x.base.value
     else:
         val = x
-    return dBQuantity(10*np.log10(val),'dB',islog=True, factor=10)
+    return dBQuantity(10*np.log10(val), 'dB', islog=True, factor=10)
 
 
 def dB20(x):
@@ -102,7 +102,7 @@ def isdbquantity(q):
     :param q: test quantity
     :return: True if dBQuantity class
     """
-    return isinstance( q, dBQuantity)
+    return isinstance(q, dBQuantity)
 
 
 class UnitError(ValueError):
@@ -137,7 +137,7 @@ class dBQuantity:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
-        self.format = '' # display format for number to string conversion
+        self.format = ''  # display format for number to string conversion
         for key, val in list(kwargs.items()):
             if key is 'islog':
                 islog = val    # convert to log at initialization
@@ -171,9 +171,9 @@ class dBQuantity:
                     if isinstance(unit, PhysicalUnit):
                         if unit.baseunit is base:
                             x.append(key)
-        return filter(None,[str(_x) for _x in x])
+        return filter(None, [str(_x) for _x in x])
     
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit after rescaling and return value only.
         """
@@ -217,7 +217,7 @@ class dBQuantity:
         """
         if unit in dB_units.keys():
             # convert to same base unit, only scaling
-            scaling = self.factor * np.log10( dB_units[self.unit][0].factor / dB_units[unit][0].factor)
+            scaling = self.factor * np.log10(dB_units[self.unit][0].factor / dB_units[unit][0].factor)
             value = self.value + scaling
             return self.__class__(value, unit, islog=True)
 
@@ -260,7 +260,7 @@ class dBQuantity:
         """
         linunit = dB_units[self.unit][0]
         if isinstance(linunit, PhysicalUnit):
-            return PhysicalQuantity(self.__float__(),linunit.name)
+            return PhysicalQuantity(self.__float__(), linunit.name)
         if self.factor == 0:
             raise UnitError('Cannot convert dB unit with unknown factor to linear')
         val = self.value / self.factor
@@ -323,10 +323,10 @@ class dBQuantity:
         return 10**(dbw/(dB_units[self.unit][2]))
 
     def __str__(self):
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
             # %precision magic only works for floats
-            format = self.ptformatter.float_format
-            return "%s %s" % (format%self.value, str(self.unit))
+            _format = self.ptformatter.float_format
+            return "%s %s" % (_format%self.value, str(self.unit))
         return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
 
     def __repr__(self):
