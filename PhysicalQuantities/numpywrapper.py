@@ -106,8 +106,12 @@ def tophysicalquantity(arr):
     >>> b
     [ 1 2000 3] mm
     """
+    if isphysicalquantity(arr) and type(arr) is list:
+        newarr = np.array(arr)
+        return newarr * PhysicalQuantity(1, arr.unit)
+    
     if not type(arr) is list:
-        raise('%s is not a list or array' % arr)
+        raise TypeError('%s is not a list or array' % arr)
     for i, _a in enumerate(arr):
         if not isphysicalquantity(_a):
             raise UnitError('Element %d is not a physical quantity' % i)
