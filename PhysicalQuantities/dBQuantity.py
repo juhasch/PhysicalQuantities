@@ -20,7 +20,7 @@ __all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
 _m2unit = PhysicalQuantity(1,'m**2').unit
 
 # list of tuples: (base unit, correction factor to linear unit, conversion factor to linear)
-dB_units = {'dB' : (None, 0),
+dB_units = {'dB':   (None, 0),
             'dBm':  (unit_table['mW'], 0),  # Power in Watt
             'dBW':  (unit_table['W'], 0),
             'dBnV': (unit_table['nV'], 0),  # Voltage
@@ -36,12 +36,12 @@ dB_units = {'dB' : (None, 0),
             'dBd':  (None, 2.15)}    # Antenna gain
 
 
-def PhysicalQuantity_to_dBQuantity(x, dBtype):
+def PhysicalQuantity_to_dBQuantity(x, dBunit):
     """ Conversion from a PhysicalQuantity to correct dB<x> value
 
     :param x: convert a linear physical quanitiy into a dB quantitiy
     :type x: PhysicalQuantity
-    :param dBtype: type of dB value (i.e. dBW or dBW for Watt) TODO
+    :param dBunit: desired unit of dB value (i.e. dBm or dBW for Watt)
     :return: converted dB quantity
     :rtype: dBQuantity
     """
@@ -52,20 +52,26 @@ def PhysicalQuantity_to_dBQuantity(x, dBtype):
     if isinstance(x, PhysicalQuantity):
         dbbase = None
         value = None
-        for key in dB_units:
-            if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.baseunit.name:
-                dbbase = key
-                value = x.base.value
-                _unit = x.base.unit
-        for key in dB_units:
-            if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.name:
-                dbbase = key
-                value = x.value
-                _unit = x.unit
+        if dBunit is not None and dB_units[dBunit] is not None:
+            if dB_units[dBunit][0].baseunit.name == x.unit.baseunit.name:
+                    dbbase = dBunit
+                    value = x.to(dB_units[dBunit][0].name).value
+                    _unit = dB_units[dBunit][0]
+        else:
+            for key in dB_units:
+                if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.baseunit.name:
+                    dbbase = key
+                    value = x.base.value
+                elif dB_units[key][0] is not None and dB_units[key][0].name == x.unit.name:
+                    dbbase = key
+                    value = x.value
+                    break
+            _unit = x.unit
         if dbbase is None:
             raise UnitError('Cannot handle unit %s' % x.unit)
         factor = 20 - 10 * _unit.is_power
         dbvalue = factor * np.log10(value)
+        print(dbbase, dbvalue)
         return dBQuantity(dbvalue, dbbase ,islog=True, factor=factor)
     raise UnitError('Cannot handle unitless quantity %s' % x)
 
@@ -79,7 +85,7 @@ def dB10(x):
         val = x.base.value
     else:
         val = x
-    return dBQuantity(10*np.log10(val),'dB',islog=True, factor=10)
+    return dBQuantity(10*np.log10(val), 'dB', islog=True, factor=10)
 
 
 def dB20(x):
@@ -92,7 +98,7 @@ def dB20(x):
         val = x.base.value
     else:
         val = x
-    return dBQuantity(20*np.log10(val),'dB',islog=True, factor=20)
+    return dBQuantity(20*np.log10(val), 'dB', islog=True, factor=20)
 
 
 class dBQuantity:
@@ -161,9 +167,9 @@ class dBQuantity:
                     if isinstance(unit, PhysicalUnit):
                         if unit.baseunit is base:
                             x.append(key)
-        return filter(None,[str(_x) for _x in x])
+        return filter(None, [str(_x) for _x in x])
     
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit after rescaling and return value only.
         """
@@ -201,7 +207,7 @@ class dBQuantity:
         raise TypeError
 
     def to(self, unit):
-        """ Convert to differently scaled dB unit
+        """ Convert to differently scaled dB units
         :param unit:
         :return:
         """
@@ -251,7 +257,7 @@ class dBQuantity:
         """
         linunit = dB_units[self.unit][0]
         if self.sourceunit is not None:
-            return PhysicalQuantity(self.__float__(),linunit.name)
+            return PhysicalQuantity(self.__float__(), linunit.name)
         if self.factor == 0:
             raise UnitError('Cannot convert dB unit with unknown factor to linear')
         val = self.value / self.factor
@@ -311,14 +317,14 @@ class dBQuantity:
     def __float__(self):
         # return linear value in base unit
         dbw = self.value + dB_units[self.unit][1]
-        return 10**(dbw/(self.factor))
+        return 10**(dbw/self.factor)
 
     def __str__(self):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
             format = self.ptformatter.float_format
             return "%s %s" % (format%self.value, str(self.unit))
-        return '{0:{format}} {1}'.format(self.value, str(self.unit),format=self.format)
+        return '{0:{format}} {1}'.format(self.value, str(self.unit), format=self.format)
 
     def __repr__(self):
         return self.__str__()

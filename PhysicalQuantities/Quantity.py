@@ -87,6 +87,7 @@ class PhysicalQuantity:
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list
             e.g. obj[0] or obj[0:4]
+
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return self.__class__(self.value[key], self.unit)
@@ -95,6 +96,7 @@ class PhysicalQuantity:
     def __setitem__(self, key, value):
         """ Set quantities if underlying object is array or list
             e.g. obj[0] = 1m
+
         """
         if not isinstance(value, PhysicalQuantity):
             raise AttributeError('Not a Physical Quantity')
@@ -112,6 +114,16 @@ class PhysicalQuantity:
         raise TypeError
 
     def to_dB(self, dBtype=None):
+        """ Convert to dB scaled unit
+        :param dBtype: optional dB unit ('dBm', 'dBW')
+        :return: dBQuantity
+
+        >>> a = 1 mV
+        >>> a.to_dB()
+        0.0 dBmV
+        >>> a.to_dB('dBV')
+        -60.0 dBV
+        """
         from .dBQuantity import PhysicalQuantity_to_dBQuantity
         return PhysicalQuantity_to_dBQuantity(self, dBtype)
 
