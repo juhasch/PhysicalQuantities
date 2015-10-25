@@ -13,8 +13,6 @@ except ImportError:
     pass
 
 from .Unit import *
-#from .dBQuantity import dBQuantity
-#from .dBQuantity import dBQuantity
 import copy
 from IPython import get_ipython
 
@@ -34,7 +32,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value, unit=None, islog=False):
+    def __init__(self, value, unit=None):
         """There are two constructor calling patterns
 
         :param value: value
@@ -52,7 +50,6 @@ class PhysicalQuantity:
         self.format = ''  # display format for number to string conversion
         self.value = value
         self.unit = findunit(unit)
-        self.islog = False
 
     def __dir__(self):
         """ List attributes

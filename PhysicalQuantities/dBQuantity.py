@@ -212,7 +212,7 @@ class dBQuantity:
             return self.__class__(value, unit, islog=True)
 
     def copy(self):
-        """Return a copy of the PhysicalQuantity including the value.
+        """Return a copy of the dBQuantity including the value.
         Needs deepcopy to copy the value
         """
         return copy.deepcopy(self)
