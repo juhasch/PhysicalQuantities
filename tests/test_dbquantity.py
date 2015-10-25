@@ -134,3 +134,28 @@ def setitem():
     a = np.ones(2) * dBQuantity(1, 'dBm')
     a[0] = dBQuantity(2, 'dBm')
     assert a[0] == dBQuantity(2, 'dBm')
+
+
+def test_to_dB_0():
+    a = PhysicalQuantity(1, 'mV')
+    assert a.to_dB().unit == 'dBmV'
+
+
+def test_to_dB_1():
+    a = PhysicalQuantity(1, 'V')
+    assert a.to_dB().value == 0.0
+
+
+def test_to_dB_2():
+    a = PhysicalQuantity(1, 'V')
+    assert a.to_dB('dBV').value == 0.0
+
+
+def test_to_dB_3():
+    a = PhysicalQuantity(1, 'V')
+    assert a.to_dB('dBmV').value == 60.0
+
+
+def test_to_dB_4():
+    a = PhysicalQuantity(1, 'V')
+    assert a.to_dB('dBuV').value == 120.0
