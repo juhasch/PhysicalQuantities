@@ -12,7 +12,7 @@ Example:
 import numpy as np
 import copy
 from IPython import get_ipython
-from PhysicalQuantities import PhysicalQuantity, PhysicalUnit, unit_table, UnitError
+from . import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
 
 __all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
 
@@ -20,27 +20,28 @@ __all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
 _m2unit = PhysicalQuantity(1,'m**2').unit
 
 # list of tuples: (base unit, correction factor to linear unit, conversion factor to linear)
-dB_units = {'dB' : (None, 0, 0),
-            'dBm':  (unit_table['mW'], 0, 10),  # Power in Watt
-            'dBW':  (unit_table['W'], 0, 10),
-            'dBnV': (unit_table['nV'], 0, 20),  # Voltage
-            'dBuV': (unit_table['uV'], 0, 20),
-            'dBmV': (unit_table['mV'], 0, 20),
-            'dBV':  (unit_table['V'], 0, 20),
-            'dBnA': (unit_table['nA'], 0, 20),  # Ampere
-            'dBuA': (unit_table['uA'], 20, 20),
-            'dBmA': (unit_table['mA'], 0, 20),
-            'dBA':  (unit_table['A'], 0, 20),
-            'dBsm': (_m2unit, 0, 10),  # dB square meters
-            'dBi':  (None, 0, 10),       # Antenna gain
-            'dBd':  (None, 2.15, 10)}    # Antenna gain
+dB_units = {'dB' : (None, 0),
+            'dBm':  (unit_table['mW'], 0),  # Power in Watt
+            'dBW':  (unit_table['W'], 0),
+            'dBnV': (unit_table['nV'], 0),  # Voltage
+            'dBuV': (unit_table['uV'], 0),
+            'dBmV': (unit_table['mV'], 0),
+            'dBV':  (unit_table['V'], 0),
+            'dBnA': (unit_table['nA'], 0),  # Ampere
+            'dBuA': (unit_table['uA'], 20),
+            'dBmA': (unit_table['mA'], 0),
+            'dBA':  (unit_table['A'], 0),
+            'dBsm': (_m2unit, 0),  # dB square meters
+            'dBi':  (None, 0),       # Antenna gain
+            'dBd':  (None, 2.15)}    # Antenna gain
 
 
-def dB(x):
+def PhysicalQuantity_to_dBQuantity(x, dBtype):
     """ Conversion from a PhysicalQuantity to correct dB<x> value
 
     :param x: convert a linear physical quanitiy into a dB quantitiy
     :type x: PhysicalQuantity
+    :param dBtype: type of dB value (i.e. dBW or dBW for Watt) TODO
     :return: converted dB quantity
     :rtype: dBQuantity
     """
@@ -55,20 +56,18 @@ def dB(x):
             if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.baseunit.name:
                 dbbase = key
                 value = x.base.value
+                _unit = x.base.unit
         for key in dB_units:
             if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.name:
                 dbbase = key
                 value = x.value
+                _unit = x.unit
         if dbbase is None:
             raise UnitError('Cannot handle unit %s' % x.unit)
-        try:
-            factor = dB_units[dbbase][2]
-            dbvalue = factor * np.log10(value)
-        except:
-            raise UnitError('Cannot handle unit %s' % x.unit)
+        factor = 20 - 10 * _unit.is_power
+        dbvalue = factor * np.log10(value)
         return dBQuantity(dbvalue, dbbase ,islog=True, factor=factor)
     raise UnitError('Cannot handle unitless quantity %s' % x)
-
 
 def dB10(x):
     """ Convert linear value to 10*log10() dB value
@@ -111,20 +110,24 @@ class dBQuantity:
         :param unit: unit
         """
         self.z0 = PhysicalQuantity(50, 'Ohm')
-        self.factor = 0
         islog = True
 
         try:
             self.sourceunit = dB_units[unit][0]
-            self.factor = dB_units[unit][2]
         except KeyError:
             self.sourceunit = None
+
+        if self.sourceunit is None:
+            self.factor = 0
+        else:
+            self.factor = 20 - 10 * self.sourceunit.is_power
         ip = get_ipython()
         if ip is not None:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
         self.format = '' # display format for number to string conversion
+
         for key, val in list(kwargs.items()):
             if key is 'islog':
                 islog = val    # convert to log at initialization
@@ -137,7 +140,7 @@ class dBQuantity:
             if islog is True:
                 self.value = value
             else:
-                self.value = dB_units[self.unit][2] * np.log10(value) - dB_units[self.unit][1]
+                self.value = self.factor * np.log10(value) - dB_units[self.unit][1]
         else:
             raise UnitError('Unknown unit %s' % unit)
 
@@ -247,7 +250,7 @@ class dBQuantity:
         :return: linear value or unit
         """
         linunit = dB_units[self.unit][0]
-        if isinstance(linunit, PhysicalUnit):
+        if self.sourceunit is not None:
             return PhysicalQuantity(self.__float__(),linunit.name)
         if self.factor == 0:
             raise UnitError('Cannot convert dB unit with unknown factor to linear')
@@ -308,7 +311,7 @@ class dBQuantity:
     def __float__(self):
         # return linear value in base unit
         dbw = self.value + dB_units[self.unit][1]
-        return 10**(dbw/(dB_units[self.unit][2]))
+        return 10**(dbw/(self.factor))
 
     def __str__(self):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):

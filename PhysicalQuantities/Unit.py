@@ -175,6 +175,17 @@ class PhysicalUnit:
         return name
 
     @property
+    def is_power(self):
+        """ Test if unit is a power unit. Used of dB conversion
+        TODO: basically very dumb right now
+        :return: True if it is a power unit, i.e. W, J or anything like it
+        """
+        p = self.powers
+        if p[0] == 2 and p[1] == 1 and p[3] > -1:
+            return True
+        return False
+
+    @property
     def is_dimensionless(self):
         """ Check if no dimension is given
 

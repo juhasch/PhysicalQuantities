@@ -13,6 +13,8 @@ except ImportError:
     pass
 
 from .Unit import *
+#from .dBQuantity import dBQuantity
+#from .dBQuantity import dBQuantity
 import copy
 from IPython import get_ipython
 
@@ -32,7 +34,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value, unit=None,  **kwargs):
+    def __init__(self, value, unit=None, islog=False):
         """There are two constructor calling patterns
 
         :param value: value
@@ -50,6 +52,7 @@ class PhysicalQuantity:
         self.format = ''  # display format for number to string conversion
         self.value = value
         self.unit = findunit(unit)
+        self.islog = False
 
     def __dir__(self):
         """ List attributes
@@ -111,6 +114,20 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError
 
+    def to_dB(self, dBtype=None):
+        from .dBQuantity import PhysicalQuantity_to_dBQuantity
+        return PhysicalQuantity_to_dBQuantity(self, dBtype)
+
+    @property
+    def dB(self):
+        """ Return dB converted value of unit, dropping current unit
+        :return: unitless dB value
+        """
+        from .dBQuantity import dBQuantity
+        if self.unit.is_power is True:
+            return dBQuantity(10*np.log10(self.value),'dB',islog=True, factor=10)
+        return dBQuantity(20*np.log10(self.value),'dB',islog=True, factor=20)
+
     def rint(self):
         """ Round elements to the nearest integer
 
@@ -138,11 +155,6 @@ class PhysicalQuantity:
         """ Return float number without units converted to base units 
         """
         return self.base.value
-
-    #def __array__(self):
-        #""" Return array with units converted to base units
-        #"""
-        #return np.array(self.base.value)
 
     def __repr__(self):
         """ Return string representation
