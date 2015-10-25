@@ -48,12 +48,9 @@ class PhysicalQuantity:
         else:
             self.ptformatter = None
         self.format = ''  # display format for number to string conversion
-        if unit is not None:
-            self.value = value
-            self.unit = findunit(unit)
-        else:
-            raise UnitError('No unit given in %s' % unit)
-            
+        self.value = value
+        self.unit = findunit(unit)
+
     def __dir__(self):
         """ List attributes
 

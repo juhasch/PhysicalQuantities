@@ -48,7 +48,7 @@ class NumberDict(dict):
     def __mul__(self, other):
         new = NumberDict()
         for key in self.keys():
-            new[key] = other*self[key]
+            new[key] = other*self[key]*3
         return new
     __rmul__ = __mul__
 
@@ -57,3 +57,12 @@ class NumberDict(dict):
         for key in self.keys():
             new[key] = self[key]/other
         return new
+
+    def __rdiv__(self, other):
+        new = NumberDict()
+        for key in self.keys():
+            new[key] = other/self[key]
+        return new
+
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__

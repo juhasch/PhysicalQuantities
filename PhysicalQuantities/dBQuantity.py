@@ -12,7 +12,7 @@ Example:
 import numpy as np
 import copy
 from IPython import get_ipython
-from PhysicalQuantities import PhysicalQuantity, PhysicalUnit, unit_table
+from PhysicalQuantities import PhysicalQuantity, PhysicalUnit, unit_table, UnitError
 
 __all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
 
@@ -94,19 +94,6 @@ def dB20(x):
     else:
         val = x
     return dBQuantity(20*np.log10(val),'dB',islog=True, factor=20)
-
-
-def isdbquantity(q):
-    """ Test if quantity is a dBQuantity class
-
-    :param q: test quantity
-    :return: True if dBQuantity class
-    """
-    return isinstance( q, dBQuantity)
-
-
-class UnitError(ValueError):
-    pass
 
 
 class dBQuantity:
@@ -238,8 +225,9 @@ class dBQuantity:
     def __setitem__(self, key, value):
         """ Set quantities if underlying object is array or list
 
-            >>> obj = np.linspace(0,10,10) * 1 dBm
-            >>> obj[0] = 0 dBm
+            >>> from PhysicalQuantities import q
+            >>> obj = np.linspace(0,10,10) * 1 q.dBm
+            >>> obj[0] = 0 q.dBm
         """
         if not isinstance(value, dBQuantity):
             raise AttributeError('Not a dBQuantity')
@@ -333,7 +321,7 @@ class dBQuantity:
         return self.__str__()
 
     def __gt__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             # dB values without scaling
             if self.unit == other.unit:
                 return self.value > other.value
@@ -345,7 +333,7 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __ge__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             if self.unit is other.unit:
                 return self.value >= other.value
             elif self.lin.base.unit is other.linbase.unit:
@@ -356,7 +344,7 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __lt__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value < other.value
             elif self.lin.base.unit is other.linbase.unit:
@@ -367,7 +355,7 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __le__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             if self.unit <= other.unit:
                 return self.value <= other.value
             elif self.lin.base.unit is other.linbase.unit:
@@ -378,7 +366,7 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __eq__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value == other.value
             elif self.lin.base.unit is other.linbase.unit:
@@ -389,7 +377,7 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __ne__(self, other):
-        if isdbquantity(other):
+        if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value != other.value
             elif self.lin.base.unit is other.linbase.unit:

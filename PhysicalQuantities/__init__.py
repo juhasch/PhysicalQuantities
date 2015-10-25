@@ -67,7 +67,8 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units, isdbquantity
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_units
+
 
 class _q:
     def __init__(self):
@@ -85,9 +86,9 @@ class _q:
             _Q = self.table[attr]
         except:
             raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(_Q):
+        if isinstance(_Q, PhysicalQuantity):
             return PhysicalQuantity(1, _Q)
-        elif isdbquantity(_Q):
+        elif isinstance(_Q, dBQuantity):
             return _Q
         else:
             raise AttributeError('Unknown unit %s' % attr)
@@ -96,10 +97,13 @@ q = _q()
 
 
 def isphysicalquantity(x):
-    """ Test if parameter is a PhysicalQuantity object
+    """ Test if parameter is a PhysicalQuantity or dBQuantity object
 
     :param x: parameter to test
     :return: true if x is a PhysicalQuantity
     :rtype: bool
+
+    >>> isphysicalquantity( PhysicalQuantity(1, 'V'))
+    True
     """
     return isinstance(x, PhysicalQuantity) or isinstance(x, dBQuantity)
