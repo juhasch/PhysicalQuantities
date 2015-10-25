@@ -44,13 +44,20 @@ line_match1 = re.compile(match1)
 line_match2 = re.compile(match2)
 line_match3 = re.compile(match3)
 
-# -- dB --
+# =========================================
+# dB
 # sort units after length for Regex matching
+# regex: number + space + dB-unit
+# valid: 0dBm, 0 dBm, 0. dBm
+# invalid: 0.dBm
+number = r'(-?[\d0-9-.]+)'
+
 _li = sorted(list(dB_units.keys()),key=len, reverse=True)
+
 _dB_unit_list = '('
-for x in _li[0:-1]:
-    _unit_list += x + '|'
-_dB_unit_list += _li[-1] + ')'
+for x in _li:
+    _dB_unit_list += x + '|'
+_dB_unit_list = _dB_unit_list.strip('|') + ')'
 
 # regex for finding units and quoted strings
 number = r'(?<!\w)(-?[\d0-9.]+[\d0-9eE-|x]*)'
@@ -77,7 +84,7 @@ def dB_replace_inline(ml):
 
     return dB_unit_match.sub(replace_unit, ml.group())
 
-# -- dB --
+# =========================================
 
 
 def replace_inline(m):

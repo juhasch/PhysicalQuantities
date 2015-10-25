@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.dBQuantity import dBQuantity, dB, dB10, dB20
+from PhysicalQuantities.dBQuantity import dBQuantity, dB10, dB20
 from PhysicalQuantities import PhysicalQuantity
 from numpy.testing import assert_almost_equal
 import numpy as np
@@ -82,9 +82,15 @@ def test_calculation():
 def test_numpy_dB():
     a = np.array([1, 2, 3])
     b = a * PhysicalQuantity(1, 'V')
-    c = dB(b)
-    assert_almost_equal(c.lin.value, a)
+    c = b.dB
+    assert_almost_equal(c.lin, a)
 
+
+def test_numpy_to_dB():
+    a = np.array([1, 2, 3])
+    b = a * PhysicalQuantity(1, 'V')
+    c = b.to_dB()
+    assert_almost_equal(c.lin.value, a)
 
 def test_add_dB():
     g1 = dBQuantity(1,'dB')
@@ -114,13 +120,13 @@ def test_dB20():
 
 def test_dB_1():
     a = PhysicalQuantity(10, 'V')
-    b = dB(a)
+    b = a.to_dB()
     assert b == dBQuantity(20, 'dBV')
 
 
 def test_dB_2():
     a = PhysicalQuantity(10, 'nV')
-    b = dB(a)
+    b = a.to_dB()
     assert b == dBQuantity(20, 'dBnV')
 
 
