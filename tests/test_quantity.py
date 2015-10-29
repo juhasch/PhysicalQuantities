@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities.Quantity import PhysicalQuantity
 from PhysicalQuantities import isphysicalquantity
+from PhysicalQuantities.Unit import UnitError
 from numpy.testing import assert_almost_equal
-
+import numpy as np
+from nose.tools import raises
+import operator
 
 def test_isphysicalquantity():
     g = PhysicalQuantity(1, 'mm')
     assert isphysicalquantity(g) is True
     assert isphysicalquantity(1) is False
 
+
+def test_rint():
+    g = PhysicalQuantity(1.1, 'mm')
+    assert g.rint() == PhysicalQuantity(1, 'mm')
+    
 
 def test_dir():
     g = PhysicalQuantity(1, 'mm')
@@ -90,6 +98,12 @@ def test_mul():
     a = PhysicalQuantity(2, 'mm')
     b = PhysicalQuantity(3, 'mm')
     assert a*b == PhysicalQuantity(6, 'mm**2')
+
+
+def test_mul_1():
+    a = PhysicalQuantity(2, 'mm')
+    b = PhysicalQuantity(3, '1/mm')
+    assert a*b == 6
 
 
 def test_div():
@@ -189,6 +203,11 @@ def test_to():
     assert a.to('mm') == b
 
 
+def test_to_1():
+    a = PhysicalQuantity(4000, 'mm/s')
+    assert a.to('m/s') == a
+
+
 def test_base():
     a = PhysicalQuantity(1, 'V')
     b = PhysicalQuantity(1, 'kg*m^2/A/s^3')
@@ -254,8 +273,106 @@ def test_round():
     assert b.value == 1
 
 
+def test_round_2():
+    a = np.array([1.2, 2.8]) * PhysicalQuantity(1, 'm')
+    b = round(a)
+    assert_almost_equal(b.value, np.array([1, 3]))
+
+
 def test_floordiv():
-    a = PhysicalQuantity(4.0, 'm')
-    b = PhysicalQuantity(2.0, 'm')
+    a = PhysicalQuantity(4, 'm')
+    b = PhysicalQuantity(2, 'm')
     c = a // b
     assert c == 2
+
+
+def test_floordiv_1():
+    a = PhysicalQuantity(4, 'm')
+    b = 2
+    c = a // b
+    assert c.value == 2
+
+
+def test_rfloordiv():
+    a = 4
+    b = PhysicalQuantity(2, 'm')
+    c = a // b
+    assert c.value == 2
+
+
+@raises(UnitError)
+def test_rpow():
+    a = PhysicalQuantity(4, 'm')
+    b = 2
+    b**a
+
+
+def test_pos():
+    a = PhysicalQuantity(4, 'm')
+    assert operator.pos(a) == a
+  
+  
+def test_pos_np():
+    a = np.array([1, 2]) * PhysicalQuantity(1, 'm')
+    assert np.any(operator.pos(a) == a)
+
+    
+def test_neg():
+    a = PhysicalQuantity(4, 'm')
+    assert operator.neg(a) == -a
+
+
+def test_neg_np():
+    a = np.array([1, 2]) * PhysicalQuantity(1, 'm')
+    assert np.any(operator.neg(a) == -a)
+
+
+def test_nonzero():
+    assert PhysicalQuantity(4, 'm').__nonzero__() == True
+    assert PhysicalQuantity(0, 'm').__nonzero__() == False
+
+
+def test_nonzero_np():
+    r = (np.array([3, 0, 1]) * PhysicalQuantity(1, 'm')).__nonzero__()
+    print(r)
+    assert np.any(r.value == np.array([0,2]))
+
+def test_is_angle():
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(1, 'deg')
+    c = PhysicalQuantity(1, 'rad')
+    assert a.unit.is_angle == False
+    assert b.unit.is_angle == True
+    assert c.unit.is_angle == True
+
+
+def test_markdown():
+    a = PhysicalQuantity(1, 'm')
+    assert a.unit.markdown == '$\\text{m}$'
+
+
+def test_name():
+    a = PhysicalQuantity(1, 'm')
+    assert a.unit.name == 'm'
+
+
+def test_deg():
+    a = PhysicalQuantity(30, 'deg')
+    assert np.sin(a) == np.sin(30/180*np.pi)
+    assert np.cos(a) == np.cos(30/180*np.pi)
+
+
+
+def test_sin():
+    a = PhysicalQuantity(0, 'deg')
+    assert a.sin() == 0
+
+
+def test_cos():
+    a = PhysicalQuantity(0, 'deg')
+    assert a.cos() == 1
+
+    
+def test_tan():
+    a = PhysicalQuantity(0, 'deg')
+    assert a.tan() == 0

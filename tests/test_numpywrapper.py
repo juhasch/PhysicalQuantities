@@ -32,5 +32,15 @@ def test_tophysicalquantity():
     b = nw.tophysicalquantity(a)
     assert_almost_equal(b.value, np.array([1, 2000, 3]))
 
-#def test_argsort(arr):
-#def test_insert(array, obj, values):
+def test_argsort():
+    x = np.array([3, 1, 2])
+    y = np.argsort(x)
+    _x = x * PhysicalQuantity(1, 'm^2')
+    _y = nw.argsort(_x)
+    assert_almost_equal( _y, y)
+
+def test_insert():
+    x = np.array([1, 2, 3]) * PhysicalQuantity(1, 'm^2')
+    y = nw.insert( x, 0, PhysicalQuantity(4, 'm^2'))
+    assert_almost_equal( y.value, np.array([4, 1, 2, 3]))
+    

@@ -22,11 +22,6 @@ class NumberDict(dict):
         except KeyError:
             return 0
 
-    def __coerce__(self, other):
-        if isinstance(other, dict):
-            other = NumberDict(other)
-        return self, other
-
     def __add__(self, other):
         sum_dict = NumberDict()
         for key in self.keys():
@@ -48,8 +43,9 @@ class NumberDict(dict):
     def __mul__(self, other):
         new = NumberDict()
         for key in self.keys():
-            new[key] = other*self[key]*3
+            new[key] = other*self[key]
         return new
+
     __rmul__ = __mul__
 
     def __div__(self, other):
@@ -66,3 +62,15 @@ class NumberDict(dict):
 
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
+
+    def __floordiv__(self, other):
+        new = NumberDict()
+        for key in self.keys():
+            new[key] = self[key] // other
+        return new
+
+    def __rfloordiv__(self, other):
+        new = NumberDict()
+        for key in self.keys():
+            new[key] = other // self[key]
+        return new
