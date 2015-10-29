@@ -9,6 +9,7 @@ def test_basic_properties():
     assert g.value == 0.1
     assert g.unit == 'dBm'
     assert g.factor == 10
+    assert g.z0 == PhysicalQuantity(50, 'Ohm')
     assert_almost_equal(g.lin.value, 1.023292992280754)
 
 

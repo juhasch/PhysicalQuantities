@@ -2,7 +2,7 @@
 import numpy as np
 from .Quantity import *
 from .Unit import UnitError
-from . import isphysicalquantity
+from . import isphysicalquantity, q
 
 __all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 
@@ -95,7 +95,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return array * PhysicalQuantity(1, unit)
 
 
-def tophysicalquantity(arr):
+def tophysicalquantity(arr, unit=None):
     """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
 
     :param arr: input array
@@ -106,22 +106,40 @@ def tophysicalquantity(arr):
     >>> b
     [ 1 2000 3] mm
     """
-    if isphysicalquantity(arr) and type(arr) is list:
-        newarr = np.array(arr)
-        return newarr * PhysicalQuantity(1, arr.unit)
-    
-    if not type(arr) is list:
-        raise TypeError('%s is not a list or array' % arr)
+    if isphysicalquantity(arr) and type(arr.value) is np.ndarray:
+        return arr
+    if isphysicalquantity(arr) and type(arr.value) is list:
+        newarr = np.array(arr.value)
+        return newarr * q[arr.unit]
+    if isphysicalquantity(arr):
+        raise TypeError('%s is not a valid list or array' % type(arr))
+        
     for i, _a in enumerate(arr):
-        if not isphysicalquantity(_a):
-            raise UnitError('Element %d is not a physical quantity' % i)
-    unit = arr[0].unit
-    valuetype = type(arr[0].value)
+        if not isphysicalquantity(_a) and unit == None:
+            raise UnitError('Element %d is not a physical quantity: %s' % (i,_a))
+
+    if unit is None:
+        unit = arr[0].unit
+    if isphysicalquantity(arr[0]):
+        valuetype = type(arr[0].value)
+    else:
+        valuetype = type(arr[0])
+
     newarr = np.zeros_like(arr, dtype=valuetype )
     for i, _a in enumerate(arr):
-        try:
-            _a.to(unit)
-        except UnitError:
-            raise UnitError('Element %d is not same unit as others' % i)
-        newarr[i] = _a.to(unit).value
-    return newarr * PhysicalQuantity(1, unit)
+        if isphysicalquantity(_a):
+            try:
+                newarr[i] = _a.to(unit).value
+            except UnitError:
+                raise UnitError('Element %d is not same unit as others' % i)
+        else:
+                newarr[i] = _a
+    print("U:", unit)
+    return newarr * q[unit]
+
+def argsort(arr):
+    return np.argsort(arr.value)
+#def any(arr):
+#    return np.any(arr.value)
+def insert(array, obj, values):
+    return np.insert(array.value, obj, values.value) * q[array.unit]
