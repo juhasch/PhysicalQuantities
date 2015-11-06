@@ -67,31 +67,35 @@ del unit_table['pi']
 addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
 addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
 
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_units
-
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
 
 class _q:
     def __init__(self):
         self.table = {}
-        for key in dB_units:
+        for key in dB_unit_table:
             self.table[key] = dBQuantity(1, key)
         for key in unit_table:
-            self.table[key] = unit_table[key]  # for some reason directly using a PhysicalQuantity bombs
-            
+            self.table[key] = PhysicalQuantity(1, unit_table[key])  # for some reason directly using a PhysicalQuantity bombs
+
     def __dir__(self):
-        return self.table.keys
+        return self.table.keys()
+
+    def __getitem__(self, key):
+        try:
+            if type(key) is str:
+                _Q = self.table[key]
+            else:
+                _Q = self.table[key.name]                
+        except:
+            raise AttributeError('Unit %s not found' % key)
+        return _Q
     
     def __getattr__(self, attr):
         try:
             _Q = self.table[attr]
         except:
             raise AttributeError('Unit %s not found' % attr)
-        if isinstance(_Q, PhysicalQuantity):
-            return PhysicalQuantity(1, _Q)
-        elif isinstance(_Q, dBQuantity):
-            return _Q
-        else:
-            raise AttributeError('Unknown unit %s' % attr)
+        return _Q
 
 q = _q()
 

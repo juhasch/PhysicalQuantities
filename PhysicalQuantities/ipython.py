@@ -7,7 +7,7 @@
 import re
 from IPython.core.inputtransformer import StatelessInputTransformer
 from PhysicalQuantities import PhysicalQuantity, dBQuantity
-from PhysicalQuantities.dBQuantity import dB_units
+from PhysicalQuantities.dBQuantity import dB_unit_table
 from PhysicalQuantities import unit_table
 
 
@@ -52,7 +52,7 @@ line_match3 = re.compile(match3)
 # invalid: 0.dBm
 number = r'(-?[\d0-9-.]+)'
 
-_li = sorted(list(dB_units.keys()),key=len, reverse=True)
+_li = sorted(list(dB_unit_table.keys()),key=len, reverse=True)
 
 _dB_unit_list = '('
 for x in _li:

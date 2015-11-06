@@ -3,8 +3,7 @@
 
 Example:
     >>> from PhysicalQuantities.dBQuantity import dBQuantity
-    >>> a = dBQuantity(1,'dBm')
-    >>> print(a)
+    >>> dBQuantity(1,'dBm')
     1 dBm
 
 """
@@ -14,26 +13,47 @@ import copy
 from IPython import get_ipython
 from . import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
 
-__all__ = ['dB', 'dB10', 'dB20', 'dBQuantity', 'dB_units']
+__all__ = ['dB10', 'dB20', 'PhysicalQuantity_to_dBQuantity', 'dBQuantity', 'dB_unit_table']
+
+dB_unit_table = {}
 
 
-_m2unit = PhysicalQuantity(1,'m**2').unit
+class dBUnit:
+    def __init__(self, name, unit, offset=0):
+        """ Type for dB units
+        
+        name: str name of dB unit
+        unit: PhysicalUnit of linear representation
+        offset: dB offset, used for dBd vs. dBi
+        """
+        self.name = name
+        self.unit = unit
+        self.offset = offset
+        dB_unit_table[name] = self
 
-# list of tuples: (base unit, correction factor to linear unit, conversion factor to linear)
-dB_units = {'dB':   (None, 0),
-            'dBm':  (unit_table['mW'], 0),  # Power in Watt
-            'dBW':  (unit_table['W'], 0),
-            'dBnV': (unit_table['nV'], 0),  # Voltage
-            'dBuV': (unit_table['uV'], 0),
-            'dBmV': (unit_table['mV'], 0),
-            'dBV':  (unit_table['V'], 0),
-            'dBnA': (unit_table['nA'], 0),  # Ampere
-            'dBuA': (unit_table['uA'], 20),
-            'dBmA': (unit_table['mA'], 0),
-            'dBA':  (unit_table['A'], 0),
-            'dBsm': (_m2unit, 0),  # dB square meters
-            'dBi':  (None, 0),       # Antenna gain
-            'dBd':  (None, 2.15)}    # Antenna gain
+    @property
+    def __name__(self):
+        return self.name
+
+
+def _add_dB_units(name, unit, offset=0):
+    dB_unit_table[name] = dBUnit(name, unit, offset)
+
+_add_dB_units('dB', None)
+_add_dB_units('dBm', unit_table['mW'])
+_add_dB_units('dBW', unit_table['W'])
+_add_dB_units('dBnV', unit_table['nV'])
+_add_dB_units('dBuV', unit_table['uV'])
+_add_dB_units('dBmV', unit_table['mV'])
+_add_dB_units('dBV', unit_table['V'])
+_add_dB_units('dBnA', unit_table['nA'])
+_add_dB_units('dBuA', unit_table['uA'])
+_add_dB_units('dBmA', unit_table['mA'])
+_add_dB_units('dBA', unit_table['A'])
+_add_dB_units('dBsm', PhysicalQuantity(1,'m**2').unit)
+_add_dB_units('dBd', None, offset=2.15)
+_add_dB_units('dBi', None)
+_add_dB_units('dBc', None)
 
 
 def PhysicalQuantity_to_dBQuantity(x, dBunit):
@@ -52,26 +72,25 @@ def PhysicalQuantity_to_dBQuantity(x, dBunit):
     if isinstance(x, PhysicalQuantity):
         dbbase = None
         value = None
-        if dBunit is not None and dB_units[dBunit] is not None:
-            if dB_units[dBunit][0].baseunit.name == x.unit.baseunit.name:
+        if dBunit is not None and dB_unit_table[dBunit] is not None:
+            if dB_unit_table[dBunit].unit.baseunit.name == x.unit.baseunit.name:
                     dbbase = dBunit
-                    value = x.to(dB_units[dBunit][0].name).value
-                    _unit = dB_units[dBunit][0]
+                    value = x.to(dB_unit_table[dBunit].unit.name).value
+                    _unit = dB_unit_table[dBunit].unit
         else:
-            for key in dB_units:
-                if dB_units[key][0] is not None and dB_units[key][0].name == x.unit.baseunit.name:
-                    dbbase = key
-                    value = x.base.value
-                elif dB_units[key][0] is not None and dB_units[key][0].name == x.unit.name:
+            for key in dB_unit_table:
+                if dB_unit_table[key].unit is not None and dB_unit_table[key].unit.name == x.unit.name:
                     dbbase = key
                     value = x.value
                     break
+                elif dB_unit_table[key].unit is not None and dB_unit_table[key].unit.baseunit.name == x.unit.baseunit.name:
+                    dbbase = key
+                    value = x.base.value
             _unit = x.unit
         if dbbase is None:
             raise UnitError('Cannot handle unit %s' % x.unit)
         factor = 20 - 10 * _unit.is_power
         dbvalue = factor * np.log10(value)
-        print(dbbase, dbvalue)
         return dBQuantity(dbvalue, dbbase ,islog=True, factor=factor)
     raise UnitError('Cannot handle unitless quantity %s' % x)
 
@@ -119,7 +138,7 @@ class dBQuantity:
         islog = True
 
         try:
-            self.sourceunit = dB_units[unit][0]
+            self.sourceunit = dB_unit_table[unit].unit
         except KeyError:
             self.sourceunit = None
 
@@ -141,12 +160,12 @@ class dBQuantity:
                 self.z0 = val
             if key is 'factor':
                 self.factor = val
-        if dB_units[unit]:
+        if dB_unit_table[unit]:
             self.unit = unit
             if islog is True:
                 self.value = value
             else:
-                self.value = self.factor * np.log10(value) - dB_units[self.unit][1]
+                self.value = self.factor * np.log10(value) - dB_unit_table[self.unit].offset
         else:
             raise UnitError('Unknown unit %s' % unit)
 
@@ -162,8 +181,8 @@ class dBQuantity:
                 for key in unit_table:
                     if unit_table[key].baseunit is base:
                         x.append(key)
-                for key in dB_units:
-                    unit = dB_units[key][0]
+                for key in dB_unit_table:
+                    unit = dB_unit_table[key]
                     if isinstance(unit, PhysicalUnit):
                         if unit.baseunit is base:
                             x.append(key)
@@ -176,7 +195,7 @@ class dBQuantity:
         dropunit = (attr[-1] == '_')
         unit = attr.strip('_')
 
-        isdbunit = unit in dB_units.keys()
+        isdbunit = unit in dB_unit_table.keys()
 
         if not isdbunit:
             if dropunit is False:
@@ -187,9 +206,9 @@ class dBQuantity:
         # convert to different scaling
         if self.unit is unit:
             return self
-        elif unit in dB_units.keys():
+        elif unit in dB_unit_table.keys():
             # convert to same base unit, only scaling
-            scaling = self.factor * np.log10( dB_units[self.unit][0].factor / dB_units[unit][0].factor)
+            scaling = self.factor * np.log10( dB_unit_table[self.unit].unit.factor / dB_unit_table[unit].unit.factor)
             value = self.value + scaling
             if dropunit is False:
                 return self.__class__(value, unit, islog=True)
@@ -204,16 +223,16 @@ class dBQuantity:
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return len(self.value)
-        raise TypeError
+        raise TypeError('Not a list or array: %s', self)
 
     def to(self, unit):
         """ Convert to differently scaled dB units
         :param unit:
         :return:
         """
-        if unit in dB_units.keys():
+        if unit in dB_unit_table.keys():
             # convert to same base unit, only scaling
-            scaling = self.factor * np.log10( dB_units[self.unit][0].factor / dB_units[unit][0].factor)
+            scaling = self.factor * np.log10( dB_unit_table[self.unit].unit.factor / dB_unit_table[unit].unit.factor)
             value = self.value + scaling
             return self.__class__(value, unit, islog=True)
 
@@ -229,7 +248,7 @@ class dBQuantity:
         """
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
             return self.__class__(self.value[key], self.unit)
-        raise AttributeError        
+        raise AttributeError('Not a list or array: %s' % self)        
 
     def __setitem__(self, key, value):
         """ Set quantities if underlying object is array or list
@@ -252,25 +271,42 @@ class dBQuantity:
 
     @property
     def lin(self):
+        """Return linear value of dBQuantity
+        :return: linear value
+        
+        >>> a = 0 dBm
+        >>> a.lin
+        1 mW
+        >>> a = dB10(8)
+        18.06 dB
+        >>> a.lin
+        8.00
         """
-        :return: linear value or unit
-        """
-        linunit = dB_units[self.unit][0]
         if self.sourceunit is not None:
-            return PhysicalQuantity(self.__float__(), linunit.name)
-        if self.factor == 0:
-            raise UnitError('Cannot convert dB unit with unknown factor to linear')
-        val = self.value / self.factor
-
-        return pow(10, val)
+            return PhysicalQuantity(self.__float__(), self.sourceunit)
+        return self.__float__()
 
     def __add__(self, other):
+        """ Add two dBQuantity values
+        Values without physical units are simply added
+        For physical units, the linear values are added and converted back to dB.
+        
+        :parm other: Value to be added
+        
+        >>> 1 dB + 2 dB
+        3 dB
+        >>> 1 dBm + 2 dB
+        3 dBm
+        >>> 1 dBm + 1 dBm
+        4.01 dBm
+        """
+        
         if (self.unit is 'dB') or (other.unit is 'dB'):
             # easy unitless adding
             value = self.value + other.value
             unit = other.unit if self.unit is 'dB' else self.unit
             return self.__class__(value, unit, islog=True)
-        elif dB_units[self.unit][0] is dB_units[other.unit][0]:
+        elif dB_unit_table[self.unit] is dB_unit_table[other.unit]:
             # same unit adding
             val1 = float(self)
             val2 = float(other)
@@ -285,7 +321,7 @@ class dBQuantity:
             # easy unitless adding
             value = self.value - other.value
             return self.__class__(value, self.unit, islog=True)
-        elif dB_units[self.unit][0] is dB_units[other.unit][0]:
+        elif dB_unit_table[self.unit] is dB_unit_table[other.unit]:
             # same unit subtraction
             val1 = float(self)
             val2 = float(other)
@@ -304,21 +340,80 @@ class dBQuantity:
     __rmul__ = __mul__
 
     def __div__(self, other):
+        """ Divide a dB value by another factor
+        Only valid if the dB value is not associated whith a physical quantity
+        
+        :param other: dBQuantity
+        :return: divided dBQuantity
+        
+        >>> 3 dB / 4
+        """
         if self.unit is 'dB' and not hasattr(other,'unit'):
             # dB without physical dimension can be divided by a factor
             value = self.value / other
             return self.__class__(value, self.unit, islog=True)
+        raise UnitError('Cannot divide dB units')
 
-    __rdiv__ = __div__
 
+    def __rdiv__(self, other):
+        """ Divide a dB value by another factor
+        Only valid if the dB value is not associated whith a physical quantity
+        
+        :param other: dBQuantity
+        :return: divided dBQuantity
+        
+        >>> 3 dB / 4
+        """
+        if self.unit is 'dB' and not hasattr(other,'unit'):
+            # dB without physical dimension can be divided by a factor
+            value = other / self.value
+            return self.__class__(value, self.unit, islog=True)
+
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
+    
+    def __floordiv__(self, other):
+        """ Divide a dB value by another factor
+        Only valid if the dB value is not associated whith a physical quantity
+        
+        :param other: dBQuantity
+        :return: divided dBQuantity
+        
+        >>> 3 dB / 4
+        """
+        if self.unit is 'dB' and not hasattr(other,'unit'):
+            # dB without physical dimension can be divided by a factor
+            value = self.value // other
+            return self.__class__(value, self.unit, islog=True)
+        raise UnitError('Cannot divide dB units')
+            
+
+    def __rfloordiv__(self, other):
+        """ Divide a dB value by another factor
+        Only valid if the dB value is not associated whith a physical quantity
+        
+        :param other: dBQuantity
+        :return: divided dBQuantity
+        
+        >>> 3 dB / 4
+        """
+        if self.unit is 'dB' and not hasattr(other,'unit'):
+            # dB without physical dimension can be divided by a factor
+            value = other // self.value
+            return self.__class__(value, self.unit, islog=True)
+        
     def __neg__(self):
+        """ Return negative value """
         return self.__class__(-self.value, self.unit, islog=True)
     
     def __float__(self):
         # return linear value in base unit
-        dbw = self.value + dB_units[self.unit][1]
-        return 10**(dbw/self.factor)
+        if self.factor == 0:
+            raise UnitError('Cannot convert dB unit with unknown factor to linear')
 
+        val = self.value / self.factor
+        return pow(10, val)
+    
     def __str__(self):
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
@@ -330,11 +425,17 @@ class dBQuantity:
         return self.__str__()
 
     def __gt__(self, other):
+        """ Test if quantity is greater than other
+
+            :param other: quantity to compare with
+            :return: true if quantity is greater than other
+            :rtype: bool
+        """        
         if isinstance(other, dBQuantity):
             # dB values without scaling
             if self.unit == other.unit:
                 return self.value > other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value > other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -342,10 +443,16 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __ge__(self, other):
+        """ Test if quantity is greater or equal than other
+
+            :param other: quantity to compare with
+            :return: true if quantity is greater or equal than other
+            :rtype: bool
+        """
         if isinstance(other, dBQuantity):
             if self.unit is other.unit:
                 return self.value >= other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value >= other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -353,10 +460,16 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __lt__(self, other):
+        """ Test if quantity is less than other
+
+            :param other: quantity to compare with
+            :return: true if quantity is less than other
+            :rtype: bool
+        """
         if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value < other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value < other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -364,10 +477,16 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __le__(self, other):
+        """ Test if quantity is less or equal than other
+
+            :param other: quantity to compare with
+            :return: true if quantity is less or equal than other
+            :rtype: bool
+        """
         if isinstance(other, dBQuantity):
             if self.unit <= other.unit:
                 return self.value <= other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value <= other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -375,10 +494,16 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __eq__(self, other):
+        """ Test if two quantities are equal
+
+            :param other: quantity to compare with
+            :return: true if quantities are equal
+            :rtype: bool
+        """
         if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value == other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value == other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
@@ -386,10 +511,16 @@ class dBQuantity:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
     def __ne__(self, other):
+        """ Test if two quantities are not equal
+
+            :param other: quantity to compare with
+            :return: true if quantities are not equal
+            :rtype: bool
+        """
         if isinstance(other, dBQuantity):
             if self.unit == other.unit:
                 return self.value != other.value
-            elif self.lin.base.unit is other.linbase.unit:
+            elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value != other.lin.base.value
             else:
                 raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
