@@ -450,7 +450,7 @@ class PhysicalUnit:
         (1000.0, 0.0)
         """
         if self.powers != other.powers:
-            raise UnitError('Incompatible unit for conversion %s' % other.unit)
+            raise UnitError('Incompatible unit for conversion from %s to %s' % (self, other))
 
         # let (s1,d1) be the conversion tuple from 'self' to base units
         #   (ie. (x+d1)*s1 converts a value x from 'self' to base units,

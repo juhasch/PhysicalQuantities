@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.Unit import isphysicalunit
+from PhysicalQuantities.Unit import isphysicalunit, UnitError
 import numpy as np
+from nose.tools import raises
 
 
 def test_str():
@@ -62,9 +63,15 @@ def test_conversion_tuple_to():
     assert a.unit.conversion_tuple_to(b.unit) == (1000.0, 0.0)
 
 
+@raises(UnitError)
+def test_conversion_tuple_to_2():
+    # raises UnitError
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(1, 's')
+    assert a.unit.conversion_tuple_to(b.unit) == (1000.0, 0.0)
+
+
 def test_isphysicalunit():
     a = PhysicalQuantity(1, 'm')
     assert isphysicalunit(a.unit) == True
     assert isphysicalunit(1) == False
-
-    
