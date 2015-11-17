@@ -193,7 +193,7 @@ def insert(array, obj, values):
 
     """
     if isphysicalquantity(array):
-        return np.insert(array.value, obj, values.value) * PhysicalQuantity(1, array.unit)
+        return np.insert(array.value, obj, values.value) * q[array.unit]
     else:
         return np.insert(array, obj, values)
 
