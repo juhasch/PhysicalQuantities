@@ -5,6 +5,11 @@ from numpy.testing import assert_almost_equal
 import numpy as np
 
 
+def test_max():
+    a = np.array([1.3, 2.5]) * PhysicalQuantity(1, 'mm')
+    assert_almost_equal(nw.max(a).value, 2.5)
+
+
 def test_floor():
     a = np.array([1.3, 2.5]) * PhysicalQuantity(1, 'mm')
     assert_almost_equal(nw.floor(a).value, np.array([1, 2]))
@@ -40,7 +45,7 @@ def test_argsort():
     assert_almost_equal( _y, y)
 
 def test_insert():
-    x = np.array([1, 2, 3]) * PhysicalQuantity(1, 'm^2')
-    y = nw.insert( x, 0, PhysicalQuantity(4, 'm^2'))
+    x = np.array([1, 2, 3]) * PhysicalQuantity(1, 'm')
+    y = nw.insert( x, 0, PhysicalQuantity(4, 'm'))
     assert_almost_equal( y.value, np.array([4, 1, 2, 3]))
     
