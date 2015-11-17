@@ -77,7 +77,7 @@ class PhysicalQuantity:
     
     def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
-            If a '_' is appended, drop unit (after rescaling) and return value only.
+            If a '_' is appended, drop unit (possibly after rescaling) and return value only.
 
         Parameters
         ----------
