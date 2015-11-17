@@ -7,6 +7,18 @@ from . import isphysicalquantity, q
 __all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 
 
+def max(q):
+    """Return the maximum of an array or maximum along an axis.
+
+    Parameters
+    ----------
+    q : array_like
+        Input data.
+    """
+    value = np.max(q.value)
+    return q.__class__(value, q.unit)
+
+    
 def floor(q):
     """ Return the floor of the input, element-wise.
 
