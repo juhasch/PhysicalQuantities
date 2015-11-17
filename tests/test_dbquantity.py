@@ -324,3 +324,17 @@ def test_rfloordiv():
     b = dBQuantity(2, 'dB')
     c = a // b
     assert c.value == 2
+
+def test_getattr():
+    a = dBQuantity(0, 'dBm')
+    b = dBQuantity(-30, 'dBW')
+    assert a.dBm == a
+    assert a.dBW == b
+    assert a.dBm_ == 0
+    assert_almost_equal(a.dBm_, b.dBm_)
+    assert_almost_equal(a.dBW_, -30)
+
+
+def test_getattr2():
+    a = dBQuantity(3, 'dB')
+    assert a._ == 3
