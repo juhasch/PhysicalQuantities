@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.Quantity import PhysicalQuantity
+from PhysicalQuantities.Quantity import PhysicalQuantity, UnitError
 import PhysicalQuantities.numpywrapper as nw
 from numpy.testing import assert_almost_equal
 import numpy as np
+from nose.tools import raises
 
 
 def test_max():
@@ -32,10 +33,34 @@ def test_linspace():
     assert_almost_equal(a.value, b)
 
 
-def test_tophysicalquantity():
+def test_tophysicalquantity_1():
+    # cpmversion of PQ array elements to PQ array
     a = [ PhysicalQuantity(1, 'mm'), PhysicalQuantity(2, 'm'), PhysicalQuantity(3, 'mm')]
     b = nw.tophysicalquantity(a)
     assert_almost_equal(b.value, np.array([1, 2000, 3]))
+
+
+@raises(UnitError)
+def test_tophysicalquantity_2():
+    # single value
+    a = 1
+    b = nw.tophysicalquantity(a)
+    assert a == b
+
+    
+def test_tophysicalquantity_3():
+    # single value
+    a = 1
+    b = nw.tophysicalquantity(a, 'Hz')
+    assert a == b.value
+
+
+def test_tophysicalquantity_4():
+    # single value
+    a = PhysicalQuantity(2, 'Hz')
+    b = nw.tophysicalquantity(a)
+    assert a == b
+
 
 def test_argsort():
     x = np.array([3, 1, 2])
