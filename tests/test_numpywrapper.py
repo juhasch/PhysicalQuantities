@@ -34,7 +34,7 @@ def test_linspace():
 
 
 def test_tophysicalquantity_1():
-    # cpmversion of PQ array elements to PQ array
+    # conversion of PQ array elements to PQ array
     a = [ PhysicalQuantity(1, 'mm'), PhysicalQuantity(2, 'm'), PhysicalQuantity(3, 'mm')]
     b = nw.tophysicalquantity(a)
     assert_almost_equal(b.value, np.array([1, 2000, 3]))
@@ -60,6 +60,14 @@ def test_tophysicalquantity_4():
     a = PhysicalQuantity(2, 'Hz')
     b = nw.tophysicalquantity(a)
     assert a == b
+
+
+def test_tophysicalquantity_5():
+    # already an array
+    a = [ 1, 2, 3] * PhysicalQuantity(1, 'mm')
+    b = nw.tophysicalquantity(a)
+    assert_almost_equal(a.value, b.value)
+    assert a.unit == b.unit
 
 
 def test_argsort():
