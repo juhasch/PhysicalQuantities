@@ -15,8 +15,10 @@ def max(q):
     q : array_like
         Input data.
     """
-    value = np.max(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.max(q.value), q.unit)
+    else:
+        return np.max(q)
 
     
 def floor(q):
@@ -29,8 +31,10 @@ def floor(q):
     >>> nw.floor(1.3 mm)
     1 mm
     """
-    value = np.floor(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.floor(q.value), q.unit)
+    else:
+        return np.floor(q)
 
 
 def ceil(q):
@@ -45,8 +49,10 @@ def ceil(q):
     >>> nw.ceil(1.3 mm)
     2.0 mm
     """
-    value = np.ceil(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.ceil(q.value), q.unit)
+    else:
+        return np.ceil(q)
 
 
 def sqrt(q):
@@ -59,8 +65,11 @@ def sqrt(q):
     >>> nw.sqrt(4 m**2)
     2.0 m
     """
-    value = np.sqrt(q.value)
-    return q.__class__(value, q.unit**0.5)
+    if isphysicalquantity(q):
+        value = np.sqrt(q.value)
+        return q.__class__(value, q.unit**0.5)
+    else:
+        return np.sqrt(q)
 
 
 def linspace(start, stop, num=50,  endpoint=True, retstep=False):
@@ -123,8 +132,13 @@ def tophysicalquantity(arr, unit=None):
     if isphysicalquantity(arr) and type(arr.value) is list:
         newarr = np.array(arr.value)
         return newarr * q[arr.unit]
-    if isphysicalquantity(arr):
-        raise TypeError('%s is not a valid list or array' % type(arr))
+
+    if isphysicalquantity(arr) and type(arr.value) is not (list or nd.array):
+        return arr
+    if not isphysicalquantity(arr) and unit is not None:
+#        return arr
+        #raise TypeError('%s is not a valid list or array' % type(arr))
+        return PhysicalQuantity(arr, unit)
         
     for i, _a in enumerate(arr):
         if not isphysicalquantity(_a) and unit == None:
