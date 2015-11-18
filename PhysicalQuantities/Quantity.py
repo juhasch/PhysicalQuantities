@@ -77,7 +77,7 @@ class PhysicalQuantity:
     
     def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
-            If a '_' is appended, drop unit after rescaling and return value only.
+            If a '_' is appended, drop unit (possibly after rescaling) and return value only.
 
         Parameters
         ----------
@@ -88,9 +88,19 @@ class PhysicalQuantity:
         ------
         AttributeError
             If unit is not a valid attribute
+            
+        >>> a = 2 mm
+        >>> a._
+        2
+        >>> a.mm_
+        2
+        >>> a.m_
+        0.002
         """
         dropunit = (attr[-1] is '_')
         attr = attr.strip('_')
+        if attr == '' and dropunit is True:
+            return self.value
         try:
             attrunit = unit_table[attr]
         except:

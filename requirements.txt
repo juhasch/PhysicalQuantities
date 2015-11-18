@@ -1,4 +1,3 @@
-PhysicalQuantities
 six
 numpy
 IPython >= 2.0

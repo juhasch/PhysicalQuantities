@@ -36,6 +36,11 @@ def test_getattr():
     assert_almost_equal(a.m_, 1e-3)
 
 
+def test_getattr2():
+    a = PhysicalQuantity(3, 'mm')
+    assert a._ == 3
+
+
 def test_decorators():
     """ Test .base and .value decorators """
     g=PhysicalQuantity(98, 'mm')/ PhysicalQuantity(1, 's**2')
@@ -360,7 +365,6 @@ def test_deg():
     a = PhysicalQuantity(30, 'deg')
     assert np.sin(a) == np.sin(30/180*np.pi)
     assert np.cos(a) == np.cos(30/180*np.pi)
-
 
 
 def test_sin():

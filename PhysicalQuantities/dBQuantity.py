@@ -190,10 +190,30 @@ class dBQuantity:
     
     def __getattr__(self, attr):
         """ Convert to different scaling in the same unit.
-            If a '_' is appended, drop unit after rescaling and return value only.
+            If a '_' is appended, drop unit (possibly after rescaling) and return value only.
+
+        Parameters
+        ----------
+        attr : string
+            attribute name
+            
+        Raises
+        ------
+        UnitError
+            If no conversion between units is possible
+
+        >>> a = 2 mm
+        >>> a._
+        2
+        >>> a.mm_
+        2
+        >>> a.m_
+        0.002
         """
         dropunit = (attr[-1] == '_')
         unit = attr.strip('_')
+        if unit == '' and dropunit is True:
+            return self.value
 
         isdbunit = unit in dB_unit_table.keys()
 
