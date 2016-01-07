@@ -15,8 +15,10 @@ def max(q):
     q : array_like
         Input data.
     """
-    value = np.max(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.max(q.value), q.unit)
+    else:
+        return np.max(q)
 
     
 def floor(q):
@@ -29,8 +31,10 @@ def floor(q):
     >>> nw.floor(1.3 mm)
     1 mm
     """
-    value = np.floor(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.floor(q.value), q.unit)
+    else:
+        return np.floor(q)
 
 
 def ceil(q):
@@ -45,8 +49,10 @@ def ceil(q):
     >>> nw.ceil(1.3 mm)
     2.0 mm
     """
-    value = np.ceil(q.value)
-    return q.__class__(value, q.unit)
+    if isphysicalquantity(q):
+        return q.__class__(np.ceil(q.value), q.unit)
+    else:
+        return np.ceil(q)
 
 
 def sqrt(q):
@@ -59,8 +65,11 @@ def sqrt(q):
     >>> nw.sqrt(4 m**2)
     2.0 m
     """
-    value = np.sqrt(q.value)
-    return q.__class__(value, q.unit**0.5)
+    if isphysicalquantity(q):
+        value = np.sqrt(q.value)
+        return q.__class__(value, q.unit**0.5)
+    else:
+        return np.sqrt(q)
 
 
 def linspace(start, stop, num=50,  endpoint=True, retstep=False):
@@ -84,7 +93,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
 
     if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
         if start.base.unit != stop.base.unit:
-            raise UnitError("Cannot match units")
+            raise UnitError("Cannot match units %s and %s" % (start.units, stop.units))
 
     unit = None
     if isinstance(start, PhysicalQuantity):
@@ -102,9 +111,9 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     array = np.linspace(start_value, stop_value, num,  endpoint, retstep)
 
     if retstep:
-        return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
+        return array[0] * q[unit], array[1] * q[unit]
     else:
-        return array * PhysicalQuantity(1, unit)
+        return array * q[unit]
 
 
 def tophysicalquantity(arr, unit=None):
@@ -118,14 +127,25 @@ def tophysicalquantity(arr, unit=None):
     >>> b
     [ 1 2000 3] mm
     """
-    if isphysicalquantity(arr) and type(arr.value) is np.ndarray:
-        return arr
-    if isphysicalquantity(arr) and type(arr.value) is list:
-        newarr = np.array(arr.value)
-        return newarr * q[arr.unit]
     if isphysicalquantity(arr):
-        raise TypeError('%s is not a valid list or array' % type(arr))
-        
+        if type(arr.value) is np.ndarray:
+            # we are already a PQ array
+            return arr
+        if type(arr.value) is list:
+            # convert list to array
+            newarr = np.array(arr.value)
+            return newarr * q[arr.unit]
+        if type(arr.value) is not (list or nd.array):
+            # do nothing for single PQ values
+            return arr
+    else:
+        if type(arr) is not (list or nd.array):
+            if unit is not None:
+                # convert single values to PQ if unit is specified
+                return arr * q[unit]
+            else:
+                raise UnitError('No unit given for value')
+
     for i, _a in enumerate(arr):
         if not isphysicalquantity(_a) and unit == None:
             raise UnitError('Element %d is not a physical quantity: %s' % (i,_a))
