@@ -1,0 +1,16 @@
+language: python
+sudo: false
+python:
+    - 3.5
+    - 3.4
+    - 3.3
+    - 2.7
+sudo: false
+install:
+    - pip install ipython nose requests codecov
+    - python setup.py develop
+script:
+    - python runtests.py
+
+after_success:
+  - codecov
