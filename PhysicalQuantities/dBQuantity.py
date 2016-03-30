@@ -11,7 +11,7 @@ Example:
 import numpy as np
 import copy
 from IPython import get_ipython
-from . import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
+from .Quantity import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
 
 __all__ = ['dB10', 'dB20', 'PhysicalQuantity_to_dBQuantity', 'dBQuantity', 'dB_unit_table']
 

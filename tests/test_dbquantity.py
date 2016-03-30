@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities.dBQuantity import dBQuantity, dB10, dB20
-from PhysicalQuantities import PhysicalQuantity, UnitError
+from PhysicalQuantities import PhysicalQuantity
+from PhysicalQuantities.Unit import UnitError
 from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
