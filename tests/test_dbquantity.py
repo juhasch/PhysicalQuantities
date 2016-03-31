@@ -5,6 +5,7 @@ from PhysicalQuantities.Unit import UnitError
 from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
+from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity
 
 def test_basic_properties_1():
     """ test value attribute """
@@ -135,6 +136,11 @@ def test_eq_dB_2():
     assert g1 == g1
     assert not g1 == g2
 
+@raises(UnitError)
+def test_eq_dB_3():
+    """ test eq operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g == 0
 
 def test_ne_db():
     """ test ne operator """
@@ -160,6 +166,13 @@ def test_ne_db_2():
     assert not g1 != g1
 
 
+@raises(UnitError)
+def test_ne_dB_3():
+    """ test eq operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g != 0
+
+
 def test_ge_dB():
     """ test ge operator """
     g1 = dBQuantity(0, 'dB')
@@ -181,6 +194,13 @@ def test_ge_dB_2():
     g1 = dBQuantity(1, 'dBnV')
     g2 = dBQuantity(1, 'dBmV')
     assert g2 >= g1
+
+
+@raises(UnitError)
+def test_ge_dB_3():
+    """ test eq operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g >= 0
 
 
 def test_le_dB():
@@ -206,6 +226,13 @@ def test_le_dB_2():
     assert g1 <= g2
     
     
+@raises(UnitError)
+def test_le_dB_3():
+    """ test eq operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g <= 0
+
+
 def test_calculation_1():
     """ test addition """
     g = dBQuantity(0, 'dBm')
@@ -219,23 +246,17 @@ def test_calculation_2():
     """ test addition """
     g = dBQuantity(0, 'dBm')
     a = dBQuantity(0, 'dBm')
-    ga = PhysicalQuantity(2, 'mW').to_dB()
+    ga = PhysicalQuantity(2, 'mW').dB
     assert a + g == ga
     assert g + a == ga
 
 
 def test_numpy_dB():
-    a = np.array([1, 2, 3])
+    a = np.array([1., 2., 3.])
     b = a * PhysicalQuantity(1, 'V')
     c = b.dB
-    assert_almost_equal(c.lin, a)
-
-
-def test_numpy_to_dB():
-    a = np.array([1, 2, 3])
-    b = a * PhysicalQuantity(1, 'V')
-    c = b.to_dB()
     assert_almost_equal(c.lin.value, a)
+
 
 def test_add_dB():
     g1 = dBQuantity(1,'dB')
@@ -250,29 +271,27 @@ def test_sub_dB():
 
 
 def test_dB10():
+    a = dB10(PhysicalQuantity(10, 'V'))
+    assert a.value == 10
+
+
+def test_dB10_1():
     a = dB10(100)
     b = dB10(0.1)
     assert a.value == 20
     assert b.value == -10
 
 
-def test_dB20():
+def test_dB10():
+    a = dB20(PhysicalQuantity(10, 'V'))
+    assert a.value == 20
+
+
+def test_dB20_1():
     a = dB20(100)
     b = dB20(0.1)
     assert a.value == 40
     assert b.value == -20
-
-
-def test_dB_1():
-    a = PhysicalQuantity(10, 'V')
-    b = a.to_dB()
-    assert b == dBQuantity(20, 'dBV')
-
-
-def test_dB_2():
-    a = PhysicalQuantity(10, 'nV')
-    b = a.to_dB()
-    assert b == dBQuantity(20, 'dBnV')
 
 
 def setitem():
@@ -283,27 +302,27 @@ def setitem():
 
 def test_to_dB_0():
     a = PhysicalQuantity(1, 'mV')
-    assert a.to_dB().unit == 'dBmV'
+    assert a.dB.unit == 'dBmV'
 
 
 def test_to_dB_1():
     a = PhysicalQuantity(1, 'V')
-    assert a.to_dB().value == 0.0
+    assert a.dB.value == 0.0
 
 
 def test_to_dB_2():
     a = PhysicalQuantity(1, 'V')
-    assert a.to_dB('dBV').value == 0.0
+    assert a.dB.dBV.value == 0.0
 
 
 def test_to_dB_3():
     a = PhysicalQuantity(1, 'V')
-    assert a.to_dB('dBmV').value == 60.0
+    assert a.dB.dBmV.value == 60.0
 
 
 def test_to_dB_4():
     a = PhysicalQuantity(1, 'V')
-    assert a.to_dB('dBuV').value == 120.0
+    assert a.dB.dBuV.value == 120.0
 
 
 def test_floordiv():
@@ -311,6 +330,7 @@ def test_floordiv():
     b = 2
     c = a // b
     assert c.value == 2
+
 
 @raises(UnitError)
 def test_floordiv_exc():
@@ -320,11 +340,13 @@ def test_floordiv_exc():
     c = a // b
     assert c.value == 2
 
+
 def test_rfloordiv():
     a = 4
     b = dBQuantity(2, 'dB')
     c = a // b
     assert c.value == 2
+
 
 def test_getattr():
     a = dBQuantity(0, 'dBm')
@@ -339,3 +361,8 @@ def test_getattr():
 def test_getattr2():
     a = dBQuantity(3, 'dB')
     assert a._ == 3
+
+def test_PhysicalQuantity_to_dBQuantity():
+    a = PhysicalQuantity(2, 'V')
+    b = PhysicalQuantity_to_dBQuantity(a, 'dBuV')
+    assert_almost_equal(b.value, 126.02059991327963)

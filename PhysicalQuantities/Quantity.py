@@ -141,38 +141,29 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError('Object of type %s has no len()' % type(self.value))
 
-    def to_dB(self, dBtype=None):
-        """ Convert to dB scaled unit
-        :param dBtype: optional dB unit ('dBm', 'dBW')
-        :return: dBQuantity
-
-        >>> a = 1 mV
-        >>> a.to_dB()
-        0.0 dBmV
-        >>> a.to_dB('dBV')
-        -60.0 dBV
-        """
-        from .dBQuantity import PhysicalQuantity_to_dBQuantity
-        return PhysicalQuantity_to_dBQuantity(self, dBtype)
-
     @property
     def dB(self):
-        """ Return dB converted value of unit, dropping current unit
-        
+        """ Convert to dB scaled unit, if possible. Guess if it is a power unit to select 10*log10 or 20*log10
+
         Returns
         -------
-        any
-            unitless dB values
+        dBQuantity
+            dB quantity converted from PhysicalQuantity
         
         >>> (10 V).dB
-        20.0 dB
+        20.0 dBV
         >>> (10 W).dB
-        10.0 dB
+        10.0 dBW
         """
-        from .dBQuantity import dBQuantity
-        if self.unit.is_power is True:
-            return dBQuantity(10*np.log10(self.value),'dB',islog=True, factor=10)
-        return dBQuantity(20*np.log10(self.value),'dB',islog=True, factor=20)
+        from .dBQuantity import dBQuantity, PhysicalQuantity_to_dBQuantity
+        try:
+            print('A')
+            return PhysicalQuantity_to_dBQuantity(self)
+        except UnitError:
+            print('B')
+            if self.unit.is_power is True:
+                return dBQuantity(10*np.log10(self.value),'dB',islog=True, factor=10)
+            return dBQuantity(20*np.log10(self.value),'dB',islog=True, factor=20)
 
     def rint(self):
         """ Round elements to the nearest integer

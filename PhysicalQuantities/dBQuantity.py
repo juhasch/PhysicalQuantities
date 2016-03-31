@@ -15,16 +15,35 @@ from .Quantity import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
 
 __all__ = ['dB10', 'dB20', 'PhysicalQuantity_to_dBQuantity', 'dBQuantity', 'dB_unit_table']
 
+# Dynamically generated list of all dB units
 dB_unit_table = {}
 
 
 class dBUnit:
+    """Class for handling dB units
+
+    Attributes
+    ----------
+    name: str
+        Name of dB unit
+    unit: PhysicalUnit
+        Physical representation of the dB value
+    offset: float
+        Offset, used e.g. for dBd vs. dBi
+
+    """
     def __init__(self, name, unit, offset=0):
-        """ Type for dB units
-        
-        name: str name of dB unit
-        unit: PhysicalUnit of linear representation
-        offset: dB offset, used for dBd vs. dBi
+        """
+
+        Parameters
+        ----------
+        name: str
+            Name of dB unit
+        unit: PhysicalUnit
+            Physical representation of the dB value
+        offset: float
+            Offset, used e.g. for dBd vs. dBi
+
         """
         self.name = name
         self.unit = unit
@@ -39,6 +58,7 @@ class dBUnit:
 def _add_dB_units(name, unit, offset=0):
     dB_unit_table[name] = dBUnit(name, unit, offset)
 
+# Predefined dB units
 _add_dB_units('dB', None)
 _add_dB_units('dBm', unit_table['mW'])
 _add_dB_units('dBW', unit_table['W'])
@@ -56,22 +76,26 @@ _add_dB_units('dBi', None)
 _add_dB_units('dBc', None)
 
 
-def PhysicalQuantity_to_dBQuantity(x, dBunit):
+def PhysicalQuantity_to_dBQuantity(x, dBunit=None):
     """ Conversion from a PhysicalQuantity to correct dB<x> value
 
-    :param x: convert a linear physical quanitiy into a dB quantitiy
-    :type x: PhysicalQuantity
-    :param dBunit: desired unit of dB value (i.e. dBm or dBW for Watt)
-    :return: converted dB quantity
-    :rtype: dBQuantity
-    """
-    """
-    :param x:
-    :return:
+    Parameters
+    ----------
+    x: PhysicalQuantity
+        Linear physical quantiy to be converted into a dB quantitiy
+    dBunit: dBQuantity
+        Desired unit of dB value (i.e. dBm or dBW for Watt)
+
+    Returns
+    -------
+    dBQuantity
+        Converted dB quantity
+
     """
     if isinstance(x, PhysicalQuantity):
         dbbase = None
         value = None
+
         if dBunit is not None and dB_unit_table[dBunit] is not None:
             if dB_unit_table[dBunit].unit.baseunit.name == x.unit.baseunit.name:
                     dbbase = dBunit
@@ -86,13 +110,14 @@ def PhysicalQuantity_to_dBQuantity(x, dBunit):
                 elif dB_unit_table[key].unit is not None and dB_unit_table[key].unit.baseunit.name == x.unit.baseunit.name:
                     dbbase = key
                     value = x.base.value
-            _unit = x.unit
+        _unit = x.unit
         if dbbase is None:
             raise UnitError('Cannot handle unit %s' % x.unit)
         factor = 20 - 10 * _unit.is_power
         dbvalue = factor * np.log10(value)
         return dBQuantity(dbvalue, dbbase ,islog=True, factor=factor)
     raise UnitError('Cannot handle unitless quantity %s' % x)
+
 
 def dB10(x):
     """ Convert linear value to 10*log10() dB value
@@ -368,7 +393,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit is 'dB' and not hasattr(other,'unit'):
+        if self.unit is 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = self.value / other
             return self.__class__(value, self.unit, islog=True)
@@ -384,7 +409,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit is 'dB' and not hasattr(other,'unit'):
+        if self.unit is 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = other / self.value
             return self.__class__(value, self.unit, islog=True)
@@ -401,13 +426,12 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit is 'dB' and not hasattr(other,'unit'):
+        if self.unit is 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = self.value // other
             return self.__class__(value, self.unit, islog=True)
         raise UnitError('Cannot divide dB units')
             
-
     def __rfloordiv__(self, other):
         """ Divide a dB value by another factor
         Only valid if the dB value is not associated whith a physical quantity
@@ -417,7 +441,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit is 'dB' and not hasattr(other,'unit'):
+        if self.unit is 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = other // self.value
             return self.__class__(value, self.unit, islog=True)
@@ -438,7 +462,7 @@ class dBQuantity:
         if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
             # %precision magic only works for floats
             format = self.ptformatter.float_format
-            return "%s %s" % (format%self.value, str(self.unit))
+            return "%s %s" % (format % self.value, str(self.unit))
         return '{0:{format}} {1}'.format(self.value, str(self.unit), format=self.format)
 
     def __repr__(self):
