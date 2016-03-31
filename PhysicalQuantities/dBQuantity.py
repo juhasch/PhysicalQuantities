@@ -528,7 +528,7 @@ class dBQuantity:
             :rtype: bool
         """
         if isinstance(other, dBQuantity):
-            if self.unit <= other.unit:
+            if self.unit == other.unit:
                 return self.value <= other.value
             elif self.lin.base.unit == other.lin.base.unit:
                 return self.lin.base.value <= other.lin.base.value

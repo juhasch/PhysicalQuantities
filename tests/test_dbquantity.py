@@ -89,6 +89,21 @@ def test_gt_dB_2():
     assert g3 > g2
 
 
+@raises(UnitError)
+def test_gt_dB_3():
+    """ test eq operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g > 0
+
+
+@raises(UnitError)
+def test_gt_dB_4():
+    """ test eq operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 > g2
+
+
 def test_lt_dB():
     """ test lt operator """
     g1 = dBQuantity(0, 'dB')
@@ -111,6 +126,21 @@ def test_lt_dB_2():
     g2 = dBQuantity(1, 'dBnV')
     g3 = dBQuantity(1, 'dBmV')
     assert g2 < g3
+
+
+@raises(UnitError)
+def test_lt_dB_3():
+    """ test lt operator with scalar """
+    g = dBQuantity(0, 'dBnV')
+    assert g <= 0
+
+
+@raises(UnitError)
+def test_lt_dB_4():
+    """ test lt operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 < g2
 
 
 def test_eq_dB():
@@ -141,6 +171,15 @@ def test_eq_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
     assert g == 0
+
+
+@raises(UnitError)
+def test_eq_dB_4():
+    """ test eq operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 == g2
+
 
 def test_ne_db():
     """ test ne operator """
@@ -173,6 +212,14 @@ def test_ne_dB_3():
     assert g != 0
 
 
+@raises(UnitError)
+def test_ne_dB_4():
+    """ test ne operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 != g2
+
+
 def test_ge_dB():
     """ test ge operator """
     g1 = dBQuantity(0, 'dB')
@@ -189,6 +236,7 @@ def test_ge_dB_1():
     g2 = dBQuantity(1, 'dBV')
     assert g2 >= g1
 
+
 def test_ge_dB_2():
     """ test ge operator with different units"""
     g1 = dBQuantity(1, 'dBnV')
@@ -201,6 +249,14 @@ def test_ge_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
     assert g >= 0
+
+
+@raises(UnitError)
+def test_ge_dB_4():
+    """ test ge operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 >= g2
 
 
 def test_le_dB():
@@ -226,6 +282,14 @@ def test_le_dB_2():
     assert g1 <= g2
     
     
+@raises(UnitError)
+def test_le_dB_4():
+    """ test le operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    assert g1 <= g2
+
+
 @raises(UnitError)
 def test_le_dB_3():
     """ test eq operator with scalar """
@@ -362,7 +426,13 @@ def test_getattr2():
     a = dBQuantity(3, 'dB')
     assert a._ == 3
 
+
 def test_PhysicalQuantity_to_dBQuantity():
     a = PhysicalQuantity(2, 'V')
     b = PhysicalQuantity_to_dBQuantity(a, 'dBuV')
     assert_almost_equal(b.value, 126.02059991327963)
+
+
+def test_dB():
+    a = dBQuantity(0, 'dBm')
+    assert(a.dB, '0 dB')
