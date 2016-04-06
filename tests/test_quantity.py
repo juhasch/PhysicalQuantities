@@ -1,11 +1,32 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities.Quantity import PhysicalQuantity
-from PhysicalQuantities import isphysicalquantity
+from PhysicalQuantities import isphysicalquantity, q
 from PhysicalQuantities.Unit import UnitError
 from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
 import operator
+
+
+def test_str():
+    a = PhysicalQuantity(1,'m/s')
+    assert str(a) == '1 m/s'
+
+
+def test_scaling():
+    k = PhysicalQuantity(1e-3, 'km')
+    a = PhysicalQuantity(1, 'm')
+    c = PhysicalQuantity(100, 'cm')
+    m = PhysicalQuantity(1000, 'mm')
+    u = PhysicalQuantity(1e6, 'um')
+    n = PhysicalQuantity(1e9, 'nm')
+    assert k == a == c == m == u == n
+
+
+def test_prefix_attributes():
+    d = PhysicalQuantity(1, 'm')
+    assert d.to('mm') ==  d.mm
+
 
 def test_isphysicalquantity():
     g = PhysicalQuantity(1, 'mm')
@@ -43,7 +64,7 @@ def test_getattr2():
 
 def test_decorators():
     """ Test .base and .value decorators """
-    g=PhysicalQuantity(98, 'mm')/ PhysicalQuantity(1, 's**2')
+    g = PhysicalQuantity(98, 'mm')/ PhysicalQuantity(1, 's**2')
     assert g.value == 98
     assert g.base.value == 0.098
     assert str(g.unit) == "mm/s^2"    
@@ -339,16 +360,16 @@ def test_nonzero():
 
 def test_nonzero_np():
     r = (np.array([3, 0, 1]) * PhysicalQuantity(1, 'm')).__nonzero__()
-    print(r)
-    assert np.any(r.value == np.array([0,2]))
+    assert np.any(r.value == np.array([0, 2]))
+
 
 def test_is_angle():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(1, 'deg')
     c = PhysicalQuantity(1, 'rad')
-    assert a.unit.is_angle == False
-    assert b.unit.is_angle == True
-    assert c.unit.is_angle == True
+    assert a.unit.is_angle is False
+    assert b.unit.is_angle is True
+    assert c.unit.is_angle is True
 
 
 def test_markdown():
@@ -380,3 +401,9 @@ def test_cos():
 def test_tan():
     a = PhysicalQuantity(0, 'deg')
     assert a.tan() == 0
+
+
+@raises(AttributeError)
+def test_q():
+    """Test for invalid units"""
+    a = q['xxm']

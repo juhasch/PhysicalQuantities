@@ -259,7 +259,7 @@ def test_ge_dB_4():
     assert g1 >= g2
 
 
-def test_le_dB():
+def test_le_dB_1():
     """ test le operator """
     g1 = dBQuantity(0, 'dB')
     g2 = dBQuantity(1, 'dB')
@@ -268,30 +268,26 @@ def test_le_dB():
     assert g3 <= g1
     assert not g2 <= g1
 
-def test_le_dB_1():
-    """ test le operator with units"""
-    g1 = dBQuantity(0, 'dBV')
-    g2 = dBQuantity(1, 'dBV')
-    assert g1 <= g2
-
 
 def test_le_dB_2():
     """ test le operator with different units"""
     g1 = dBQuantity(1, 'dBnV')
     g2 = dBQuantity(1, 'dBmV')
+    print('abce')
     assert g1 <= g2
     
     
-@raises(UnitError)
-def test_le_dB_4():
-    """ test le operator with different dB unit """
-    g1 = dBQuantity(0, 'dBV')
-    g2 = dBQuantity(0, 'dBW')
-    assert g1 <= g2
-
 
 @raises(UnitError)
 def test_le_dB_3():
+    """ test le operator with different dB unit """
+    g1 = dBQuantity(0, 'dBV')
+    g2 = dBQuantity(0, 'dBW')
+    g1 <= g2
+
+
+@raises(UnitError)
+def test_le_dB_4():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
     assert g <= 0
@@ -435,4 +431,51 @@ def test_PhysicalQuantity_to_dBQuantity():
 
 def test_dB():
     a = dBQuantity(0, 'dBm')
-    assert(a.dB, '0 dB')
+    assert(str(a.dB) == '0 dB')
+
+
+def test_div_1():
+    a = dBQuantity(4, 'dB')
+    b = a / 4
+    assert_almost_equal(b.value, 1)
+
+
+@raises(UnitError)
+def test_div_2():
+    a = dBQuantity(4, 'dBm')
+    b = a / 4
+    assert_almost_equal(b.value, 1)
+
+
+def test_len_db_1():
+    a = [dBQuantity(4, 'dBm')]
+    assert(len(a) == 1)
+
+
+@raises(TypeError)
+def test_len_db_2():
+    a = dBQuantity(4, 'dBm')
+    assert(len(a) == 1)
+
+
+def test_to_db():
+    a = dBQuantity(4, 'dBm')
+    b = a.to('dBW')
+    assert_almost_equal(a.lin.W_, b.lin.W_)
+
+
+def test_indexing_db_1():
+    a = [dBQuantity(4, 'dBm')]
+    assert(a[0].value == 4)
+
+
+@raises(IndexError)
+def test_indexing_db_2():
+    a = [dBQuantity(4, 'dBm')]
+    assert(a[1].value == 4)
+
+
+def test_dir_db():
+    a = dBQuantity(4, 'dBm')
+    b = list(a.__dir__())
+    assert('dB' in b)
