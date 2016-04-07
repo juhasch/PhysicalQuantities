@@ -1,23 +1,31 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.Unit import isphysicalunit, UnitError
+from PhysicalQuantities.Unit import isphysicalunit, UnitError, findunit, convertvalue, units_html_list
 import numpy as np
 from nose.tools import raises
 
 
-def test_str():
-    a = PhysicalQuantity(1,'m/s')
-    assert str(a) == '1 m/s'
+def test_findunit_1():
+    a = findunit('mm')
+    b = PhysicalQuantity(1, 'mm').unit
+    assert(a == b)
 
 
-def test_scaling():
-    k = PhysicalQuantity(1e-3, 'km')
-    a = PhysicalQuantity(1, 'm')
-    c = PhysicalQuantity(100, 'cm')
-    m = PhysicalQuantity(1000, 'mm')
-    u = PhysicalQuantity(1e6, 'um')
-    n = PhysicalQuantity(1e9, 'nm')
-    assert k == a == c == m == u == n
+@raises(UnitError)
+def test_findunit_2():
+    findunit(0)
+
+
+@raises(UnitError)
+def test_findunit_2():
+    findunit(0)
+
+
+@raises(UnitError)
+def test_convertvalue():
+    a = PhysicalQuantity(1, 'm').unit
+    b = PhysicalQuantity(1, 'mm').unit
+    convertvalue([1], a, b)
 
 
 def test_unit_division_2():
@@ -30,11 +38,6 @@ def test_unit_multiplication():
     a = PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(1, 'cm')
     assert str((a*b).base.unit) == "m^2"
-
-
-def test_prefix_attributes():
-    d = PhysicalQuantity(1, 'm')
-    assert d.to('mm') ==  d.mm
 
 
 def test_unit_inversion():
@@ -75,3 +78,66 @@ def test_isphysicalunit():
     a = PhysicalQuantity(1, 'm')
     assert isphysicalunit(a.unit) == True
     assert isphysicalunit(1) == False
+
+
+def test_repr():
+    a = PhysicalQuantity(1, 'm').unit
+    b = a.__repr__()
+    assert(b == '<PhysicalUnit m>')
+
+
+def test_latex_repr():
+    a = PhysicalQuantity(1, 'm').unit
+    b = a.latex
+    assert(b == r'\text{m}')
+
+
+@raises(UnitError)
+def test_gt():
+    """Only same units can be compared"""
+    a = PhysicalQuantity(1, 'm').unit
+    b = PhysicalQuantity(1, 's').unit
+    assert (a > b is True)
+
+
+@raises(UnitError)
+def test_ge():
+    """Only same units can be compared"""
+    a = PhysicalQuantity(1, 'm').unit
+    b = PhysicalQuantity(1, 's').unit
+    assert (a >= b is True)
+
+
+@raises(UnitError)
+def test_lt():
+    """Only same units can be compared"""
+    a = PhysicalQuantity(1, 'm').unit
+    b = PhysicalQuantity(1, 's').unit
+    assert (a < b is True)
+
+
+def test_pow_1():
+    """Only integer exponents"""
+    a = PhysicalQuantity(1, 'm^2').unit
+    b = PhysicalQuantity(1, 'm').unit
+    assert(a**0.5 == b)
+
+
+@raises(UnitError)
+def test_pow_2():
+    """Only integer exponents"""
+    a = PhysicalQuantity(1, 'm').unit
+    a**2.0
+
+
+@raises(UnitError)
+def test_pow_3():
+    """Offsets are not allowed"""
+    a = PhysicalQuantity(1, 'm').unit
+    a.offset = 1
+    a**2
+
+
+def test_units_html_list():
+    a = units_html_list()
+    assert(len(a.data) > 1000)

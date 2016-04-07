@@ -73,31 +73,53 @@ def isphysicalunit(x):
 class PhysicalUnit:
     """Physical unit.
 
-    A physical unit is defined by a name (possibly composite), a scaling factor,
-    and the exponentials of each of the SI base units that enter into it. Units
-    can be multiplied, divided, and raised to integer powers.
+    A physical unit is defined by a name (possibly composite), a scaling factor, and the exponentials of each of
+    the SI base units that enter into it. Units can be multiplied, divided, and raised to integer powers.
+
+    Attributes
+    ----------
+    prefixed: bool
+        If instance is a scaled version of a unit
+    baseunit: PhysicalUnit
+        Base unit if prefixed, otherwise self
+    names: dict|str
+        A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
+        for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
+    factor: float
+        A scaling factor from base units
+    powers: list
+        The integer powers for each of the nine base units:
+        ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+    offset: float
+        An additive offset to the unit (used only for temperatures)
+    url: str
+        URL describing the unit
+    verbosename: str
+        The verbose name of the unit (e.g. Coulomb)
+
     """
 
     def __init__(self, names, factor, powers, offset=0, url='', verbosename=''):
-        """ Initialize unit object
+        """ Initialize object
 
-        :param names: a dictionary mapping each name component to its
-                      associated integer power (e.g. C{{'m': 1, 's': -1}})
-                      for M{m/s}). As a shorthand, a string may be passed
-                      which is assigned an implicit power 1.
-        :type names: dict or str
-        :param factor: a scaling factor
-        :type factor: float
-        :param powers: the integer powers for each of the nine base units
-        :type powers: list
-        :param offset: an additive offset to the base unit (used only for temperatures)
-        :type offset: float
-        :param url: URL describing the unit
-        :type url: str
-        :param verbosename: the verbose name of the unit (e.g. Coulomb)
-        :type verbosename: str
+        Parameters
+        ----------
+        names: dict|str
+            A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
+            for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
+        factor: float
+            A scaling factor from base units
+        powers: list
+            The integer powers for each of the nine base units:
+            ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+        offset: float
+            An additive offset to the unit (used only for temperatures)
+        url: str
+            URL describing the unit
+        verbosename: str
+            The verbose name of the unit (e.g. Coulomb)
+
         """
-
         self.prefixed = False
         self.baseunit = self
         self.verbosename = verbosename
@@ -119,8 +141,11 @@ class PhysicalUnit:
     def name(self):
         """ Return name of unit
 
-        :return: name of unit
-        :rtype: str
+        Returns
+        -------
+        str
+            Name of unit
+
         """
         num = ''
         denom = ''
@@ -144,8 +169,11 @@ class PhysicalUnit:
     def _markdown_name(self):
         """ Return name of unit as markdown string
 
-        :return: name of unit as markdown string
-        :rtype: str
+        Returns
+        -------
+        str
+            Name of unit as markdown string
+
         """
         num = ''
         denom = ''
@@ -525,18 +553,26 @@ def units_list():
 def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
     """ Add new PhysicalUnit entry
 
-     :param name: unit name
-     :type name: str
-     :param unit: unit
-     :type unit: PhysicalUnit or str
-     :param verbosename: a more verbose name for the unit
-     :type verbosename: str
-     :param prefixed: is this a prefixed unit
-     :type prefixed: bool
-     :param baseunit:
-     :type baseunit: PhysicalUnit
-     :param url: URL with information about unit
-     :type url: str
+    Parameters
+    -----------
+    name: str
+        Name of the unit
+    unit: str, PhysicalUnit
+        Name or class of the PhysicalUnit
+    verbosename: str
+        A more verbose name for the unit
+    prefixed: bool
+        This is a prefixed unit
+    baseunit : PhysicalUnit
+        Base unit
+    url: str
+        A URL linking to more information about the unit
+
+    Raises
+    ------
+    KeyError
+        If unit already exists
+
     """
     if name in unit_table:
         raise KeyError('Unit ' + name + ' already defined')
@@ -560,63 +596,27 @@ def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
     unit_table[name] = newunit
     return name
 
-
-def addprefixed(unitname, range='full'):
-    """ Add prefixes to already defined unit
-
-    :param unitname: name of unit to be prefixed, e.k. 'm' -> 'mm','cm','dm','km'
-    :param range: 'engineering' -> 1e-18 to 1e12 or 'full' -> 1e-24 to 1e24
-    """
-    if range == 'engineering':
-        _prefixes = _engineering_prefixes
-    else:
-        _prefixes = _full_prefixes
-    unit = unit_table[unitname]
-    for prefix in _prefixes:
-        prefixedname = prefix[0] + unitname
-        if prefixedname not in unit_table:
-            addunit(prefixedname, prefix[1] * unit, prefixed=True, baseunit=unit, verbosename=unit.verbosename,
-                    url=unit.url)
-
-
-# add scaling prefixes
-_full_prefixes = [
-    ('Y', 1.e24), ('Z', 1.e21), ('E', 1.e18), ('P', 1.e15), ('T', 1.e12),
-    ('G', 1.e9), ('M', 1.e6), ('k', 1.e3), ('h', 1.e2), ('da', 1.e1),
-    ('d', 1.e-1), ('c', 1.e-2), ('m', 1.e-3), ('u', 1.e-6), ('n', 1.e-9),
-    ('p', 1.e-12), ('f', 1.e-15), ('a', 1.e-18), ('z', 1.e-21),
-    ('y', 1.e-24),
-]
-
-# actually, use a reduced set of scaling prefixes for engineering purposes:
-_engineering_prefixes = [
-    ('T', 1.e12),
-    ('G', 1.e9), ('M', 1.e6), ('k', 1.e3),
-    ('c', 1.e-2), ('m', 1.e-3), ('u', 1.e-6), ('n', 1.e-9),
-    ('p', 1.e-12), ('f', 1.e-15), ('a', 1.e-18),
-]
-
 unit_table = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
+addunit('m', PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre')
 addunit('kg', PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram')
-addprefixed(addunit('g', PhysicalUnit('g', 0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram'), range='engineering')
-addprefixed(addunit('s', PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Second', verbosename='Second'), range='engineering')
-addprefixed(addunit('A', PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere'), range='engineering')
-addprefixed(addunit('K', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin'), range='engineering')
-addprefixed(addunit('mol', PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol'), range='engineering')
-addprefixed(addunit('cd', PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela'), range='engineering')
-addprefixed(addunit('rad', PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
-                    url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian'), range='engineering')
-addprefixed(addunit('sr', PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
-                    url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian'), range='engineering')
-addprefixed(addunit('m', PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
-                    url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre'), range='engineering')
+addunit('g', PhysicalUnit('g', 0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Gram')
+addunit('s', PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Second', verbosename='Second')
+addunit('A', PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere')
+addunit('K', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin')
+addunit('mol', PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol')
+addunit('cd', PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
+        url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela')
+addunit('rad', PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
+        url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian')
+addunit('sr', PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
+        url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian')

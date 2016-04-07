@@ -13,7 +13,12 @@ def max(q):
     Parameters
     ----------
     q : array_like
-        Input data.
+        Input data
+
+    Returns
+    -------
+    array_like
+        Maximum of an array or maximum along an axis
     """
     if isphysicalquantity(q):
         return q.__class__(np.max(q.value), q.unit)
@@ -24,9 +29,18 @@ def max(q):
 def floor(q):
     """ Return the floor of the input, element-wise.
 
-    :return: The floor of each element
-    :rtype: PhysicalQuantity
+    Parameters
+    ----------
+    q : array_like
+        Input data
 
+    Returns
+    -------
+    PhysicalQuantity
+        The floor of each element
+
+    Example
+    -------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.floor(1.3 mm)
     1 mm
@@ -40,11 +54,18 @@ def floor(q):
 def ceil(q):
     """ Return the ceiling of the input, element-wise.
 
-    :param q:
-    :type q: numpy array
-    :return: The ceiling of each element
-    :rtype: PhysicalQuantity
+    Parameters
+    ----------
+    q : array_like
+        Input data
 
+    Returns
+    -------
+    PhysicalQuantity
+        The ceiling of each element
+
+    Example
+    -------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.ceil(1.3 mm)
     2.0 mm
@@ -58,9 +79,18 @@ def ceil(q):
 def sqrt(q):
     """ Return the square root of the input, element-wise.
 
-    :return: The floor of each element
-    :rtype: PhysicalQuantity
+    Parameters
+    ----------
+    q : array_like
+        Input data
 
+    Returns
+    -------
+    PhysicalQuantity
+        The floor of each element
+
+    Example
+    -------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.sqrt(4 m**2)
     2.0 m
@@ -75,16 +105,25 @@ def sqrt(q):
 def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     """ A units-enabled linspace
 
-    :param start: start value
-    :type start: PhysicalQuantity or float
-    :param stop:  stop value
-    :type stop: PhysicalQuantity or float
-    :param num: number of points
-    :type num: int
-    :param endpoint: include stop point
-    :param retstep: if true, return (samples, step)
-    :return: return equally spaced samples between start and stop
+    Parameters
+    ----------
+    start: PhysicalQuantity or float
+        Start value
+    stop:  PhysicalQuantity or float
+        Stop value
+    num: int
+        Number of points
+    endpoint: bool
+        If true, include stop point
+    retstep: bool
+        If true, return (samples, step)
 
+    Returns
+    -------
+        Return equally spaced samples between start and stop
+
+    Example
+    -------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.linspace(0 GHz, 100 GHz, 200)
     """
@@ -92,8 +131,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return np.linspace(start, stop, num,  endpoint, retstep)
 
     if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
-        if start.base.unit != stop.base.unit:
-            raise UnitError("Cannot match units %s and %s" % (start.units, stop.units))
+        start.base.unit == stop.base.unit
 
     unit = None
     if isinstance(start, PhysicalQuantity):
@@ -119,9 +157,17 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
 def tophysicalquantity(arr, unit=None):
     """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
 
-    :param arr: input array
-    :return: PhysicalQuantity wrapped numpy array
+    Parameters
+    -----------
+    arr: array_like
 
+    Returns
+    -------
+    PhysicalQuantity
+        Array wrapped as PhysicalQuantity
+
+    Example
+    -------
     >>> a = [ 1mm, 2m, 3mm]
     >>> b = toPhysicalQuantity(a)
     >>> b
@@ -135,11 +181,11 @@ def tophysicalquantity(arr, unit=None):
             # convert list to array
             newarr = np.array(arr.value)
             return newarr * q[arr.unit]
-        if type(arr.value) is not (list or nd.array):
+        if type(arr.value) is not (list or np.array):
             # do nothing for single PQ values
             return arr
     else:
-        if type(arr) is not (list or nd.array):
+        if type(arr) is not (list or np.array):
             if unit is not None:
                 # convert single values to PQ if unit is specified
                 return arr * q[unit]
@@ -147,7 +193,7 @@ def tophysicalquantity(arr, unit=None):
                 raise UnitError('No unit given for value')
 
     for i, _a in enumerate(arr):
-        if not isphysicalquantity(_a) and unit == None:
+        if not isphysicalquantity(_a) and unit is None:
             raise UnitError('Element %d is not a physical quantity: %s' % (i,_a))
 
     if unit is None:
@@ -175,23 +221,21 @@ def argsort(array):
 
     Parameters:	
     -----------
-    
-        a : array_like
+    a : array_like
         Array to sort.
     
-        axis : int or None, optional
+    axis : int or None, optional
         Axis along which to sort. The default is -1 (the last axis). If None, the flattened array is used.
     
-        kind : {‘quicksort’, ‘mergesort’, ‘heapsort’}, optional
+    kind : {‘quicksort’, ‘mergesort’, ‘heapsort’}, optional
         Sorting algorithm.
     
-        order : str or list of str, optional
+    order : str or list of str, optional
         When a is an array with fields defined, this argument specifies which fields to compare first, second, etc. A single field can be specified as a string, and not all fields need be specified, but unspecified fields will still be used, in the order in which they come up in the dtype, to break ties.
     
     Returns:
     --------
-    
-        index_array : ndarray, int
+    index_array : ndarray, int
         Array of indices that sort a along the specified axis. In other words, a[index_array] yields a sorted a.
 
     """
@@ -228,4 +272,3 @@ def insert(array, obj, values):
         return np.insert(array.value, obj, values.value) * q[array.unit]
     else:
         return np.insert(array, obj, values)
-
