@@ -13,7 +13,7 @@ Units can be mixed with numpy arrays:
 .. parsed-literal::
 
     [0 1 2 3 4 5 6 7 8 9] s
-
+    
 
 Array indexing and slicing is supported:
 
@@ -28,11 +28,11 @@ Array indexing and slicing is supported:
 .. parsed-literal::
 
     [1 2 3] s
-    [[ 0.39  0.16  0.19  0.65]
-     [ 0.39  0.47  0.21  0.16]
-     [ 0.35  0.34  0.18  0.28]] m
-    0.28352011318205039 m
-
+    [[ 0.4219646   0.96249539  0.54305894  0.42640778]
+     [ 0.13962467  0.87781861  0.4868283   0.15459366]
+     [ 0.15887323  0.48109571  0.78403639  0.6370445 ]] m
+    0.63704450020648784 m
+    
 
 Assignment of array elements is supported:
 
@@ -47,7 +47,7 @@ Assignment of array elements is supported:
 
     [  3.           1.11111111   2.22222222   3.33333333   4.44444444
        5.55555556   6.66666667   7.77777778   8.88888889  10.        ] m
-
+    
 
 Pretty printing Numpy arrays can be achieved using ``set_printoptions``
 
@@ -60,7 +60,7 @@ Pretty printing Numpy arrays can be achieved using ``set_printoptions``
 .. parsed-literal::
 
     [  3.     1.11   2.22   3.33   4.44   5.56   6.67   7.78   8.89  10.  ] m
-
+    
 
 Prefixing units is also possible like for single values:
 
@@ -74,7 +74,7 @@ Prefixing units is also possible like for single values:
 
     [    0.  1000.  2000.  3000.  4000.  5000.  6000.  7000.  8000.  9000.] ms
     [    0.  1000.  2000.  3000.  4000.  5000.  6000.  7000.  8000.  9000.]
-
+    
 
 A more practical example:
 
@@ -103,19 +103,4 @@ A more practical example:
 
 
 .. image:: pq-numpy_files/pq-numpy_13_0.png
-
-
-A helper function ``PhysicalQuantities.linspace`` simplifies specifying
-ranges:
-
-.. code:: python
-
-    t = pq.linspace(0, 10ms, 11)
-    print(t)
-
-
-.. parsed-literal::
-
-    [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.] ms
-
 

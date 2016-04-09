@@ -37,7 +37,7 @@ Require units in function call
     ---> 55             checkbaseunit(arg, units[i])
          56         for i, kwarg in enumerate(kwargs):
          57             checkbaseunit(kwarg, units[i])
-
+    
 
     /Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in checkbaseunit(arg, unit)
          12     """
@@ -45,7 +45,7 @@ Require units in function call
     ---> 14         raise UnitError('%s is not a PhysicalQuantitiy' % arg)
          15     try:
          16         arg.unit.conversion_tuple_to(unit_table[unit])
-
+    
 
     UnitError: 1 is not a PhysicalQuantitiy
 
@@ -77,19 +77,19 @@ Require units in function call
          15     try:
     ---> 16         arg.unit.conversion_tuple_to(unit_table[unit])
          17         return True
-
+    
 
     /Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/Unit.py in conversion_tuple_to(self, other)
         336         if self.powers != other.powers:
     --> 337             raise UnitError('Incompatible units')
         338 
-
+    
 
     UnitError: Incompatible units
 
     
     During handling of the above exception, another exception occurred:
-
+    
 
     UnitError                                 Traceback (most recent call last)
 
@@ -103,7 +103,7 @@ Require units in function call
     ---> 55             checkbaseunit(arg, units[i])
          56         for i, kwarg in enumerate(kwargs):
          57             checkbaseunit(kwarg, units[i])
-
+    
 
     /Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in checkbaseunit(arg, unit)
          17         return True
@@ -111,7 +111,7 @@ Require units in function call
     ---> 19         raise UnitError('%s is not of unit %s' % (arg, unit))
          20 
          21 
-
+    
 
     UnitError: 1 A is not of unit V
 
@@ -144,7 +144,7 @@ Require units in function call
     ---> 57             checkbaseunit(kwarg, units[i])
          58         ret = wrapped(*args, **kwargs)
          59         return ret
-
+    
 
     IndexError: tuple index out of range
 
@@ -196,19 +196,19 @@ Optional units in function call
          30     try:
     ---> 31         arg.unit.conversion_tuple_to(unit_table[unit])
          32         return arg.base.value
-
+    
 
     /Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/Unit.py in conversion_tuple_to(self, other)
         336         if self.powers != other.powers:
     --> 337             raise UnitError('Incompatible units')
         338 
-
+    
 
     UnitError: Incompatible units
 
     
     During handling of the above exception, another exception occurred:
-
+    
 
     UnitError                                 Traceback (most recent call last)
 
@@ -222,7 +222,7 @@ Optional units in function call
     ---> 80             newargs.append(dropunit(arg, units[i]))
          81         newkwargs = {}
          82         for i, key in enumerate(kwargs):
-
+    
 
     /Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in dropunit(arg, unit)
          32         return arg.base.value
@@ -230,7 +230,7 @@ Optional units in function call
     ---> 34         raise UnitError('%s is not of unit %s' % (arg, unit))
          35 
          36 
-
+    
 
     UnitError: 1 m is not of unit A
 

@@ -31,7 +31,9 @@ This is still work in progress.
 
 
 
-2.00+/-0.25 :math:`m`
+.. math::
+
+    2.00+/-0.25 $m
 
 
 
@@ -43,7 +45,9 @@ This is still work in progress.
 
 
 
-4.0+/-1.0 :math:`m^2`
+.. math::
+
+    4.0+/-1.0 $m^2
 
 
 
@@ -54,7 +58,9 @@ This is still work in progress.
 
 
 
-0.0+/-0 :math:`m^2`
+.. math::
+
+    0.0+/-0 $m^2
 
 
 
@@ -82,7 +88,7 @@ This is still work in progress.
 .. parsed-literal::
 
     [1.0+/-0.1 2.0+/-0.2] s
-
+    
 
 .. code:: python
 
@@ -92,5 +98,5 @@ This is still work in progress.
 .. parsed-literal::
 
     1.50+/-0.11
-
+    
 

@@ -19,8 +19,9 @@ Sympy and PhysicalQuantities
 
 
 
-:math:`\left[\begin{matrix}1 & 2 & 3\\4 & 5 & 6\end{matrix}\right]`
-:math:`\text{m}`
+.. math::
+
+    \left[\begin{matrix}1 & 2 & 3\\4 & 5 & 6\end{matrix}\right]$ $\text{m}
 
 
 
@@ -31,8 +32,9 @@ Sympy and PhysicalQuantities
 
 
 
-:math:`\left[\begin{matrix}1.01 & 2.02 & 3.03\\4.04 & 5.05 & 6.06\end{matrix}\right]`
-:math:`\text{m}`
+.. math::
+
+    \left[\begin{matrix}1.01 & 2.02 & 3.03\\4.04 & 5.05 & 6.06\end{matrix}\right]$ $\text{m}
 
 
 
@@ -47,7 +49,9 @@ Sympy and PhysicalQuantities
 
 
 
-:math:`x` :math:`\text{m}`
+.. math::
+
+    x$ $\text{m}
 
 
 
@@ -59,7 +63,9 @@ Sympy and PhysicalQuantities
 
 
 
-:math:`2 x` :math:`\text{m}`
+.. math::
+
+    2 x$ $\text{m}
 
 
 
@@ -70,7 +76,9 @@ Sympy and PhysicalQuantities
 
 
 
-:math:`\frac{2 x}{3}` :math:`\text{m}`
+.. math::
+
+    \frac{2 x}{3}$ $\text{m}
 
 
 
@@ -81,7 +89,9 @@ Sympy and PhysicalQuantities
 
 
 
-.. math:: \int \sqrt{\frac{1}{x}}\, dx
+.. math::
+
+    \int \sqrt{\frac{1}{x}}\, dx
 
 
 

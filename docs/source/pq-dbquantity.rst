@@ -25,7 +25,7 @@ It provides an easy way to do dB calculations:
     0 dBm
     -30.0 dBW
     0.001 W
-
+    
 
 .. code:: python
 
@@ -36,7 +36,7 @@ It provides an easy way to do dB calculations:
 .. parsed-literal::
 
     3 dBm
-
+    
 
 .. code:: python
 
@@ -48,7 +48,7 @@ It provides an easy way to do dB calculations:
 
     -30.0 dBW
     -30.0
-
+    
 
 .. code:: python
 
@@ -63,7 +63,7 @@ It provides an easy way to do dB calculations:
 .. parsed-literal::
 
     0.1 dBm
-
+    
 
 .. code:: python
 
@@ -85,7 +85,9 @@ It provides an easy way to do dB calculations:
 
 
 
-0.0010232929922807542 :math:`\text{W}`
+.. math::
+
+    0.0010232929922807542 $\text{W}
 
 
 
@@ -97,7 +99,9 @@ It provides an easy way to do dB calculations:
 
 
 
-1.02 :math:`\text{mW}`
+.. math::
+
+    1.02 $\text{mW}
 
 
 
@@ -106,14 +110,14 @@ Helper function to generate dB values from a linear value:
 .. code:: python
 
     from PhysicalQuantities.dBQuantity import dB, dB10, dB20
-    dB(1 mW)
+    dB(2 mW)
 
 
 
 
 .. parsed-literal::
 
-    0.00 dBm
+    3.01 dBm
 
 
 

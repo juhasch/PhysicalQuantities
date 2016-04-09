@@ -7,5 +7,5 @@ Unit
 
 .. automodule:: PhysicalQuantities.Unit
    :members:
-   :special-members:
+
 

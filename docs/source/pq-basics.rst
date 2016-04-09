@@ -6,13 +6,7 @@ Installation
 ------------
 
 The PhysicalQuantities module can be installed like any other Python
-module: 1. Download package from
-https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
-2. Unzpip 3. Install package using ``python setup.py install``
-
-This document describes the basic use and some internals of the Python
-module. If you are using IPython or the IPython notebook, you might want
-to read the other example notebooks first.
+module: ``pip install PhysicalQuantities``
 
 Loading the Python Module
 -------------------------
@@ -28,7 +22,7 @@ You can now define physical quantities using the
 
     g = pq.PhysicalQuantity(1.1, 'm')
 
-or as the shortcut ``Q()``:
+or using the shortcut ``Q()``:
 
 .. code:: python
 
@@ -46,7 +40,7 @@ This creates a new ``PhysicalQuantity`` object:
 
     object: 1.1 m
     object type : <class 'PhysicalQuantities.Quantity.PhysicalQuantity'>
-
+    
 
 The value and unit are stored as attributes of the class:
 
@@ -64,7 +58,7 @@ The value and unit are stored as attributes of the class:
     value type: <class 'float'>
     unit: m
     unit type: <class 'PhysicalQuantities.Unit.PhysicalUnit'>
-
+    
 
 Using ``.to()`` let's you convert to other representations of the unit.
 This can be used for scaling or to express the quantity in a derived
@@ -87,11 +81,11 @@ unit. The ``.base`` property will convert
 
     g = 1.1 m
     g in mm = 1100.0 mm
-    x = 2 kg*m/s^2
+    x = 2 m*kg/s^2
     x in N = 2.0 N
     u = 1 V
-    u in base units = 1.0 kg*m^2/A/s^3
-
+    u in base units = 1.0 m^2*kg/s^3/A
+    
 
 Scaling of simple units is easy using scaling attributes:
 
@@ -113,7 +107,7 @@ Scaling of simple units is easy using scaling attributes:
     110.00000000000001 cm
     1.1 m
     0.0011 km
-
+    
 
 The physical quantity can converted back to a unitless value using the
 underscore ``_`` with the scaling attribute:
@@ -136,7 +130,7 @@ underscore ``_`` with the scaling attribute:
     110.00000000000001
     1.1
     0.0011
-
+    
 
 Internal Representation
 -----------------------
@@ -170,7 +164,9 @@ complex numbers \* uncertainties \* numpy arrays \* lists
 
 
 
-:math:`\frac{\text{m}^{2}\cdot \text{s}^{3}}{\text{A}^2\cdot \text{kg}}`
+.. math::
+
+    \frac{\text{m}^{2}\cdot \text{s}^{3}}{\text{kg}\cdot \text{A}^2}
 
 
 
@@ -216,6 +212,5 @@ is a scaled version of a base unit
 
     ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
     [2, -1, 3, -2, 0, 0, 0, 0, 0]
-    m^2*s^3/A^2/kg
-
-
+    m^2*s^3/kg/A^2
+    
