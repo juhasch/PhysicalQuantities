@@ -407,3 +407,7 @@ def test_tan():
 def test_q():
     """Test for invalid units"""
     a = q['xxm']
+
+def test_ipython_key_completions_():
+    l = q._ipython_key_completions_()
+    assert len(l) > 1
