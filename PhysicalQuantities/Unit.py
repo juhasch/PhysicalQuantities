@@ -22,10 +22,20 @@ class UnitError(ValueError):
 def findunit(unit):
     """ Return PhysicalUnit class if given parameter is a valid unit
 
-    :param unit: unit to check if valid
-    :type unit: str
-    :return: unit
-    :rtype: PhysicalUnit
+    Parameters
+    ----------
+    unit: str
+        Unit to check if valid
+
+    Returns
+    -------
+    PhysicalUnit
+        Unit
+
+    Example
+    -------
+    >>> findunit('mm')
+     <PhysicalUnit mm>
     """
     if isinstance(unit, six.string_types):
         name = str(unit).strip().replace('^', '**')
@@ -48,12 +58,24 @@ def findunit(unit):
 def convertvalue(value, src_unit, target_unit):
     """ Convert between units, if possible
 
-    :param value: value in source units
-    :param src_unit: source unit
-    :type src_unit: PhysicalUnit
-    :param target_unit: target unit
-    :type target_unit: PhysicalUnit
-    :return: value in target unit
+    Parameters
+    ----------
+    value:
+        Value in source units
+    src_unit: PhysicalUnit
+        Source unit
+    target_unit: PhysicalUnit
+        Target unit
+
+    Returns
+    -------
+    any
+        Value scaled to target unit
+
+    Example
+    -------
+    >>> convertvalue(1, q.mm.unit, q.km.unit)
+    1e-06
     """
     (factor, offset) = src_unit.conversion_tuple_to(target_unit)
     if isinstance(value, list):
@@ -64,8 +86,10 @@ def convertvalue(value, src_unit, target_unit):
 def isphysicalunit(x):
     """ Return true if valid PhysicalUnit class
 
-    :param x: unit
-    :type x: PhysicalUnit
+    Parameters
+    ----------
+    x: PhysicalUnit
+        Unit
     """
     return isinstance(x, PhysicalUnit)
 
@@ -206,7 +230,11 @@ class PhysicalUnit:
     def is_power(self):
         """ Test if unit is a power unit. Used of dB conversion
         TODO: basically very dumb right now
-        :return: True if it is a power unit, i.e. W, J or anything like it
+
+        Returns
+        -------
+        bool
+            True if it is a power unit, i.e. W, J or anything like it
         """
         p = self.powers
         if p[0] == 2 and p[1] == 1 and p[3] > -1:
@@ -217,8 +245,10 @@ class PhysicalUnit:
     def is_dimensionless(self):
         """ Check if no dimension is given
 
-        :return: true if dimensionless
-        :rtype: bool
+        Returns
+        -------
+        bool
+            True if dimensionless
         """
         return not reduce(lambda a, b: a or b, self.powers)
 
@@ -226,17 +256,20 @@ class PhysicalUnit:
     def is_angle(self):
         """ Check if unit is an angle
 
-        :return: true if unit is an angle
-        :rtype: bool
+        Returns
+        -------
+        bool
+            True if unit is an angle
         """
-        return self.powers[7] == 1 and \
-               reduce(lambda a, b: a + b, self.powers) == 1
+        return self.powers[7] == 1 and reduce(lambda a, b: a + b, self.powers) == 1
 
     def __str__(self):
         """ Return string text representation of unit
 
-        :return: Text representation of unit
-        :rtype: str
+        Returns
+        -------
+        str
+            Text representation of unit
         """
         name = self.name.strip().replace('**', u'^')
         return name
@@ -247,8 +280,10 @@ class PhysicalUnit:
     def _repr_markdown_(self):
         """ Return markdown representation for IPython notebook
 
-        :return: Unit as LaTeX string
-        :rtype: str
+        Returns
+        -------
+        str
+            Unit as LaTeX string
         """
         unit = self._markdown_name
         s = '$%s$' % unit
@@ -257,8 +292,10 @@ class PhysicalUnit:
     def _repr_latex_(self):
         """ Return LaTeX representation for IPython notebook
 
-        :return: Unit as LaTeX string
-        :rtype: str
+        Returns
+        -------
+        str
+            Unit as LaTeX string
         """
         unit = self._markdown_name
         s = '%s' % unit
@@ -268,8 +305,10 @@ class PhysicalUnit:
     def markdown(self):
         """ Return unit as a markdown formatted string
 
-        :return: Unit as LaTeX string
-        :rtype: str
+        Returns
+        -------
+        str
+            Unit as LaTeX string
         """
         return self._repr_markdown_()
 
@@ -277,18 +316,25 @@ class PhysicalUnit:
     def latex(self):
         """ Return unit as a LaTeX formatted string
 
-        :return: Unit as LaTeX string
-        :rtype: str
+        Returns
+        -------
+        str
+            Unit as LaTeX string
         """
         return self._repr_latex_()
 
     def __gt__(self, other):
         """ Test if unit is greater than other unit
 
-        :param other: other unit to compare with
-        :type other: PhysicalUnit
-        :return: true, if unit is greater than other unit
-        :rtype: bool
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to compare with
+
+        Returns
+        -------
+        bool
+            True, if unit is greater than other unit
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor > other.factor
@@ -297,10 +343,15 @@ class PhysicalUnit:
     def __ge__(self, other):
         """ Test if unit is greater or equal than other unit
 
-        :param other: other unit to compare with
-        :type other: PhysicalUnit
-        :return: true, if unit is greater or equal than other unit
-        :rtype: bool
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to compare with
+
+        Returns
+        -------
+        bool
+            True, if unit is greater or equal than other unit
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor >= other.factor
@@ -309,10 +360,15 @@ class PhysicalUnit:
     def __lt__(self, other):
         """ Test if unit is less than other unit
 
-        :param other: other unit to compare with
-        :type other: PhysicalUnit
-        :return: true, if unit is less than other unit
-        :rtype: bool
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to compare with
+
+        Returns
+        -------
+        bool
+            True, if unit is less than other unit
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor < other.factor
@@ -321,10 +377,15 @@ class PhysicalUnit:
     def __le__(self, other):
         """ Test if unit is less or equal than other unit
 
-        :param other: other unit to compare with
-        :type other: PhysicalUnit
-        :return: true, if unit is less or equal than other unit
-        :rtype: bool
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to compare with
+
+        Returns
+        -------
+        bool
+            True, if unit is less or equal than other unit
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor <= other.factor
@@ -333,10 +394,15 @@ class PhysicalUnit:
     def __eq__(self, other):
         """ Test if unit is equal than other unit
 
-        :param other: other unit to compare with
-        :type other: PhysicalUnit
-        :return: true, if unit is equal than other unit
-        :rtype: bool
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to compare with
+
+        Returns
+        -------
+        bool
+            True, if unit is equal than other unit
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor == other.factor
@@ -345,11 +411,18 @@ class PhysicalUnit:
     def __mul__(self, other):
         """ Multiply two units
 
-        :param other: other unit to multiply
-        :type other: PhysicalUnit
-        :return: multiplied unit
-        :rtype: PhysicalUnit
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Unit to multiply with
 
+        Returns
+        -------
+        PhysicalUnit
+            Multiplied unit
+
+        Example
+        -------
         >>> from PhysicalQuantities import q
         >>> q.m.unit * q.s.unit
         m*s
@@ -369,11 +442,18 @@ class PhysicalUnit:
     def __div__(self, other):
         """ Divide two units
 
-        :param other: other unit to divide
-        :type other: PhysicalUnit
-        :return: divided unit
-        :rtype: PhysicalUnit
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to divide
 
+        Returns
+        -------
+        PhysicalUnit
+            Divided unit
+
+        Example
+        -------
         >>> from PhysicalQuantities import q
         >>> q.m.unit / q.s.unit
         m/s
@@ -390,7 +470,7 @@ class PhysicalUnit:
 
     def __rdiv__(self, other):
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self,other))
+            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self, other))
         if isphysicalunit(other):
             return PhysicalUnit(other.names - self.names,
                                 other.factor / self.factor,
@@ -406,11 +486,18 @@ class PhysicalUnit:
     def __pow__(self, exponent):
         """ Power of a unit
 
-        :param exponent: power exponent
-        :type exponent: PhysicalUnit
-        :return: unit to the power of exponent
-        :rtype: PhysicalUnit
+        Parameters
+        ----------
+        exponent: PhysicalUnit
+            Power exponent
 
+        Returns
+        -------
+        PhysicalUnit
+            Unit to the power of exponent
+
+        Example
+        -------
         >>> from PhysicalQuantities import q
         >>> q.m.unit ** 2
         m^2
@@ -449,10 +536,18 @@ class PhysicalUnit:
     def conversion_factor_to(self, other):
         """Return conversion factor to another unit
 
-        :param other: other unit
-        :type other: PhysicalUnit
-        :return: float
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Unit to compute conversion factor for
 
+        Returns
+        -------
+        float
+            Conversion factor
+
+        Example
+        -------
         >>> from PhysicalQuantities import q
         >>> q.km.unit.conversion_factor_to(q.m.unit)
         1000.0
@@ -468,11 +563,18 @@ class PhysicalUnit:
     def conversion_tuple_to(self, other):
         """Return conversion factor and offset to another unit
 
-        :param other: other unit
-        :type other: PhysicalUnit
-        :return: tuple (factor, offset)
-        :rtype: float tuple
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Unit to compute conversion factor and offset for
 
+        Returns
+        -------
+        float tuple
+            Tuple (factor, offset)
+
+        Example
+        -------
         >>> from PhysicalQuantities import q
         >>> q.km.unit.conversion_tuple_to(q.m.unit)
         (1000.0, 0.0)
@@ -503,8 +605,15 @@ class PhysicalUnit:
 def _pretty(text):
     """ Pretty up unit name string
 
-    :param text: input string
-    :return: string with replaced characters
+    Parameters
+    ----------
+    text: str
+        Input string
+
+    Returns
+    -------
+    str
+        String with replaced characters
     """
     rep = {'**': '^', 'deg': '°', '*': '·', 'pi': 'π'}
     for k, v in rep.items():
@@ -515,8 +624,10 @@ def _pretty(text):
 def units_html_list():
     """ List all defined units in a HTML table
 
-    :return: list of all defined units
-    :rtype: HTML string
+    Returns
+    -------
+    str
+        HTML formatted list of all defined units
     """
     from IPython.display import HTML
     table = "<table>"
@@ -539,8 +650,10 @@ def units_html_list():
 def units_list():
     """ List all defined units
 
-    :return: list of all defined units
-    :rtype: str
+    Returns
+    -------
+    str
+        List of all defined units
     """
     units = []
     for name in unit_table:

@@ -53,4 +53,3 @@ scaled:
 3.00 :math:`\text{nF}`
 
 
-

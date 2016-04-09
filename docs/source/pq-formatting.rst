@@ -12,7 +12,9 @@ Sometimes numerical calculation results don't look too pretty:
 
 
 
-2.3333333333333335 :math:`\frac{1}{\text{m}}`
+.. math::
+
+    2.3333333333333335 $\frac{1}{\text{m}}
 
 
 
@@ -30,7 +32,9 @@ prettier:
 
 
 
-2.3 :math:`\frac{1}{\text{m}}`
+.. math::
+
+    2.3 $\frac{1}{\text{m}}
 
 
 
@@ -82,7 +86,9 @@ class. **Attention** The ``format`` property is taking Python
 
 
 
-1.235 :math:`\text{mm}`
+.. math::
+
+    2.333 $\frac{1}{\text{m}}
 
 
 
@@ -106,7 +112,7 @@ Printing Output with Quantities
     1.2 mm
     0.001235
     1.23
-
+    
 
 Another way to display quantities is using the ``Latex`` function.
 Unfortunately, mixing math equations and Python's ``.format()`` needs a
@@ -124,14 +130,20 @@ little trick because of the ``{}``\ brackets.
 
 
 
-:math:`v_{min}` is 1.2 m
+.. math::
+
+    v_{min}$ is 1.2 m
 
 
 
-:math:`v_{min}` is 1.23 m
+.. math::
+
+    v_{min}$ is 1.23 m
 
 
 
-:math:`v_{min}` is 1.23 m
+.. math::
+
+    v_{min}$ is 1.23 m
 
 
