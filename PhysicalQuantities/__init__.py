@@ -77,6 +77,9 @@ class _Quantity:
         except:
             raise AttributeError('Unit %s not found' % attr)
         return _Q
+    
+    def _ipython_key_completions_(self):
+        return list(self.table.keys())
 
 q = _Quantity()
 
