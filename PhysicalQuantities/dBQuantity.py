@@ -72,7 +72,7 @@ _add_dB_units('dBmA', unit_table['mA'])
 _add_dB_units('dBA', unit_table['A'])
 _add_dB_units('dBsm', PhysicalQuantity(1,'m**2').unit)
 _add_dB_units('dBd', None, offset=2.15)
-_add_dB_units('dBi', None)
+_add_dB_units('dBi', None, factor=10)
 _add_dB_units('dBc', None)
 
 
@@ -315,10 +315,20 @@ class dBQuantity:
         return dBQuantity(self.value, 'dB', islog=True)
 
     @property
-    def lin(self):
+    def lin(self, factor=None):
         """Return linear value of dBQuantity
-        :return: linear value
-        
+
+        Parameters
+        ----------
+        factor: float
+            Optional conversion factor for computation of factor*log10(). Typically 10 or 20
+
+        Returns
+        -------
+            Linear value
+
+        Example
+        -------
         >>> a = 0 dBm
         >>> a.lin
         1 mW
@@ -326,7 +336,12 @@ class dBQuantity:
         18.06 dB
         >>> a.lin
         8.00
+        >>> a = 6 dBi
+        >>> a.lin(10)
+        3.98
         """
+        if factor is not None:
+            self.factor = factor
         if self.sourceunit is not None:
             return PhysicalQuantity(self.__float__(), self.sourceunit)
         return self.__float__()
