@@ -24,14 +24,21 @@ def checkbaseunit(arg, unit):
 def dropunit(arg, unit):
     """ Drop unit of a given argument
 
-    :param arg: argument with unit to be checked
-    :param unit: reference unit
-    :return: value without unit
+    Parameters
+    ----------
+    arg: PhysicalQuantity
+        Argument with unit to be checked
+    unit: str
+        Reference unit
+
+    Returns
+    -------
+        Value without unit
     """
     if not isinstance(arg, PhysicalQuantity):
         return arg
     try:
-        arg.unit.conversion_tuple_to(unit_table[unit])
+        arg.to(unit)
         return arg.base.value
     except UnitError:
         raise UnitError('%s is not of unit %s' % (arg, unit))

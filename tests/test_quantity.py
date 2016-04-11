@@ -403,10 +403,23 @@ def test_tan():
     assert a.tan() == 0
 
 
+def test_q_1():
+    """Test for iitems"""
+    a = q['m']
+    assert a == PhysicalQuantity(1, 'm')
+
+
 @raises(AttributeError)
-def test_q():
+def test_q_2():
     """Test for invalid units"""
     a = q['xxm']
+
+
+def test_q_3():
+    """Test for attributes"""
+    a = q.m
+    assert a == PhysicalQuantity(1, 'm')
+
 
 def test_ipython_key_completions_():
     l = q._ipython_key_completions_()

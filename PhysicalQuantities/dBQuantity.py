@@ -55,8 +55,8 @@ class dBUnit:
         return self.name
 
 
-def _add_dB_units(name, unit, offset=0):
-    dB_unit_table[name] = dBUnit(name, unit, offset)
+def _add_dB_units(name, unit,  **kwargs):
+    dB_unit_table[name] = dBUnit(name, unit, kwargs)
 
 # Predefined dB units
 _add_dB_units('dB', None)
@@ -72,7 +72,7 @@ _add_dB_units('dBmA', unit_table['mA'])
 _add_dB_units('dBA', unit_table['A'])
 _add_dB_units('dBsm', PhysicalQuantity(1,'m**2').unit)
 _add_dB_units('dBd', None, offset=2.15)
-_add_dB_units('dBi', None)
+_add_dB_units('dBi', None, factor=10)
 _add_dB_units('dBc', None)
 
 
@@ -161,6 +161,7 @@ class dBQuantity:
         """
         self.z0 = PhysicalQuantity(50, 'Ohm')
         islog = True
+        self.offset = 0
 
         try:
             self.sourceunit = dB_unit_table[unit].unit
@@ -185,12 +186,14 @@ class dBQuantity:
                 self.z0 = val
             if key is 'factor':
                 self.factor = val
+            if key is 'offset':
+                self.offset = val
         if dB_unit_table[unit]:
             self.unit = unit
             if islog is True:
                 self.value = value
             else:
-                self.value = self.factor * np.log10(value) - dB_unit_table[self.unit].offset
+                self.value = self.factor * np.log10(value) - self.offset
         else:
             raise UnitError('Unknown unit %s' % unit)
 
@@ -317,8 +320,13 @@ class dBQuantity:
     @property
     def lin(self):
         """Return linear value of dBQuantity
-        :return: linear value
-        
+
+        Returns
+        -------
+            Linear value
+
+        Example
+        -------
         >>> a = 0 dBm
         >>> a.lin
         1 mW
@@ -330,6 +338,30 @@ class dBQuantity:
         if self.sourceunit is not None:
             return PhysicalQuantity(self.__float__(), self.sourceunit)
         return self.__float__()
+
+
+    def to_lin(self, factor):
+        """Return linear value of dBQuantity and specify conversion factor
+
+        Parameters
+        ----------
+        factor: float
+            Optional conversion factor for computation of factor*log10(). Typically 10 or 20
+
+        Returns
+        -------
+            Linear value
+
+        Example
+        -------
+        >>> a = 6 dBi
+        >>> a.lin(10)
+        3.98
+        """
+        if factor is not None:
+            self.factor = factor
+        return self.lin
+
 
     def __add__(self, other):
         """ Add two dBQuantity values
