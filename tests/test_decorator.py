@@ -1,14 +1,38 @@
 # -*- coding: utf-8 -*-
 from PhysicalQuantities.decorator import *
+from nose.tools import raises
 
 
-def test_checkbaseunit():
+def test_checkbaseunit_1():
     a = PhysicalQuantity(1, 'mm')
     assert checkbaseunit(a, 'm') == True
 
 
-def test_dropunit():
+@raises(UnitError)
+def test_checkbaseunit_2():
+    a = 1
+    assert checkbaseunit(a, 'm') == True
+
+
+@raises(UnitError)
+def test_checkbaseunit_3():
+    a = PhysicalQuantity(1, 's')
+    assert checkbaseunit(a, 'm') == True
+
+
+def test_dropunit_1():
     a = PhysicalQuantity(1, 'm')
+    assert dropunit(a, 'm') == a.value
+
+
+def test_dropunit_2():
+    a = PhysicalQuantity(1, 'm**2')
+    assert dropunit(a, 'm**2') == a.value
+
+
+@raises(UnitError)
+def test_dropunit_3():
+    a = PhysicalQuantity(1, 's')
     assert dropunit(a, 'm') == a.value
 
 

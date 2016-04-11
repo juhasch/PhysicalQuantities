@@ -293,6 +293,24 @@ def test_le_dB_4():
     assert g <= 0
 
 
+def test_lin_1():
+    a = dBQuantity(6, 'dBV')
+    b = a.lin
+    assert b.dB == a
+
+
+@raises(UnitError)
+def test_lin_2():
+    a = dBQuantity(6, 'dB')
+    a.lin
+
+
+def test_tolin():
+    a = dBQuantity(6, 'dB')
+    b = a.to_lin(20)
+    assert_almost_equal(b, 1.9952623149688795)
+
+
 def test_calculation_1():
     """ test addition """
     g = dBQuantity(0, 'dBm')
