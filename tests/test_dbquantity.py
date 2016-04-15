@@ -16,19 +16,19 @@ def test_basic_properties_1():
 def test_basic_properties_2():
     """ test unit attribute """
     g = dBQuantity(0.1,'dBm')
-    assert g.unit == 'dBm'
+    assert g.unitname == 'dBm'
 
 
 def test_basic_properties_3():
     """ test log10 factor """
     g = dBQuantity(0.1,'dBm')
-    assert g.factor == 10
+    assert g.unit.factor == 10
 
 
 def test_basic_properties_4():
     """ test default impedance """
     g = dBQuantity(0.1,'dBm')
-    assert g.z0 == PhysicalQuantity(50, 'Ohm')
+    assert g.unit.z0 == PhysicalQuantity(50, 'Ohm')
 
 
 def test_basic_properties_5():
@@ -305,9 +305,15 @@ def test_lin_2():
     a.lin
 
 
-def test_tolin():
+def test_lin10():
     a = dBQuantity(6, 'dB')
-    b = a.to_lin(20)
+    b = a.lin10
+    assert_almost_equal(b, 3.9810717055349722)
+
+
+def test_lin20():
+    a = dBQuantity(6, 'dB')
+    b = a.lin20
     assert_almost_equal(b, 1.9952623149688795)
 
 
@@ -380,7 +386,7 @@ def setitem():
 
 def test_to_dB_0():
     a = PhysicalQuantity(1, 'mV')
-    assert a.dB.unit == 'dBmV'
+    assert a.dB.unitname == 'dBmV'
 
 
 def test_to_dB_1():
