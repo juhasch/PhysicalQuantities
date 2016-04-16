@@ -149,9 +149,9 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     array = np.linspace(start_value, stop_value, num,  endpoint, retstep)
 
     if retstep:
-        return array[0] * q[unit], array[1] * q[unit]
+        return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
     else:
-        return array * q[unit]
+        return PhysicalQuantity(array, unit)
 
 
 def tophysicalquantity(arr, unit=None):
@@ -212,7 +212,7 @@ def tophysicalquantity(arr, unit=None):
                 raise UnitError('Element %d is not same unit as others' % i)
         else:
             newarr[i] = _a
-    return newarr * q[unit]
+    return PhysicalQuantity(newarr, unit)
 
 
 def argsort(array):

@@ -409,7 +409,7 @@ def test_q_1():
     assert a == PhysicalQuantity(1, 'm')
 
 
-@raises(AttributeError)
+@raises(KeyError)
 def test_q_2():
     """Test for invalid units"""
     a = q['xxm']

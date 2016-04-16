@@ -16,7 +16,7 @@ def test_basic_properties_1():
 def test_basic_properties_2():
     """ test unit attribute """
     g = dBQuantity(0.1,'dBm')
-    assert g.unitname == 'dBm'
+    assert g.unit.name == 'dBm'
 
 
 def test_basic_properties_3():
@@ -386,7 +386,7 @@ def setitem():
 
 def test_to_dB_0():
     a = PhysicalQuantity(1, 'mV')
-    assert a.dB.unitname == 'dBmV'
+    assert a.dB.unit.name == 'dBmV'
 
 
 def test_to_dB_1():

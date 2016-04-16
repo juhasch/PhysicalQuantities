@@ -9,7 +9,6 @@ import sys
 import six
 from .NDict import *
 
-
 if sys.version_info > (2,):
     from functools import reduce
 
@@ -19,12 +18,12 @@ class UnitError(ValueError):
 
 
 # Helper functions
-def findunit(unit):
+def findunit(unitname):
     """ Return PhysicalUnit class if given parameter is a valid unit
 
     Parameters
     ----------
-    unit: str
+    unitname: str or PhysicalUnit
         Unit to check if valid
 
     Returns
@@ -37,8 +36,8 @@ def findunit(unit):
     >>> findunit('mm')
      <PhysicalUnit mm>
     """
-    if isinstance(unit, six.string_types):
-        name = str(unit).strip().replace('^', '**')
+    if isinstance(unitname, six.string_types):
+        name = str(unitname).strip().replace('^', '**')
         if name[0:2] == '1/':
             name = '(' + name[2:] + ')**-1'
         try:
@@ -50,6 +49,8 @@ def findunit(unit):
                 del unit_table[cruft]
             except KeyError:
                 pass
+    else:
+        unit = unitname
     if not isphysicalunit(unit):
         raise UnitError('%s is not a unit' % str(unit))
     return unit
@@ -619,48 +620,6 @@ def _pretty(text):
     for k, v in rep.items():
         text = text.replace(k, v)
     return text
-
-
-def units_html_list():
-    """ List all defined units in a HTML table
-
-    Returns
-    -------
-    str
-        HTML formatted list of all defined units
-    """
-    from IPython.display import HTML
-    table = "<table>"
-    table += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
-    for name in unit_table:
-        unit = unit_table[name]
-        if isinstance(unit, PhysicalUnit):
-            if unit.prefixed is False:
-                if isinstance(unit.baseunit, PhysicalUnit):
-                    baseunit = '$ %s $' % unit.baseunit
-                else:
-                    baseunit = '$ %s $' % _pretty(unit.baseunit.name)
-                table += "<tr><td>" + unit.name + '</td><td>' + baseunit + \
-                         '</td><td><a href="' + unit.url + '" target="_blank">' + unit.verbosename + \
-                         '</a></td></tr>'
-    table += "</table>"
-    return HTML(table)
-
-
-def units_list():
-    """ List all defined units
-
-    Returns
-    -------
-    str
-        List of all defined units
-    """
-    units = []
-    for name in unit_table:
-        unit = unit_table[name]
-        if isinstance(unit, PhysicalUnit) and unit.prefixed is False:
-            units.append(unit.name)
-    return units
 
 
 def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
