@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.Unit import isphysicalunit, UnitError, findunit, convertvalue, units_html_list
+from PhysicalQuantities import PhysicalQuantity, units_list, units_html_list
+from PhysicalQuantities.Unit import isphysicalunit, UnitError, findunit, convertvalue, addunit, PhysicalUnit
 import numpy as np
 from nose.tools import raises
 
@@ -133,11 +133,18 @@ def test_pow_2():
 @raises(UnitError)
 def test_pow_3():
     """Offsets are not allowed"""
-    a = PhysicalQuantity(1, 'm').unit
-    a.offset = 1
+    addunit('degC', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15),
+            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
+    a = PhysicalQuantity(1, 'degC')
+    a.unit.offset = 1
     a**2
 
 
 def test_units_html_list():
     a = units_html_list()
     assert(len(a.data) > 1000)
+
+
+def test_units_list():
+    a,b = units_list()
+    assert(len(a) > 10)

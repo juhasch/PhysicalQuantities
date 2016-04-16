@@ -67,8 +67,8 @@ class _Quantity:
                 _Q = self.table[key]
             else:
                 _Q = self.table[key.name]
-        except:
-            raise AttributeError('Unit %s not found' % key)
+        except KeyError:
+            raise KeyError('Unit %s not found' % key)
         return _Q
 
     def __getattr__(self, attr):
@@ -95,3 +95,47 @@ def isphysicalquantity(x):
     True
     """
     return isinstance(x, PhysicalQuantity) or isinstance(x, dBQuantity)
+
+
+def units_html_list():
+    """ List all defined units in a HTML table
+
+    Returns
+    -------
+    str
+        HTML formatted list of all defined units
+    """
+    from IPython.display import HTML
+    table = "<table>"
+    table += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
+    for name in unit_table:
+        unit = unit_table[name]
+        if isinstance(unit, PhysicalUnit):
+            if unit.prefixed is False:
+                a = PhysicalQuantity(1, name)
+                baseunit = a.base._repr_latex_()
+                table += "<tr><td>" + name + '</td><td>' + baseunit + \
+                         '</td><td><a href="' + unit.url + '" target="_blank">' + unit.verbosename + \
+                         '</a></td></tr>'
+    table += "</table>"
+    return HTML(table)
+
+import collections
+def units_list():
+    """ List all defined units
+
+    Returns
+    -------
+    str
+        List of all defined units
+    """
+    units = []
+    baseunits = []
+    ut = collections.OrderedDict(sorted(unit_table.items()))
+    for name in ut:
+        unit = unit_table[name]
+        if isinstance(unit, PhysicalUnit) and unit.prefixed is False:
+            units.append(unit.name)
+            a = PhysicalQuantity(1, name)
+            baseunits.append(str(a.base))
+    return units, baseunits
