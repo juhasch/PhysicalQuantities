@@ -12,7 +12,7 @@ from PhysicalQuantities import unit_table
 
 
 name = r'([_a-zA-Z]\w*)'
-number = r'(-?[\d0-9.eE-]+)'
+number = r'-?([\d0-9.eE-]+)'
 unit = r'([a-zA-Z1°µ][a-zA-Z0-9°µ/*^-]*)'
 quantity = number + r'(?:\s+\+\/-\s+' + number + ')?' + r'\s+' + unit
 
@@ -31,9 +31,9 @@ _unit_list = _unit_list[0:-1]
 
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-number  = r'(?<![\w])(-?[0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
-number1 = r'(?<![\w])(-?[0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
-number2 = r'(?<![\w])(-?[0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
+number  = r'(?<![\w])([0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
+number1 = r'(?<![\w])([0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
+number2 = r'(?<![\w])([0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
 match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
 match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')'
 match2 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
@@ -60,12 +60,12 @@ for x in _li:
 _dB_unit_list = _dB_unit_list.strip('|') + ')'
 
 # regex for finding units and quoted strings
-number = r'(?<!\w)(-?[\d0-9.]+[\d0-9eE-|x]*)'
+number = r'(?<!\w)-?([\d0-9.]+[\d0-9eE-|x]*)'
 match = stringmatch+ '|' + number + r'(\s*)' + _dB_unit_list
 dB_line_match = re.compile(match)
 
 # regex to match unit after it has been found using line_match
-number = r'(-?[\d0-9-]+' +r'-?[\d0-9.eE-]*)'
+number = r'(-?[\d0-9-]+' + r'-?[\d0-9.eE-]*)'
 match = number + r'(.\s|\s*)' + _dB_unit_list
 dB_unit_match = re.compile(match)
 
@@ -119,6 +119,7 @@ def _transform(line):
     line = line_match3.sub(replace_inline2, line)  # unit/unit
     line = line_match2.sub(replace_inline1, line)  # unit**n
     line = line_match1.sub(replace_inline, line)
+#    print(':', line)
     line = line_match0.sub(replace_inline, line)
     line = dB_line_match.sub(dB_replace_inline, line)
     return line
