@@ -40,5 +40,5 @@ addunit('hp', '745.7*W', verbosename='horsepower')
 # Pressure units
 addunit('psi', '6894.75729317*Pa', verbosename='pounds per square inch')
 
-addunit('degF', PhysicalUnit(None, 5./9, [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), verbosename='degree Fahrenheit',
+addunit('degF', PhysicalUnit('K', 5./9, [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), verbosename='degree Fahrenheit',
         url='https://en.wikipedia.org/wiki/Fahrenheit')

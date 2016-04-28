@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using Decorators to wrap functions &mdash; PhysicalQuantities 0.6.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.6.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PhysicalQuantities 0.6.5 documentation" href="index.html" />
+    <link rel="next" title="Example: Calculating an RC Circuit" href="pq-example.html" />
+    <link rel="prev" title="Adding Imperial Units" href="pq-imperial.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-decorators-to-wrap-functions">
+<h1>Using Decorators to wrap functions<a class="headerlink" href="#using-decorators-to-wrap-functions" title="Permalink to this headline">¶</a></h1>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PhysicalQuantities.decorator</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<div class="section" id="require-units-in-function-call">
+<h2>Require units in function call<a class="headerlink" href="#require-units-in-function-call" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="nd">@require_units</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">power</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">W</span>
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">power</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+
+UnitError                                 Traceback (most recent call last)
+
+&lt;ipython-input-3-bd6d8cb9b6d5&gt; in &lt;module&gt;()
+----&gt; 1 power(1,1)
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in wrapper(wrapped, instance, args, kwargs)
+     53     def wrapper(wrapped, instance, args, kwargs):
+     54         for i, arg in enumerate(args):
+---&gt; 55             checkbaseunit(arg, units[i])
+     56         for i, kwarg in enumerate(kwargs):
+     57             checkbaseunit(kwarg, units[i])
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in checkbaseunit(arg, unit)
+     12     &quot;&quot;&quot;
+     13     if not isinstance(arg, PhysicalQuantity):
+---&gt; 14         raise UnitError(&#39;%s is not a PhysicalQuantitiy&#39; % arg)
+     15     try:
+     16         arg.unit.conversion_tuple_to(unit_table[unit])
+
+
+UnitError: 1 is not a PhysicalQuantitiy
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>power(1V, 1A)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>1.0 W
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>power(1A, 1A)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+
+UnitError                                 Traceback (most recent call last)
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in checkbaseunit(arg, unit)
+     15     try:
+---&gt; 16         arg.unit.conversion_tuple_to(unit_table[unit])
+     17         return True
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/Unit.py in conversion_tuple_to(self, other)
+    336         if self.powers != other.powers:
+--&gt; 337             raise UnitError(&#39;Incompatible units&#39;)
+    338
+
+
+UnitError: Incompatible units
+
+
+During handling of the above exception, another exception occurred:
+
+
+UnitError                                 Traceback (most recent call last)
+
+&lt;ipython-input-5-5e21cfcad74a&gt; in &lt;module&gt;()
+----&gt; 1 power(PhysicalQuantity(1,&#39;A&#39;), PhysicalQuantity(1,&#39;A&#39;))
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in wrapper(wrapped, instance, args, kwargs)
+     53     def wrapper(wrapped, instance, args, kwargs):
+     54         for i, arg in enumerate(args):
+---&gt; 55             checkbaseunit(arg, units[i])
+     56         for i, kwarg in enumerate(kwargs):
+     57             checkbaseunit(kwarg, units[i])
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in checkbaseunit(arg, unit)
+     17         return True
+     18     except UnitError:
+---&gt; 19         raise UnitError(&#39;%s is not of unit %s&#39; % (arg, unit))
+     20
+     21
+
+
+UnitError: 1 A is not of unit V
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>@require_units(u=&#39;V&#39;, i=&#39;A&#39;)
+def powerkw(u=0V, i=0A):
+    return (u*i).W
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>powerkw(u=1V, i=1A)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+
+IndexError                                Traceback (most recent call last)
+
+&lt;ipython-input-20-20a0a3217087&gt; in &lt;module&gt;()
+----&gt; 1 powerkw(u=PhysicalQuantity(1,&#39;V&#39;), i=PhysicalQuantity(1,&#39;A&#39;))
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in wrapper(wrapped, instance, args, kwargs)
+     55             checkbaseunit(arg, units[i])
+     56         for i, kwarg in enumerate(kwargs):
+---&gt; 57             checkbaseunit(kwarg, units[i])
+     58         ret = wrapped(*args, **kwargs)
+     59         return ret
+
+
+IndexError: tuple index out of range
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="optional-units-in-function-call">
+<h1>Optional units in function call<a class="headerlink" href="#optional-units-in-function-call" title="Permalink to this headline">¶</a></h1>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="nd">@optional_units</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">return_unit</span><span class="o">=</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">powero</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">u</span><span class="o">*</span><span class="n">i</span>
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">powero</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>1 W
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>powero(1V, 1A)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>1.0 W
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>powero(1V, 1m)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+
+UnitError                                 Traceback (most recent call last)
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in dropunit(arg, unit)
+     30     try:
+---&gt; 31         arg.unit.conversion_tuple_to(unit_table[unit])
+     32         return arg.base.value
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/Unit.py in conversion_tuple_to(self, other)
+    336         if self.powers != other.powers:
+--&gt; 337             raise UnitError(&#39;Incompatible units&#39;)
+    338
+
+
+UnitError: Incompatible units
+
+
+During handling of the above exception, another exception occurred:
+
+
+UnitError                                 Traceback (most recent call last)
+
+&lt;ipython-input-11-4a19eba42854&gt; in &lt;module&gt;()
+----&gt; 1 powero(PhysicalQuantity(1,&#39;V&#39;), PhysicalQuantity(1,&#39;m&#39;))
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in wrapper(wrapped, instance, args, kwargs)
+     78         newargs = []
+     79         for i, arg in enumerate(args):
+---&gt; 80             newargs.append(dropunit(arg, units[i]))
+     81         newkwargs = {}
+     82         for i, key in enumerate(kwargs):
+
+
+/Users/juhasch/anaconda/lib/python3.4/site-packages/PhysicalQuantities-0.6.1-py3.4.egg/PhysicalQuantities/decorator.py in dropunit(arg, unit)
+     32         return arg.base.value
+     33     except UnitError:
+---&gt; 34         raise UnitError(&#39;%s is not of unit %s&#39; % (arg, unit))
+     35
+     36
+
+
+UnitError: 1 m is not of unit A
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="nd">@optional_units</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">powerokw</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">W</span>
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using Decorators to wrap functions</a><ul>
+<li><a class="reference internal" href="#require-units-in-function-call">Require units in function call</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#optional-units-in-function-call">Optional units in function call</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pq-imperial.html" title="previous chapter">Adding Imperial Units</a></li>
+      <li>Next: <a href="pq-example.html" title="next chapter">Example: Calculating an RC Circuit</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pq-decorators.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Juergen Hasch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pq-decorators.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

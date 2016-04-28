@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using PhysicalQuantities in IPython &mdash; PhysicalQuantities 0.6.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.6.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PhysicalQuantities 0.6.5 documentation" href="index.html" />
+    <link rel="next" title="Autoscaling units" href="pq-autoscale.html" />
+    <link rel="prev" title="Using PhysicalQuantites in Python" href="pq-q-units.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Back to <a class="reference external" href="Index.ipynb">Index</a></p>
+<div class="section" id="using-physicalquantities-in-ipython">
+<h1>Using PhysicalQuantities in IPython<a class="headerlink" href="#using-physicalquantities-in-ipython" title="Permalink to this headline">¶</a></h1>
+<p>The IPython extension makes using physical quantities easier. To load
+the extension use:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>%load_ext PhysicalQuantities.ipython
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>The PhysicalQuantities.ipython extension is already loaded. To reload it, use:
+  %reload_ext PhysicalQuantities.ipython
+</pre></div>
+</div>
+<p>Now entering a physical quantities gets very easy:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>d = 2.3 s**3
+t = 3 A
+v = 2.3e3 * d / t
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;d = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">d</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;t = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">t</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;v = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>d = 2.3 s^3
+t = 3 A
+v = 1763.3333333333333 s^3/A
+</pre></div>
+</div>
+<div class="section" id="unit-conversion">
+<h2>Unit conversion<a class="headerlink" href="#unit-conversion" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to scale a unit is to use prefix attributes:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>u = 1 V
+print(u)
+print(u.mV)
+print(u.uV)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>1 V
+1000.0 mV
+1000000.0 uV
+</pre></div>
+</div>
+<p>To convert between different representations of a unit, <code class="docutils literal"><span class="pre">to()</span></code> can be
+used:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>a = 1 N * 1 m
+print(a)
+print(a.to(&#39;J&#39;))
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>1 m*N
+1.0 J
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-other-value-types">
+<h2>Using other value types<a class="headerlink" href="#using-other-value-types" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">PhysicalQuantity</span></code> class tries to be a wrapper around the value of
+a given quantity, i.e. not only single numbers can be used. For examples
+using Numpy arrays, take a look at the <a class="reference external" href="pq-numpy.ipynb">Using Numpy
+Arrays</a> notebook.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>u = (1 + 1j) * 1V
+print(&quot;u = %s&quot; %u)
+u = [1,2,3] * 1V
+print(&quot;u = %s&quot; %u)
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>u = (1+1j) V
+u = [1, 2, 3] V
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>a = [1, 2, 3] * 1V
+a
+</pre></div>
+</div>
+<div class="math">
+\[[1, 2, 3] $\text{V}\]</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="o">*</span><span class="n">a</span>
+</pre></div>
+</div>
+<div class="math">
+\[[1, 2, 3, 1, 2, 3] $\text{V}\]</div>
+</div>
+<div class="section" id="list-of-all-defined-units">
+<h2>List of all defined Units:<a class="headerlink" href="#list-of-all-defined-units" title="Permalink to this headline">¶</a></h2>
+<p>All predefined units can be listed using the <code class="docutils literal"><span class="pre">list()</span></code> or
+<code class="docutils literal"><span class="pre">html_list()</span></code> function of a unit:</p>
+<p><strong>BUG:</strong> Links for base units are missing</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PhysicalQuantities</span> <span class="kn">import</span> <span class="n">units_html_list</span>
+<span class="n">units_html_list</span><span class="p">()</span>
+</pre></div>
+</div>
+<table><tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr><tr><td>Wb</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{A}\cdot \text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Weber_(unit)" target="_blank">Weber</a></td></tr><tr><td>s</td><td>1.0 $\text{s}$</td><td><a href="https://en.wikipedia.org/wiki/Second" target="_blank">Second</a></td></tr><tr><td>h</td><td>3600.0 $\text{s}$</td><td><a href="https://en.wikipedia.org/wiki/Hour" target="_blank">Hour</a></td></tr><tr><td>lx</td><td>1.0 $\frac{\text{cd}\cdot \text{sr}}{\text{m}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Lux" target="_blank">Lux</a></td></tr><tr><td>sr</td><td>1.0 $\text{sr}$</td><td><a href="https://en.wikipedia.org/wiki/Steradian" target="_blank">Streradian</a></td></tr><tr><td>min</td><td>60.0 $\text{s}$</td><td><a href="https://en.wikipedia.org/wiki/Hour" target="_blank">Minute</a></td></tr><tr><td>J</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Joule" target="_blank">Joule</a></td></tr><tr><td>Pa</td><td>1.0 $\frac{\text{kg}}{\text{m}\cdot \text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Pascal_(unit)" target="_blank">Pascal</a></td></tr><tr><td>arcsec</td><td>4.84813681109536e-06 $\text{rad}$</td><td><a href="" target="_blank">seconds of arc</a></td></tr><tr><td>cd</td><td>1.0 $\text{cd}$</td><td><a href="https://en.wikipedia.org/wiki/Candela" target="_blank">Candela</a></td></tr><tr><td>lm</td><td>1.0 $\text{cd}\cdot \text{sr}$</td><td><a href="https://en.wikipedia.org/wiki/Lumen_(unit)" target="_blank">Lumen</a></td></tr><tr><td>H</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{A}^2\cdot \text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Henry_(unit)" target="_blank">Henry</a></td></tr><tr><td>m</td><td>1.0 $\text{m}$</td><td><a href="https://en.wikipedia.org/wiki/Metre" target="_blank">Metre</a></td></tr><tr><td>T</td><td>1.0 $\frac{\text{kg}}{\text{A}\cdot \text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Tesla_(unit)" target="_blank">Tesla</a></td></tr><tr><td>S</td><td>1.0 $\frac{\text{A}^{2}\cdot \text{s}^{3}}{\text{m}^2\cdot \text{kg}}$</td><td><a href="https://en.wikipedia.org/wiki/Siemens_(unit)" target="_blank">Siemens</a></td></tr><tr><td>C</td><td>1.0 $\text{A}\cdot \text{s}$</td><td><a href="https://en.wikipedia.org/wiki/Coulomb" target="_blank">Coulomb</a></td></tr><tr><td>deg</td><td>0.017453292519943295 $\text{rad}$</td><td><a href="http://en.wikipedia.org/wiki/Degree_%28angle%29" target="_blank">Degree</a></td></tr><tr><td>K</td><td>1.0 $\text{K}$</td><td><a href="https://en.wikipedia.org/wiki/Kelvin" target="_blank">Kelvin</a></td></tr><tr><td>g</td><td>0.001 $\text{kg}$</td><td><a href="https://en.wikipedia.org/wiki/Kilogram" target="_blank">Gram</a></td></tr><tr><td>kg</td><td>1 $\text{kg}$</td><td><a href="https://en.wikipedia.org/wiki/Kilogram" target="_blank">Kilogram</a></td></tr><tr><td>F</td><td>1.0 $\frac{\text{A}^{2}\cdot \text{s}^{4}}{\text{m}^2\cdot \text{kg}}$</td><td><a href="https://en.wikipedia.org/wiki/Farad" target="_blank">Farad</a></td></tr><tr><td>W</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{s}^3}$</td><td><a href="https://en.wikipedia.org/wiki/Watt" target="_blank">Watt</a></td></tr><tr><td>arcmin</td><td>0.0002908882086657216 $\text{rad}$</td><td><a href="" target="_blank">minutes of arc</a></td></tr><tr><td>Hz</td><td>1.0 $\frac{1}{\text{s}}$</td><td><a href="https://en.wikipedia.org/wiki/Hertz" target="_blank">Hertz</a></td></tr><tr><td>A</td><td>1.0 $\text{A}$</td><td><a href="https://en.wikipedia.org/wiki/Ampere" target="_blank">Ampere</a></td></tr><tr><td>Ohm</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{A}^2\cdot \text{s}^3}$</td><td><a href="https://en.wikipedia.org/wiki/Ohm_(unit)" target="_blank">Ohm</a></td></tr><tr><td>N</td><td>1.0 $\frac{\text{m}\cdot \text{kg}}{\text{s}^2}$</td><td><a href="https://en.wikipedia.org/wiki/Newton_(unit)" target="_blank">Newton</a></td></tr><tr><td>V</td><td>1.0 $\frac{\text{m}^{2}\cdot \text{kg}}{\text{A}\cdot \text{s}^3}$</td><td><a href="https://en.wikipedia.org/wiki/Volt" target="_blank">Volt</a></td></tr><tr><td>rad</td><td>1.0 $\text{rad}$</td><td><a href="https://en.wikipedia.org/wiki/Radian" target="_blank">Radian</a></td></tr><tr><td>mol</td><td>1.0 $\text{mol}$</td><td><a href="https://en.wikipedia.org/wiki/Mole_(unit)" target="_blank">Mol</a></td></tr></table></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using PhysicalQuantities in IPython</a><ul>
+<li><a class="reference internal" href="#unit-conversion">Unit conversion</a></li>
+<li><a class="reference internal" href="#using-other-value-types">Using other value types</a></li>
+<li><a class="reference internal" href="#list-of-all-defined-units">List of all defined Units:</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pq-q-units.html" title="previous chapter">Using PhysicalQuantites in Python</a></li>
+      <li>Next: <a href="pq-autoscale.html" title="next chapter">Autoscaling units</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pq-ipython.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Juergen Hasch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pq-ipython.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

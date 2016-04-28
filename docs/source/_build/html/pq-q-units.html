@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using PhysicalQuantites in Python &mdash; PhysicalQuantities 0.6.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.6.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PhysicalQuantities 0.6.5 documentation" href="index.html" />
+    <link rel="next" title="Using PhysicalQuantities in IPython" href="pq-ipython.html" />
+    <link rel="prev" title="PhysicalQuantities - Basics" href="pq-basics.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-physicalquantites-in-python">
+<h1>Using PhysicalQuantites in Python<a class="headerlink" href="#using-physicalquantites-in-python" title="Permalink to this headline">¶</a></h1>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>%precision 2
+from PhysicalQuantities import q
+</pre></div>
+</div>
+<div class="section" id="the-convenience-class-q-can-be-used-to-specify-units">
+<h2>The convenience class &#8216;q&#8217; can be used to specify units:<a class="headerlink" href="#the-convenience-class-q-can-be-used-to-specify-units" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">km</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>(1 mm, 1 m, 1 km)
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">mm</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<div class="math">
+\[2 $\text{mm}^{2}\]</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">q</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">q</span><span class="o">.</span><span class="n">s</span>
+<span class="n">v</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;km/h&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="math">
+\[108.00 $\frac{\text{km}}{\text{h}}\]</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="o">*</span><span class="n">q</span><span class="o">.</span><span class="n">dBm</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">q</span><span class="o">.</span><span class="n">dB</span>
+</pre></div>
+</div>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">W</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>(23 dBm, 0.20 W)
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-of-defined-units">
+<h2>List of defined units<a class="headerlink" href="#list-of-defined-units" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">table</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span>{&#39;A&#39;: &lt;PhysicalUnit A&gt;,
+ &#39;C&#39;: &lt;PhysicalUnit C&gt;,
+ &#39;F&#39;: &lt;PhysicalUnit F&gt;,
+ &#39;GA&#39;: &lt;PhysicalUnit GA&gt;,
+ &#39;GC&#39;: &lt;PhysicalUnit GC&gt;,
+ &#39;GF&#39;: &lt;PhysicalUnit GF&gt;,
+ &#39;GH&#39;: &lt;PhysicalUnit GH&gt;,
+ &#39;GHz&#39;: &lt;PhysicalUnit GHz&gt;,
+ &#39;GJ&#39;: &lt;PhysicalUnit GJ&gt;,
+ &#39;GK&#39;: &lt;PhysicalUnit GK&gt;,
+ &#39;GN&#39;: &lt;PhysicalUnit GN&gt;,
+ &#39;GOhm&#39;: &lt;PhysicalUnit GOhm&gt;,
+ &#39;GPa&#39;: &lt;PhysicalUnit GPa&gt;,
+ &#39;GS&#39;: &lt;PhysicalUnit GS&gt;,
+ &#39;GT&#39;: &lt;PhysicalUnit GT&gt;,
+ &#39;GV&#39;: &lt;PhysicalUnit GV&gt;,
+ &#39;GW&#39;: &lt;PhysicalUnit GW&gt;,
+ &#39;GWb&#39;: &lt;PhysicalUnit GWb&gt;,
+ &#39;Gcd&#39;: &lt;PhysicalUnit Gcd&gt;,
+ &#39;Gg&#39;: &lt;PhysicalUnit Gg&gt;,
+ &#39;Glm&#39;: &lt;PhysicalUnit Glm&gt;,
+ &#39;Glx&#39;: &lt;PhysicalUnit Glx&gt;,
+ &#39;Gm&#39;: &lt;PhysicalUnit Gm&gt;,
+ &#39;Gmol&#39;: &lt;PhysicalUnit Gmol&gt;,
+ &#39;Grad&#39;: &lt;PhysicalUnit Grad&gt;,
+ &#39;Gs&#39;: &lt;PhysicalUnit Gs&gt;,
+ &#39;Gsr&#39;: &lt;PhysicalUnit Gsr&gt;,
+ &#39;H&#39;: &lt;PhysicalUnit H&gt;,
+ &#39;Hz&#39;: &lt;PhysicalUnit Hz&gt;,
+ &#39;J&#39;: &lt;PhysicalUnit J&gt;,
+ &#39;K&#39;: &lt;PhysicalUnit K&gt;,
+ &#39;MA&#39;: &lt;PhysicalUnit MA&gt;,
+ &#39;MC&#39;: &lt;PhysicalUnit MC&gt;,
+ &#39;MF&#39;: &lt;PhysicalUnit MF&gt;,
+ &#39;MH&#39;: &lt;PhysicalUnit MH&gt;,
+ &#39;MHz&#39;: &lt;PhysicalUnit MHz&gt;,
+ &#39;MJ&#39;: &lt;PhysicalUnit MJ&gt;,
+ &#39;MK&#39;: &lt;PhysicalUnit MK&gt;,
+ &#39;MN&#39;: &lt;PhysicalUnit MN&gt;,
+ &#39;MOhm&#39;: &lt;PhysicalUnit MOhm&gt;,
+ &#39;MPa&#39;: &lt;PhysicalUnit MPa&gt;,
+ &#39;MS&#39;: &lt;PhysicalUnit MS&gt;,
+ &#39;MT&#39;: &lt;PhysicalUnit MT&gt;,
+ &#39;MV&#39;: &lt;PhysicalUnit MV&gt;,
+ &#39;MW&#39;: &lt;PhysicalUnit MW&gt;,
+ &#39;MWb&#39;: &lt;PhysicalUnit MWb&gt;,
+ &#39;Mcd&#39;: &lt;PhysicalUnit Mcd&gt;,
+ &#39;Mg&#39;: &lt;PhysicalUnit Mg&gt;,
+ &#39;Mlm&#39;: &lt;PhysicalUnit Mlm&gt;,
+ &#39;Mlx&#39;: &lt;PhysicalUnit Mlx&gt;,
+ &#39;Mm&#39;: &lt;PhysicalUnit Mm&gt;,
+ &#39;Mmol&#39;: &lt;PhysicalUnit Mmol&gt;,
+ &#39;Mrad&#39;: &lt;PhysicalUnit Mrad&gt;,
+ &#39;Ms&#39;: &lt;PhysicalUnit Ms&gt;,
+ &#39;Msr&#39;: &lt;PhysicalUnit Msr&gt;,
+ &#39;N&#39;: &lt;PhysicalUnit N&gt;,
+ &#39;Ohm&#39;: &lt;PhysicalUnit Ohm&gt;,
+ &#39;Pa&#39;: &lt;PhysicalUnit Pa&gt;,
+ &#39;S&#39;: &lt;PhysicalUnit S&gt;,
+ &#39;T&#39;: &lt;PhysicalUnit T&gt;,
+ &#39;TA&#39;: &lt;PhysicalUnit TA&gt;,
+ &#39;TC&#39;: &lt;PhysicalUnit TC&gt;,
+ &#39;TF&#39;: &lt;PhysicalUnit TF&gt;,
+ &#39;TH&#39;: &lt;PhysicalUnit TH&gt;,
+ &#39;THz&#39;: &lt;PhysicalUnit THz&gt;,
+ &#39;TJ&#39;: &lt;PhysicalUnit TJ&gt;,
+ &#39;TK&#39;: &lt;PhysicalUnit TK&gt;,
+ &#39;TN&#39;: &lt;PhysicalUnit TN&gt;,
+ &#39;TOhm&#39;: &lt;PhysicalUnit TOhm&gt;,
+ &#39;TPa&#39;: &lt;PhysicalUnit TPa&gt;,
+ &#39;TS&#39;: &lt;PhysicalUnit TS&gt;,
+ &#39;TT&#39;: &lt;PhysicalUnit TT&gt;,
+ &#39;TV&#39;: &lt;PhysicalUnit TV&gt;,
+ &#39;TW&#39;: &lt;PhysicalUnit TW&gt;,
+ &#39;TWb&#39;: &lt;PhysicalUnit TWb&gt;,
+ &#39;Tcd&#39;: &lt;PhysicalUnit Tcd&gt;,
+ &#39;Tg&#39;: &lt;PhysicalUnit Tg&gt;,
+ &#39;Tlm&#39;: &lt;PhysicalUnit Tlm&gt;,
+ &#39;Tlx&#39;: &lt;PhysicalUnit Tlx&gt;,
+ &#39;Tm&#39;: &lt;PhysicalUnit Tm&gt;,
+ &#39;Tmol&#39;: &lt;PhysicalUnit Tmol&gt;,
+ &#39;Trad&#39;: &lt;PhysicalUnit Trad&gt;,
+ &#39;Ts&#39;: &lt;PhysicalUnit Ts&gt;,
+ &#39;Tsr&#39;: &lt;PhysicalUnit Tsr&gt;,
+ &#39;V&#39;: &lt;PhysicalUnit V&gt;,
+ &#39;W&#39;: &lt;PhysicalUnit W&gt;,
+ &#39;Wb&#39;: &lt;PhysicalUnit Wb&gt;,
+ &#39;aA&#39;: &lt;PhysicalUnit aA&gt;,
+ &#39;aC&#39;: &lt;PhysicalUnit aC&gt;,
+ &#39;aF&#39;: &lt;PhysicalUnit aF&gt;,
+ &#39;aH&#39;: &lt;PhysicalUnit aH&gt;,
+ &#39;aHz&#39;: &lt;PhysicalUnit aHz&gt;,
+ &#39;aJ&#39;: &lt;PhysicalUnit aJ&gt;,
+ &#39;aK&#39;: &lt;PhysicalUnit aK&gt;,
+ &#39;aN&#39;: &lt;PhysicalUnit aN&gt;,
+ &#39;aOhm&#39;: &lt;PhysicalUnit aOhm&gt;,
+ &#39;aPa&#39;: &lt;PhysicalUnit aPa&gt;,
+ &#39;aS&#39;: &lt;PhysicalUnit aS&gt;,
+ &#39;aT&#39;: &lt;PhysicalUnit aT&gt;,
+ &#39;aV&#39;: &lt;PhysicalUnit aV&gt;,
+ &#39;aW&#39;: &lt;PhysicalUnit aW&gt;,
+ &#39;aWb&#39;: &lt;PhysicalUnit aWb&gt;,
+ &#39;acd&#39;: &lt;PhysicalUnit acd&gt;,
+ &#39;ag&#39;: &lt;PhysicalUnit ag&gt;,
+ &#39;alm&#39;: &lt;PhysicalUnit alm&gt;,
+ &#39;alx&#39;: &lt;PhysicalUnit alx&gt;,
+ &#39;am&#39;: &lt;PhysicalUnit am&gt;,
+ &#39;amol&#39;: &lt;PhysicalUnit amol&gt;,
+ &#39;arad&#39;: &lt;PhysicalUnit arad&gt;,
+ &#39;arcmin&#39;: &lt;PhysicalUnit arcmin&gt;,
+ &#39;arcsec&#39;: &lt;PhysicalUnit arcsec&gt;,
+ &#39;as&#39;: &lt;PhysicalUnit as&gt;,
+ &#39;asr&#39;: &lt;PhysicalUnit asr&gt;,
+ &#39;cA&#39;: &lt;PhysicalUnit cA&gt;,
+ &#39;cC&#39;: &lt;PhysicalUnit cC&gt;,
+ &#39;cF&#39;: &lt;PhysicalUnit cF&gt;,
+ &#39;cH&#39;: &lt;PhysicalUnit cH&gt;,
+ &#39;cHz&#39;: &lt;PhysicalUnit cHz&gt;,
+ &#39;cJ&#39;: &lt;PhysicalUnit cJ&gt;,
+ &#39;cK&#39;: &lt;PhysicalUnit cK&gt;,
+ &#39;cN&#39;: &lt;PhysicalUnit cN&gt;,
+ &#39;cOhm&#39;: &lt;PhysicalUnit cOhm&gt;,
+ &#39;cPa&#39;: &lt;PhysicalUnit cPa&gt;,
+ &#39;cS&#39;: &lt;PhysicalUnit cS&gt;,
+ &#39;cT&#39;: &lt;PhysicalUnit cT&gt;,
+ &#39;cV&#39;: &lt;PhysicalUnit cV&gt;,
+ &#39;cW&#39;: &lt;PhysicalUnit cW&gt;,
+ &#39;cWb&#39;: &lt;PhysicalUnit cWb&gt;,
+ &#39;ccd&#39;: &lt;PhysicalUnit ccd&gt;,
+ &#39;cd&#39;: &lt;PhysicalUnit cd&gt;,
+ &#39;cg&#39;: &lt;PhysicalUnit cg&gt;,
+ &#39;clm&#39;: &lt;PhysicalUnit clm&gt;,
+ &#39;clx&#39;: &lt;PhysicalUnit clx&gt;,
+ &#39;cm&#39;: &lt;PhysicalUnit cm&gt;,
+ &#39;cmol&#39;: &lt;PhysicalUnit cmol&gt;,
+ &#39;crad&#39;: &lt;PhysicalUnit crad&gt;,
+ &#39;cs&#39;: &lt;PhysicalUnit cs&gt;,
+ &#39;csr&#39;: &lt;PhysicalUnit csr&gt;,
+ &#39;dB&#39;: 1 dB,
+ &#39;dBA&#39;: 1 dBA,
+ &#39;dBV&#39;: 1 dBV,
+ &#39;dBW&#39;: 1 dBW,
+ &#39;dBd&#39;: 1 dBd,
+ &#39;dBi&#39;: 1 dBi,
+ &#39;dBm&#39;: 1 dBm,
+ &#39;dBmA&#39;: 1 dBmA,
+ &#39;dBmV&#39;: 1 dBmV,
+ &#39;dBnA&#39;: 1 dBnA,
+ &#39;dBnV&#39;: 1 dBnV,
+ &#39;dBsm&#39;: 1 dBsm,
+ &#39;dBuA&#39;: 1 dBuA,
+ &#39;dBuV&#39;: 1 dBuV,
+ &#39;deg&#39;: &lt;PhysicalUnit deg&gt;,
+ &#39;fA&#39;: &lt;PhysicalUnit fA&gt;,
+ &#39;fC&#39;: &lt;PhysicalUnit fC&gt;,
+ &#39;fF&#39;: &lt;PhysicalUnit fF&gt;,
+ &#39;fH&#39;: &lt;PhysicalUnit fH&gt;,
+ &#39;fHz&#39;: &lt;PhysicalUnit fHz&gt;,
+ &#39;fJ&#39;: &lt;PhysicalUnit fJ&gt;,
+ &#39;fK&#39;: &lt;PhysicalUnit fK&gt;,
+ &#39;fN&#39;: &lt;PhysicalUnit fN&gt;,
+ &#39;fOhm&#39;: &lt;PhysicalUnit fOhm&gt;,
+ &#39;fPa&#39;: &lt;PhysicalUnit fPa&gt;,
+ &#39;fS&#39;: &lt;PhysicalUnit fS&gt;,
+ &#39;fT&#39;: &lt;PhysicalUnit fT&gt;,
+ &#39;fV&#39;: &lt;PhysicalUnit fV&gt;,
+ &#39;fW&#39;: &lt;PhysicalUnit fW&gt;,
+ &#39;fWb&#39;: &lt;PhysicalUnit fWb&gt;,
+ &#39;fcd&#39;: &lt;PhysicalUnit fcd&gt;,
+ &#39;fg&#39;: &lt;PhysicalUnit fg&gt;,
+ &#39;flm&#39;: &lt;PhysicalUnit flm&gt;,
+ &#39;flx&#39;: &lt;PhysicalUnit flx&gt;,
+ &#39;fm&#39;: &lt;PhysicalUnit fm&gt;,
+ &#39;fmol&#39;: &lt;PhysicalUnit fmol&gt;,
+ &#39;frad&#39;: &lt;PhysicalUnit frad&gt;,
+ &#39;fs&#39;: &lt;PhysicalUnit fs&gt;,
+ &#39;fsr&#39;: &lt;PhysicalUnit fsr&gt;,
+ &#39;g&#39;: &lt;PhysicalUnit g&gt;,
+ &#39;h&#39;: &lt;PhysicalUnit h&gt;,
+ &#39;kA&#39;: &lt;PhysicalUnit kA&gt;,
+ &#39;kC&#39;: &lt;PhysicalUnit kC&gt;,
+ &#39;kF&#39;: &lt;PhysicalUnit kF&gt;,
+ &#39;kH&#39;: &lt;PhysicalUnit kH&gt;,
+ &#39;kHz&#39;: &lt;PhysicalUnit kHz&gt;,
+ &#39;kJ&#39;: &lt;PhysicalUnit kJ&gt;,
+ &#39;kK&#39;: &lt;PhysicalUnit kK&gt;,
+ &#39;kN&#39;: &lt;PhysicalUnit kN&gt;,
+ &#39;kOhm&#39;: &lt;PhysicalUnit kOhm&gt;,
+ &#39;kPa&#39;: &lt;PhysicalUnit kPa&gt;,
+ &#39;kS&#39;: &lt;PhysicalUnit kS&gt;,
+ &#39;kT&#39;: &lt;PhysicalUnit kT&gt;,
+ &#39;kV&#39;: &lt;PhysicalUnit kV&gt;,
+ &#39;kW&#39;: &lt;PhysicalUnit kW&gt;,
+ &#39;kWb&#39;: &lt;PhysicalUnit kWb&gt;,
+ &#39;kcd&#39;: &lt;PhysicalUnit kcd&gt;,
+ &#39;kg&#39;: &lt;PhysicalUnit kg&gt;,
+ &#39;klm&#39;: &lt;PhysicalUnit klm&gt;,
+ &#39;klx&#39;: &lt;PhysicalUnit klx&gt;,
+ &#39;km&#39;: &lt;PhysicalUnit km&gt;,
+ &#39;kmol&#39;: &lt;PhysicalUnit kmol&gt;,
+ &#39;krad&#39;: &lt;PhysicalUnit krad&gt;,
+ &#39;ks&#39;: &lt;PhysicalUnit ks&gt;,
+ &#39;ksr&#39;: &lt;PhysicalUnit ksr&gt;,
+ &#39;lm&#39;: &lt;PhysicalUnit lm&gt;,
+ &#39;lx&#39;: &lt;PhysicalUnit lx&gt;,
+ &#39;m&#39;: &lt;PhysicalUnit m&gt;,
+ &#39;mA&#39;: &lt;PhysicalUnit mA&gt;,
+ &#39;mC&#39;: &lt;PhysicalUnit mC&gt;,
+ &#39;mF&#39;: &lt;PhysicalUnit mF&gt;,
+ &#39;mH&#39;: &lt;PhysicalUnit mH&gt;,
+ &#39;mHz&#39;: &lt;PhysicalUnit mHz&gt;,
+ &#39;mJ&#39;: &lt;PhysicalUnit mJ&gt;,
+ &#39;mK&#39;: &lt;PhysicalUnit mK&gt;,
+ &#39;mN&#39;: &lt;PhysicalUnit mN&gt;,
+ &#39;mOhm&#39;: &lt;PhysicalUnit mOhm&gt;,
+ &#39;mPa&#39;: &lt;PhysicalUnit mPa&gt;,
+ &#39;mS&#39;: &lt;PhysicalUnit mS&gt;,
+ &#39;mT&#39;: &lt;PhysicalUnit mT&gt;,
+ &#39;mV&#39;: &lt;PhysicalUnit mV&gt;,
+ &#39;mW&#39;: &lt;PhysicalUnit mW&gt;,
+ &#39;mWb&#39;: &lt;PhysicalUnit mWb&gt;,
+ &#39;mcd&#39;: &lt;PhysicalUnit mcd&gt;,
+ &#39;mg&#39;: &lt;PhysicalUnit mg&gt;,
+ &#39;min&#39;: &lt;PhysicalUnit min&gt;,
+ &#39;mlm&#39;: &lt;PhysicalUnit mlm&gt;,
+ &#39;mlx&#39;: &lt;PhysicalUnit mlx&gt;,
+ &#39;mm&#39;: &lt;PhysicalUnit mm&gt;,
+ &#39;mmol&#39;: &lt;PhysicalUnit mmol&gt;,
+ &#39;mol&#39;: &lt;PhysicalUnit mol&gt;,
+ &#39;mrad&#39;: &lt;PhysicalUnit mrad&gt;,
+ &#39;ms&#39;: &lt;PhysicalUnit ms&gt;,
+ &#39;msr&#39;: &lt;PhysicalUnit msr&gt;,
+ &#39;nA&#39;: &lt;PhysicalUnit nA&gt;,
+ &#39;nC&#39;: &lt;PhysicalUnit nC&gt;,
+ &#39;nF&#39;: &lt;PhysicalUnit nF&gt;,
+ &#39;nH&#39;: &lt;PhysicalUnit nH&gt;,
+ &#39;nHz&#39;: &lt;PhysicalUnit nHz&gt;,
+ &#39;nJ&#39;: &lt;PhysicalUnit nJ&gt;,
+ &#39;nK&#39;: &lt;PhysicalUnit nK&gt;,
+ &#39;nN&#39;: &lt;PhysicalUnit nN&gt;,
+ &#39;nOhm&#39;: &lt;PhysicalUnit nOhm&gt;,
+ &#39;nPa&#39;: &lt;PhysicalUnit nPa&gt;,
+ &#39;nS&#39;: &lt;PhysicalUnit nS&gt;,
+ &#39;nT&#39;: &lt;PhysicalUnit nT&gt;,
+ &#39;nV&#39;: &lt;PhysicalUnit nV&gt;,
+ &#39;nW&#39;: &lt;PhysicalUnit nW&gt;,
+ &#39;nWb&#39;: &lt;PhysicalUnit nWb&gt;,
+ &#39;ncd&#39;: &lt;PhysicalUnit ncd&gt;,
+ &#39;ng&#39;: &lt;PhysicalUnit ng&gt;,
+ &#39;nlm&#39;: &lt;PhysicalUnit nlm&gt;,
+ &#39;nlx&#39;: &lt;PhysicalUnit nlx&gt;,
+ &#39;nm&#39;: &lt;PhysicalUnit nm&gt;,
+ &#39;nmol&#39;: &lt;PhysicalUnit nmol&gt;,
+ &#39;nrad&#39;: &lt;PhysicalUnit nrad&gt;,
+ &#39;ns&#39;: &lt;PhysicalUnit ns&gt;,
+ &#39;nsr&#39;: &lt;PhysicalUnit nsr&gt;,
+ &#39;pA&#39;: &lt;PhysicalUnit pA&gt;,
+ &#39;pC&#39;: &lt;PhysicalUnit pC&gt;,
+ &#39;pF&#39;: &lt;PhysicalUnit pF&gt;,
+ &#39;pH&#39;: &lt;PhysicalUnit pH&gt;,
+ &#39;pHz&#39;: &lt;PhysicalUnit pHz&gt;,
+ &#39;pJ&#39;: &lt;PhysicalUnit pJ&gt;,
+ &#39;pK&#39;: &lt;PhysicalUnit pK&gt;,
+ &#39;pN&#39;: &lt;PhysicalUnit pN&gt;,
+ &#39;pOhm&#39;: &lt;PhysicalUnit pOhm&gt;,
+ &#39;pPa&#39;: &lt;PhysicalUnit pPa&gt;,
+ &#39;pS&#39;: &lt;PhysicalUnit pS&gt;,
+ &#39;pT&#39;: &lt;PhysicalUnit pT&gt;,
+ &#39;pV&#39;: &lt;PhysicalUnit pV&gt;,
+ &#39;pW&#39;: &lt;PhysicalUnit pW&gt;,
+ &#39;pWb&#39;: &lt;PhysicalUnit pWb&gt;,
+ &#39;pcd&#39;: &lt;PhysicalUnit pcd&gt;,
+ &#39;pg&#39;: &lt;PhysicalUnit pg&gt;,
+ &#39;plm&#39;: &lt;PhysicalUnit plm&gt;,
+ &#39;plx&#39;: &lt;PhysicalUnit plx&gt;,
+ &#39;pm&#39;: &lt;PhysicalUnit pm&gt;,
+ &#39;pmol&#39;: &lt;PhysicalUnit pmol&gt;,
+ &#39;prad&#39;: &lt;PhysicalUnit prad&gt;,
+ &#39;ps&#39;: &lt;PhysicalUnit ps&gt;,
+ &#39;psr&#39;: &lt;PhysicalUnit psr&gt;,
+ &#39;rad&#39;: &lt;PhysicalUnit rad&gt;,
+ &#39;s&#39;: &lt;PhysicalUnit s&gt;,
+ &#39;sr&#39;: &lt;PhysicalUnit sr&gt;,
+ &#39;uA&#39;: &lt;PhysicalUnit uA&gt;,
+ &#39;uC&#39;: &lt;PhysicalUnit uC&gt;,
+ &#39;uF&#39;: &lt;PhysicalUnit uF&gt;,
+ &#39;uH&#39;: &lt;PhysicalUnit uH&gt;,
+ &#39;uHz&#39;: &lt;PhysicalUnit uHz&gt;,
+ &#39;uJ&#39;: &lt;PhysicalUnit uJ&gt;,
+ &#39;uK&#39;: &lt;PhysicalUnit uK&gt;,
+ &#39;uN&#39;: &lt;PhysicalUnit uN&gt;,
+ &#39;uOhm&#39;: &lt;PhysicalUnit uOhm&gt;,
+ &#39;uPa&#39;: &lt;PhysicalUnit uPa&gt;,
+ &#39;uS&#39;: &lt;PhysicalUnit uS&gt;,
+ &#39;uT&#39;: &lt;PhysicalUnit uT&gt;,
+ &#39;uV&#39;: &lt;PhysicalUnit uV&gt;,
+ &#39;uW&#39;: &lt;PhysicalUnit uW&gt;,
+ &#39;uWb&#39;: &lt;PhysicalUnit uWb&gt;,
+ &#39;ucd&#39;: &lt;PhysicalUnit ucd&gt;,
+ &#39;ug&#39;: &lt;PhysicalUnit ug&gt;,
+ &#39;ulm&#39;: &lt;PhysicalUnit ulm&gt;,
+ &#39;ulx&#39;: &lt;PhysicalUnit ulx&gt;,
+ &#39;um&#39;: &lt;PhysicalUnit um&gt;,
+ &#39;umol&#39;: &lt;PhysicalUnit umol&gt;,
+ &#39;urad&#39;: &lt;PhysicalUnit urad&gt;,
+ &#39;us&#39;: &lt;PhysicalUnit us&gt;,
+ &#39;usr&#39;: &lt;PhysicalUnit usr&gt;}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using PhysicalQuantites in Python</a><ul>
+<li><a class="reference internal" href="#the-convenience-class-q-can-be-used-to-specify-units">The convenience class &#8216;q&#8217; can be used to specify units:</a></li>
+<li><a class="reference internal" href="#list-of-defined-units">List of defined units</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pq-basics.html" title="previous chapter">PhysicalQuantities - Basics</a></li>
+      <li>Next: <a href="pq-ipython.html" title="next chapter">Using PhysicalQuantities in IPython</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pq-q-units.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Juergen Hasch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pq-q-units.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
