@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ PhysicalQuantity class definition
 
     Original author: Georg Brandl <georg@python.org>.
@@ -162,8 +161,8 @@ class PhysicalQuantity:
             return PhysicalQuantity_to_dBQuantity(self)
         except UnitError:
             if self.unit.is_power is True:
-                return dBQuantity(10*np.log10(self.value),'dB', islog=True, factor=10)
-            return dBQuantity(20*np.log10(self.value),'dB', islog=True, factor=20)
+                return dBQuantity(10*np.log10(self.value), 'dB', islog=True)
+            return dBQuantity(20*np.log10(self.value), 'dB', islog=True)
 
     def rint(self):
         """ Round elements to the nearest integer
@@ -617,7 +616,7 @@ class PhysicalQuantity:
             value = self.value
             unit = self.unit
             for i in range(len(units)-1, -1, -1):
-                value = value*unit.conversion_factor_to(units[i])
+                value *= unit.conversion_factor_to(units[i])
                 if i is 0:
                     rounded = value
                 else:
@@ -641,9 +640,9 @@ class PhysicalQuantity:
         1.0 m^2*kg/s^3
         """
         if type(self.value) is list:
-            new_value = [value * self.unit.factor for value in self.value] 
+            new_value = [(value+self.unit.offset) * self.unit.factor for value in self.value]
         else:
-            new_value = self.value * self.unit.factor
+            new_value = (self.value+self.unit.offset) * self.unit.factor
         num = ''
         denom = ''
         for i in range(len(base_names)):

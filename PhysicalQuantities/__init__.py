@@ -35,6 +35,8 @@ from .Unit import addunit, isphysicalunit, PhysicalUnit
 from .prefixes import *
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
 from math import pi
+import collections
+
 import pkg_resources
 __version__ = pkg_resources.require("PhysicalQuantities")[0].version
 
@@ -120,7 +122,7 @@ def units_html_list():
     table += "</table>"
     return HTML(table)
 
-import collections
+
 def units_list():
     """ List all defined units
 

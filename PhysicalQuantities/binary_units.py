@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-IPython-1.0 extension for binary units
+IPython extension for binary units
 
 Author: Juergen Hasch <python@elbonia.de>
 Distributed under the terms of the BSD License.  The full license is in

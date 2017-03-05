@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Define additional physical constants
 
 from math import pi

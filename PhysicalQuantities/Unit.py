@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ PhysicalUnit class definition
 
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
@@ -6,7 +5,6 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 
 import numpy as np
 import sys
-import six
 from .NDict import *
 
 if sys.version_info > (2,):
@@ -36,7 +34,7 @@ def findunit(unitname):
     >>> findunit('mm')
      <PhysicalUnit mm>
     """
-    if isinstance(unitname, six.string_types):
+    if isinstance(unitname, str):
         name = str(unitname).strip().replace('^', '**')
         if name[0:2] == '1/':
             name = '(' + name[2:] + ')**-1'
@@ -149,7 +147,7 @@ class PhysicalUnit:
         self.baseunit = self
         self.verbosename = verbosename
         self.url = url
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             self.names = NumberDict()
             self.names[names] = 1
         else:
@@ -238,6 +236,8 @@ class PhysicalUnit:
             True if it is a power unit, i.e. W, J or anything like it
         """
         p = self.powers
+        if p == [2, 0, 0, 0, 0, 0, 0, 0, 0]:
+            return True  # for m^ -> dBsm
         if p[0] == 2 and p[1] == 1 and p[3] > -1:
             return True
         return False
