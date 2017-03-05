@@ -1,22 +1,26 @@
 .. PhysicalQuantities documentation master file, created by
-   sphinx-quickstart on Thu Sep 10 21:52:33 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 PhysicalQuantities Documentation
 ================================
 
-*PhysicalQuantities* is a Python module that allows calculations to be aware of physical units.
-Built-in unit conversion ensures that calculations will result in the correct aggregate unit.
+*PhysicalQuantities* is a Python module that allows calculations to be aware of physical units. Built-in unit
+conversion ensures that calculations will result in the correct unit.
 
-This package was developed to be used in engineering applications, providing easy handling of numbers together with units.
+The module also contains an extension for IPython. This allows much simplified usage by typing in physical quantities
+as number and unit:
 
-The module also contains an extension for IPython. This allows greatly simplified use by typing in physical quantities
-directly as number and unit.
+.. code::
 
-This module was originally based on the IPython extension by Georg Brandl:
-https://bitbucket.org/birkenfeld/ipython-physics.
-It was converted into a standalone Python module and extended significantly.
+    >>> a = 1m ; b = 1s
+    >>> print("a=", a, ", b=",b,", a/b=", a/b)
+    a= 1 m , b= 1 s , a/b= 1.0 m/s
+
+The Github repository for this module can be found here:
+    https://github.com/juhasch/PhysicalQuantities
+
+This module is based on the IPython extension by Georg Brandl. It was converted into a standalone Python module and
+extended heavily to be as flexible as possible. The original extension can be found here:
+    https://bitbucket.org/birkenfeld/ipython-physics
 
 
 **Contents**
@@ -24,7 +28,7 @@ It was converted into a standalone Python module and extended significantly.
 *User Guide:*
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     pq-basics
     pq-q-units

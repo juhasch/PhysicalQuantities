@@ -1,6 +1,4 @@
 
-Back to `Index <Index.ipynb>`__
-
 Using PhysicalQuantities in IPython
 ===================================
 
@@ -9,34 +7,20 @@ the extension use:
 
 .. code:: python
 
-    %load_ext PhysicalQuantities.ipython
-
-
-.. parsed-literal::
-
-    The PhysicalQuantities.ipython extension is already loaded. To reload it, use:
-      %reload_ext PhysicalQuantities.ipython
-
+    >>> %load_ext PhysicalQuantities.ipython
 
 Now entering a physical quantities gets very easy:
 
 .. code:: python
 
-    d = 2.3 s**3
-    t = 3 A
-    v = 2.3e3 * d / t
-
-.. code:: python
-
-    print("d = %s" %d)
-    print("t = %s" %t)
-    print("v = %s" %v)
-
-
-.. parsed-literal::
-
+    >>> d = 2.3 s**3
+    >>> print("d = %s" %d)
     d = 2.3 s^3
+    >>> t = 3 A
+    >>> print("t = %s" %t)
     t = 3 A
+    >>> v = 2.3e3 * d / t
+    >>> print("v = %s" %v)
     v = 1763.3333333333333 s^3/A
 
 
@@ -47,16 +31,12 @@ The easiest way to scale a unit is to use prefix attributes:
 
 .. code:: python
 
-    u = 1 V
-    print(u)
-    print(u.mV)
-    print(u.uV)
-
-
-.. parsed-literal::
-
+    >>> u = 1 V
+    >>> print(u)
     1 V
+    >>> print(u.mV)
     1000.0 mV
+    >>> print(u.uV)
     1000000.0 uV
 
 
@@ -65,14 +45,10 @@ used:
 
 .. code:: python
 
-    a = 1 N * 1 m
-    print(a)
-    print(a.to('J'))
-
-
-.. parsed-literal::
-
+    >>> a = 1 N * 1 m
+    >>> print(a)
     1 m*N
+    >>> print(a.to('J'))
     1.0 J
 
 
@@ -86,55 +62,25 @@ Arrays <pq-numpy.ipynb>`__ notebook.
 
 .. code:: python
 
-    u = (1 + 1j) * 1V
-    print("u = %s" %u)
-    u = [1,2,3] * 1V
-    print("u = %s" %u)
-
-
-.. parsed-literal::
-
+    >>> u = (1 + 1j) * 1V
+    >>> print("u = %s" %u)
     u = (1+1j) V
+    >>> u = [1,2,3] * 1V
+    >>> print("u = %s" %u)
     u = [1, 2, 3] V
+    >>> a = [1, 2, 3] * 1V
+    >>> a
+
+:math:`[1, 2, 3] $\text{V}`
 
 
 .. code:: python
 
-    a = [1, 2, 3] * 1V
-    a
-
-
-
-
-.. math::
-
-    [1, 2, 3] $\text{V}
-
-
-
-.. code:: python
-
-    a.value
-
-
-
-
-.. parsed-literal::
-
+    >>> a.value
     [1, 2, 3]
+    >>> 2*a
 
-
-
-.. code:: python
-
-    2*a
-
-
-
-
-.. math::
-
-    [1, 2, 3, 1, 2, 3] $\text{V}
+:math:`[1, 2, 3, 1, 2, 3] \text{V}`
 
 
 
@@ -144,14 +90,11 @@ List of all defined Units:
 All predefined units can be listed using the ``list()`` or
 ``html_list()`` function of a unit:
 
-**BUG:** Links for base units are missing
 
 .. code:: python
 
-    from PhysicalQuantities import units_html_list
-    units_html_list()
-
-
+    >>> from PhysicalQuantities import units_html_list
+    >>> units_html_list()
 
 
 .. raw:: html

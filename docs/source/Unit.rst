@@ -5,7 +5,7 @@ Unit
 ====
 
 
-.. automodule:: PhysicalQuantities.Unit
-   :members:
+#.. automodule:: PhysicalQuantities.Unit
+#   :members:
 
 
