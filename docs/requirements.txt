@@ -1,0 +1,5 @@
+ipython
+readthedocs-sphinx-ext
+recommonmark>=0.4.0
+sphinx>=1.3.6
+sphinx_rtd_theme
