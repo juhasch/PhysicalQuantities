@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Define additional units
 from .Unit import *
-from .constants import *
+from .prefixes import addprefixed
 
 addunit('Bq', '1/s', 'Becquerel')
 addunit('Gy', 'J/kg', 'Gray')
@@ -20,10 +20,10 @@ addunit('fortnight', '1209600*s', '14 days')
 addunit('Ang', '1.e-10*m', 'Angstrom')
 addunit('AA', '1.e-10*m', 'Angstrom')
 
-addunit('c0','299792458*m/s','speed of light')
+addunit('c0', '299792458*m/s','speed of light')
 addunit('lyr', 'c0*yr', 'light year')
 
-addunit('eps0','28.854188e-12*F/m','vacuum permittivity')
+addunit('eps0', '28.854188e-12*F/m', 'vacuum permittivity')
 addunit('Bohr', '4*pi*eps0*hbar**2/me/e0**2', 'Bohr radius')
 addunit('furlong', '201.168*m', 'furlongs')
 addunit('au', '149597870691*m', 'astronomical unit')
@@ -47,7 +47,7 @@ addunit('dyn', '1.e-5*N', 'dyne (cgs unit)')
 
 # Energy units
 addunit('erg', '1.e-7*J', 'erg (cgs unit)')
-addprefixed(addunit('eV', 'e0*V', 'electron volt'),range='engineering')
+addprefixed(addunit('eV', 'e0*V', 'electron volt'), range='engineering')
 addunit('Hartree', 'me*e0**4/16/pi**2/eps0**2/hbar**2', 'Wavenumbers/inverse cm')
 addunit('Ken', 'kb*K', 'Kelvin as energy unit')
 addunit('cal', '4.184*J', 'thermochemical calorie')
@@ -57,8 +57,8 @@ addunit('kcali', '1000*cali', 'international kilocalorie')
 
 
 # Electromagnetic units
-addprefixed(addunit('G', '1e-4*T', 'Gauss'),range='engineering')
-addprefixed(addunit('Oe', '79.5774715*A/m', 'Oersted'),range='engineering')
+addprefixed(addunit('G', '1e-4*T', 'Gauss'), range='engineering')
+addprefixed(addunit('Oe', '79.5774715*A/m', 'Oersted'), range='engineering')
 
 # Power units
 addunit('hp', '745.7*W', 'horsepower')
@@ -73,13 +73,13 @@ addunit('torr', 'atm/760', 'torr = mm of mercury')
 # Temperature units
 addunit('degR', '(5./9.)*K', 'degrees Rankine')
 addunit('degC', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15),
-        url='https://en.wikipedia.org/wiki/Celsius', comment='degrees Celsius')
+        url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
 
 # Radiation-related units
-addprefixed(addunit('Ci', '3.7e10*Bq', 'Curie'),range='engineering')
-addprefixed(addunit('rem', '0.01*Sv', 'Rem'),range='engineering')
+addprefixed(addunit('Ci', '3.7e10*Bq', 'Curie'), range='engineering')
+addprefixed(addunit('rem', '0.01*Sv', 'Rem'), range='engineering')
 
 # Astronomical units
 addunit('Msol', '1.98892e30*kg', 'solar mass')
 addunit('Lsol', '3.839e26*W', 'solar luminosity')
-addprefixed(addunit('pc', '3.08568025e16*m'),range='engineering')
+addprefixed(addunit('pc', '3.08568025e16*m'), range='engineering')
