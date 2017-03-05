@@ -1,70 +1,41 @@
 
-Using PhysicalQuantites in Python
-=================================
+Units
+=====
+
+A quantity  always has a unit:
 
 .. code:: python
 
-    %precision 2
-    from PhysicalQuantities import q
+    >>> a = PhysicalQuantity(1, 'm')
+    >>> a.unit
+    <PhysicalUnit m>
 
 The convenience class 'q' can be used to specify units:
 -------------------------------------------------------
 
 .. code:: python
 
-    q.mm, q.m, q.km
-
-
-
-
-.. parsed-literal::
-
+    >>> %precision 2
+    >>> from PhysicalQuantities import q
+    >>> q.mm, q.m, q.km
     (1 mm, 1 m, 1 km)
+    >>> 2 * q.mm**2
 
+:math:`2 \text{mm}^{2}`
+
+.. code:: python
+
+    >>> v = 30 * q.m / q.s
+    >>> v.to('km/h')
+
+:math:`108.00 \frac{\text{km}}{\text{h}}`
 
 
 .. code:: python
 
-    2 * q.mm**2
-
-
-
-
-.. math::
-
-    2 $\text{mm}^{2}
-
-
-
-.. code:: python
-
-    v = 30 * q.m / q.s
-    v.to('km/h')
-
-
-
-
-.. math::
-
-    108.00 $\frac{\text{km}}{\text{h}}
-
-
-
-.. code:: python
-
-    p = 20*q.dBm + 3*q.dB
-
-.. code:: python
-
-    p, p.W
-
-
-
-
-.. parsed-literal::
-
+    >>> p = 20*q.dBm + 3*q.dB
+    >>> p, p.W
     (23 dBm, 0.20 W)
-
 
 
 List of defined units
@@ -72,13 +43,7 @@ List of defined units
 
 .. code:: python
 
-    q.table
-
-
-
-
-.. parsed-literal::
-
+    >>> q.table
     {'A': <PhysicalUnit A>,
      'C': <PhysicalUnit C>,
      'F': <PhysicalUnit F>,

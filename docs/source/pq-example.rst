@@ -14,7 +14,6 @@ Example: Calculating an RC Circuit
         display(HTML(s))
 
 
-
 .. parsed-literal::
 
     The PhysicalQuantities.ipython extension is already loaded. To reload it, use:
@@ -100,8 +99,6 @@ Plot Current and Voltage over Time
     ylabel('Current in %s' % i.unit);
 
 
-
-
 .. code:: python
 
     uc = u0 - i*R
@@ -110,7 +107,3 @@ Plot Current and Voltage over Time
     grid()
     xlabel('Time in %s' % t.unit)
     ylabel('Voltage in %s' % uc.unit);
-
-
-
-
