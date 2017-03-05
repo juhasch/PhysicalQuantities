@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from PhysicalQuantities import PhysicalQuantity
 from numpy.testing import assert_almost_equal
 

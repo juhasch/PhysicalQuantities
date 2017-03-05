@@ -503,3 +503,27 @@ def test_dir_db():
     a = dBQuantity(4, 'dBm')
     b = list(a.__dir__())
     assert('dB' in b)
+
+
+def test_dBi_to_lin():
+    a = dBQuantity(20, 'dBi')
+    assert(a.lin == 100.0)
+
+
+def test_dBd_to_dBi():
+    a = dBQuantity(20, 'dBd')
+    b = a.dBi
+    assert(b.value == 22.15)
+
+def test_dBsm_to_m2():
+    a = dBQuantity(20, 'dBsm')
+    b = a.lin
+    assert(b.unit.name == 'm**2')
+    assert(b.value == 100)
+
+
+def test_m2_to_dBsm():
+    a = PhysicalQuantity(100, 'm**2')
+    b = a.dB
+    assert(b.unit.name == 'dBsm')
+    assert(b.value == 20)

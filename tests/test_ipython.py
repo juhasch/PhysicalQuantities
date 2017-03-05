@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-from nose.tools import raises
-
-from PhysicalQuantities.ipython import _transform
+from PhysicalQuantities.ipython import _transform, init_match, init_dB_match
 
 
 test_transformer = _transform().func
-
+init_match()
+init_dB_match()
 
 def test_simple():
     """ No transformation """

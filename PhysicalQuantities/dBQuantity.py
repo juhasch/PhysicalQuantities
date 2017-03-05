@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-""" Class for dB calculations 
+""" Class for dB calculations
 
 Example:
     >>> from PhysicalQuantities.dBQuantity import dBQuantity
-    >>> dBQuantity(1,'dBm')
+    >>> dBQuantity(1, 'dBm')
     1 dBm
 
 """
@@ -50,9 +49,7 @@ class dBUnit:
         self.offset = offset
         self.factor = factor
         self.z0 = z0
-        if self.physicalunit is None:
-            self.factor = 0
-        else:
+        if self.physicalunit is not None:
             self.factor = 20 - 10 * self.physicalunit.is_power
         dB_unit_table[name] = self
 
@@ -61,8 +58,8 @@ class dBUnit:
         return self.name
 
 
-def _add_dB_units(name, unit,  **kwargs):
-    dB_unit_table[name] = dBUnit(name, unit, **kwargs)
+def _add_dB_units(name, unit,  offset=0, factor=0):
+    dB_unit_table[name] = dBUnit(name, unit, offset, factor)
 
 # Predefined dB units
 _add_dB_units('dB', None)
@@ -77,9 +74,9 @@ _add_dB_units('dBuA', unit_table['uA'])
 _add_dB_units('dBmA', unit_table['mA'])
 _add_dB_units('dBA', unit_table['A'])
 _add_dB_units('dBsm', PhysicalQuantity(1,'m**2').unit)
-_add_dB_units('dBd', None, offset=2.15)
+_add_dB_units('dBd', None, factor=10, offset=2.15)
 _add_dB_units('dBi', None, factor=10)
-_add_dB_units('dBc', None)
+_add_dB_units('dBc', None, factor=10)
 
 
 def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
@@ -106,7 +103,7 @@ def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
             if dB_unit_table[dBunitname].physicalunit.baseunit.name == x.unit.baseunit.name:
                     dbbase = dBunitname
                     value = x.to(dB_unit_table[dBunitname].physicalunit.name).value
-                    _unit = dB_unit_table[dBunitname].physicalunit
+                    _unit = dB_unit_table[dBunitname].physicalunit  # FIXME
         else:
             for key in dB_unit_table:
                 if dB_unit_table[key].physicalunit is not None and dB_unit_table[key].physicalunit.name == x.unit.name:
@@ -125,12 +122,18 @@ def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
     raise UnitError('Cannot handle unitless quantity %s' % x)
 
 
-
 def dB10(x):
     """ Convert linear value to 10*log10() dB value
 
-    :param x: linear value
-    :return: 10*log10(x)
+    Parameters
+    ----------
+    x: array_like
+        linear value
+
+    Returns
+    -------
+    array_like
+        10*log10(x)
     """
     if isinstance(x, PhysicalQuantity):
         val = x.base.value
@@ -142,8 +145,15 @@ def dB10(x):
 def dB20(x):
     """ Convert linear value to 20*log10() dB value
 
-    :param x: linear value
-    :return: 20*log10(x)
+    Parameters
+    ----------
+    x: array_like
+        linear value
+
+    Returns
+    -------
+    array_like
+        20*log10(x)
     """
     if isinstance(x, PhysicalQuantity):
         val = x.base.value
@@ -257,7 +267,10 @@ class dBQuantity:
             return self
         elif unitname in dB_unit_table.keys():
             # convert to same base unit, only scaling
-            scaling = self.unit.factor * np.log10( self.unit.physicalunit.factor / dB_unit_table[unitname].physicalunit.factor)
+            if self.unit.physicalunit is not None:
+                scaling = self.unit.factor * np.log10( self.unit.physicalunit.factor / dB_unit_table[unitname].physicalunit.factor)
+            else:
+                scaling = self.unit.offset
             value = self.value + scaling
             if dropunit is False:
                 return self.__class__(value, unitname, islog=True)

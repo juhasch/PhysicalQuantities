@@ -15,7 +15,7 @@ setup(
     keywords="Physical Quantities IPython",
     url="http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
-    install_requires=['six', 'numpy', 'IPython', 'wrapt'],
+    install_requires=['numpy', 'IPython', 'wrapt'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 4 - Beta",

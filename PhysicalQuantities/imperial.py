@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """ Define additional units
 """
 from .Unit import PhysicalUnit, addunit
+from PhysicalQuantities.ipython import load_ipython_extension, unload_ipython_extension
 
 # Length units
 addunit('inch', '2.54*cm', verbosename='inch', url='https://en.wikipedia.org/wiki/Inch')
@@ -13,7 +13,7 @@ addunit('furlong', '201.168*m', verbosename='furlongs')
 
 # Area units
 addunit('acres', 'mi**2/640', verbosename='acre')
-addunit('b', '1.e-28*m', verbosename='barn')
+addunit('barn', '1.e-28*m', verbosename='barn')
 
 # Volume units
 addunit('tsp', '4.92892159375*cm**3', verbosename='teaspoon')
@@ -42,3 +42,12 @@ addunit('psi', '6894.75729317*Pa', verbosename='pounds per square inch')
 
 addunit('degF', PhysicalUnit(None, 5./9, [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=459.67), verbosename='degree Fahrenheit',
         url='https://en.wikipedia.org/wiki/Fahrenheit')
+
+# Reload transformer in IPython
+try:
+    ip = get_ipython()
+    if 'PhysicalQuantity' in ip.user_ns:
+        unload_ipython_extension(ip)
+        load_ipython_extension(ip)
+except:
+    pass

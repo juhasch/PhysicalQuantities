@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+"""Decorators to check units in parameters"""
 import wrapt
 from .Quantity import *
 from .Unit import *
@@ -8,9 +7,17 @@ from .Unit import *
 def checkbaseunit(arg, unit):
     """ Check if an argument is of a certain unit
 
-    :param arg: argument with unit to be checked
-    :param unit: reference unit
-    :return: True if argument has requested unit
+    Parameters
+    ----------
+    arg: PhysicalQuantity
+        argument with unit to be checked
+    unit: str
+        reference unit
+
+    Returns
+    -------
+    bool
+        True if argument has requested unit
     """
     if not isinstance(arg, PhysicalQuantity):
         raise UnitError('%s is not a PhysicalQuantitiy' % arg)
@@ -47,8 +54,15 @@ def dropunit(arg, unit):
 def require_units(*units, **kunits):
     """ Decorator to check arguments of a function call
 
-    :param *units: list of units for arguments
-    :param **kwunits: list of keyword units for arguments
+    Parameters
+    ----------
+    units: list
+        list of units for arguments
+**kwunits: list of keyword units for arguments
+
+    Returns
+    -------
+        wrapper function
 
     >>> @require_units('V', 'A')
     >>> def power(u, i):
