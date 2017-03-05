@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/physicalquantities/badge/?version=latest)](http://physicalquantities.readthedocs.io/en/latest/?badge=latest)
+
 PhysicalQuantities is a python module that allows calculations to be aware of physical units. 
 Built-in unit conversion ensures that calculations will result in the correct aggregate unit.
 
