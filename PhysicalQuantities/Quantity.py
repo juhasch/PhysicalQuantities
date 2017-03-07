@@ -1,7 +1,5 @@
 """ PhysicalQuantity class definition
 
-    Original author: Georg Brandl <georg@python.org>.
-    https://bitbucket.org/birkenfeld/ipython-physics
 """
 
 # TODO:
@@ -587,13 +585,7 @@ class PhysicalQuantity:
         return self
     
     def to(self, *units):
-        """ Express the quantity in different units. If one unit is specified, a
-            new PhysicalQuantity object is returned that expresses the quantity in
-            that unit. If several units are specified, the return value is a tuple
-            of PhysicalObject instances with with one element per unit such that the
-            sum of all quantities in the tuple equals the the original quantity and
-            all the values except for the last one are integers. This is used to
-            convert to irregular unit systems like hour/minute/second.
+        """ Express the quantity in different units.
 
         Parameters
         ----------
@@ -604,6 +596,14 @@ class PhysicalQuantity:
         -------
             >>> b = PhysicalQuantity(4, 'J/s')
             >>> b.to('W')
+
+        Notes
+        -----
+            If one unit is specified, a new PhysicalQuantity object is returned that expresses the quantity in
+            that unit. If several units are specified, the return value is a tuple of PhysicalObject instances with
+            one element per unit such that the sum of all quantities in the tuple equals the the original quantity and
+            all the values except for the last one are integers. This is used to convert to irregular unit systems like
+            hour/minute/second.
         """
         units = list(map(findunit, units))
         if len(units) is 1:

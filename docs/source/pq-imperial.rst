@@ -4,39 +4,58 @@ Adding Imperial Units
 
 .. code:: python
 
-    from PhysicalQuantities import imperial
+    >>> from PhysicalQuantities import imperial
+    >>> l = 1 inch
+    1 inch
+    >>> l.cm
+    2.54 cm
 
-.. code:: python
-
-    %reload_ext PhysicalQuantities.ipython
-
-.. code:: python
-
-    l = 1 inch
-
-.. code:: python
-
-    l
-
-
-
-
-.. math::
-
-    1 $\text{inch}
-
-
-
-.. code:: python
-
-    l.m
-
-
-
-
-.. math::
-
-    0.025400000000000002 $\text{m}
-
-
-
++------------+------------------+
+| Name       | Unit             |
++============+==================+
+| inch       | inch             |
++------------+------------------+
+| ft         | foot             |
++------------+------------------+
+| yd         | yard             |
++------------+------------------+
+| mi     | (British) mile       |
++------------+------------------+
+| nmi     | Nautical mile       |
++------------+------------------+
+| furlong      | furlongs       |
++------------+------------------+
+| acres            | acre       |
++------------+------------------+
+| barn             | barn       |
++------------+------------------+
+| tsp          | teaspoon       |
++------------+------------------+
+| tbsp       | tablespoon       |
++------------+------------------+
+| floz      | fluid ounce       |
++------------+------------------+
+| cup              |  cup       |
++------------+------------------+
+| pt               | pint       |
++------------+------------------+
+| qt              | quart       |
++------------+------------------+
+| galUS       | US gallon       |
++------------+------------------+
+| galUK  | British gallon       |
++------------+------------------+
+| oz              | ounce       |
++------------+------------------+
+| lb              | pound       |
++------------+------------------+
+| ton            | US ton       |
++------------+------------------+
+| Btu  | British thermal unit   |
++------------+------------------+
+| hp         | horsepower       |
++------------+------------------+
+| psi  | pounds per square inch |
++------------+------------------+
+| degF | degree Fahrenheit      |
++------------+------------------+

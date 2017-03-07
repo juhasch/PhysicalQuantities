@@ -83,7 +83,6 @@ Arrays <pq-numpy.ipynb>`__ notebook.
 :math:`[1, 2, 3, 1, 2, 3] \text{V}`
 
 
-
 List of all defined Units:
 --------------------------
 
