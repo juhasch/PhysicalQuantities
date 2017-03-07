@@ -16,16 +16,16 @@ as number and unit:
     a= 1 m , b= 1 s , a/b= 1.0 m/s
 
 The Github repository for this module can be found here:
+
     https://github.com/juhasch/PhysicalQuantities
 
 This module is based on the IPython extension by Georg Brandl. It was converted into a standalone Python module and
 extended heavily to be as flexible as possible. The original extension can be found here:
+
     https://bitbucket.org/birkenfeld/ipython-physics
 
-
-**Contents**
-
-*User Guide:*
+User Guide
+----------
 
 .. toctree::
     :maxdepth: 1
@@ -37,24 +37,25 @@ extended heavily to be as flexible as possible. The original extension can be fo
     pq-dbquantity
     pq-formatting
     pq-numpy
-    pq-numpywrapper
     pq-sympy
     pq-uncertainties
     pq-imperial
     pq-decorators
     pq-example
 
-*Reference:*
+Reference
+---------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     Quantity
     Unit
     constants
+    pq-numpywrapper
 
-**Indices and tables**
-
+Indices and tables
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

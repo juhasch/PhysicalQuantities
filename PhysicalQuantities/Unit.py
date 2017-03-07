@@ -41,7 +41,7 @@ def findunit(unitname):
         try:
             unit = eval(name, unit_table)
         except NameError:
-            raise UnitError('Invalid or unknown unit in %s' % name)
+            raise UnitError('Invalid or unknown unit %s' % name)
         for cruft in ['__builtins__', '__args__']:
             try:
                 del unit_table[cruft]

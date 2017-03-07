@@ -6,7 +6,7 @@ Built-in unit conversion ensures that calculations will result in the correct ag
 The module also contains an extension for IPython. This allows greatly simplified use by typing in physical quantities
 directly as number and unit.
 
-```Python
+```
 >>> a = 10m ; b = 2s
 >>> print("a=", a, ", b=",b,", a/b=", a//b)
 a= 10 m , b= 2 s , a/b= 5 m/s
@@ -14,7 +14,7 @@ a= 10 m , b= 2 s , a/b= 5 m/s
 
 dB calculations are supported, too:
 
-```Python
+```
 >>> p = 200mW
 >>> p.dB
 23.010299956639813 dBm
