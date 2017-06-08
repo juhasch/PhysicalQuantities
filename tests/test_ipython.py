@@ -73,3 +73,15 @@ def test_10():
     line = '1e-6 V'
     ret = test_transformer(line)
     assert ret == "PhysicalQuantity(1e-6,'V')"
+
+
+def test_pep15():
+    line = '10_000 m'
+    ret = test_transformer(line)
+    assert ret == "PhysicalQuantity(10000,'m')"
+
+
+def test_pep15_dB():
+    line = '10_000 dBm'
+    ret = test_transformer(line)
+    assert ret == "PhysicalQuantity(10000,'dBm')"
