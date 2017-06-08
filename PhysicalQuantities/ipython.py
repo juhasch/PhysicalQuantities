@@ -17,6 +17,7 @@ line_match3 = None
 dB_line_match = None
 dB_unit_match = None
 
+
 def init_match():
     global line_match0, line_match1, line_match2, line_match3
 
@@ -37,6 +38,7 @@ def init_match():
     line_match2 = re.compile(match2)
     line_match3 = re.compile(match3)
 
+
 def init_dB_match():
     global dB_line_match, dB_unit_match
     _li = sorted(list(dB_unit_table.keys()),key=len, reverse=True)
@@ -47,12 +49,12 @@ def init_dB_match():
     _dB_unit_list = _dB_unit_list.strip('|') + ')'
 
     # regex for finding units and quoted strings
-    dB_number = r'(?<!\w)-?([\d0-9.]+[\d0-9eE-|x]*)'
+    dB_number = r'(?<!\w)-?([\d0-9._]+[\d0-9eE-|x]*)'
     dB_match = stringmatch + '|' + dB_number + r'(\s*)' + _dB_unit_list
     dB_line_match = re.compile(dB_match)
 
     # regex to match unit after it has been found using line_match
-    dB_number2 = r'(-?[\d0-9-]+' + r'-?[\d0-9.eE-]*)'
+    dB_number2 = r'(-?[\d0-9-_]+' + r'-?[\d0-9.eE-]*)'
     dB_match2 = dB_number2 + r'(.\s|\s*)' + _dB_unit_list
     dB_unit_match = re.compile(dB_match2)
 
@@ -71,9 +73,9 @@ subst_re = re.compile(r'\?' + name)
 
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-number  = r'(?<![\w])([0-9]*\.?[0-9]*[eE]?-?[0-9]*)'
-number1 = r'(?<![\w])([0-9]+\.?[0-9]*[eE]?-?[0-9]*)'
-number2 = r'(?<![\w])([0-9]*\.?[0-9]+[eE]?-?[0-9]*)'
+number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
+number1 = r'(?<![\w])([0-9_]+\.?[0-9]*[eE]?-?[0-9]*)'
+number2 = r'(?<![\w])([0-9_]*\.?[0-9]+[eE]?-?[0-9]*)'
 
 # =========================================
 # dB

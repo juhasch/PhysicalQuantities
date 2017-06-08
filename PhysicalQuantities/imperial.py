@@ -5,6 +5,7 @@ from PhysicalQuantities.ipython import load_ipython_extension, unload_ipython_ex
 
 # Length units
 addunit('inch', '2.54*cm', verbosename='inch', url='https://en.wikipedia.org/wiki/Inch')
+addunit('mil', 'inch/1000', verbosename='foot', url='https://en.wikipedia.org/wiki/Thousandth_of_an_inch')
 addunit('ft', '12*inch', verbosename='foot', url='https://en.wikipedia.org/wiki/Foot_(unit)')
 addunit('yd', '3*ft', verbosename='yard', url='https://en.wikipedia.org/wiki/Yard')
 addunit('mi', '5280.*ft', verbosename='(British) mile')
