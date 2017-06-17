@@ -38,7 +38,7 @@ from math import pi
 import collections
 
 import pkg_resources
-__version__ = '0.6.6'
+__version__ = '0.6.7'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
