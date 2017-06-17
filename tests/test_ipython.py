@@ -1,9 +1,12 @@
 from PhysicalQuantities.ipython import _transform, init_match, init_dB_match
 
+import unittest
+import sys
 
 test_transformer = _transform().func
 init_match()
 init_dB_match()
+
 
 def test_simple():
     """ No transformation """
@@ -73,3 +76,18 @@ def test_10():
     line = '1e-6 V'
     ret = test_transformer(line)
     assert ret == "PhysicalQuantity(1e-6,'V')"
+
+@unittest.skipIf(sys.version_info < (3, 6),
+                    reason="requires python3.6")
+def test_pep15():
+    line = '10_000 m'
+    ret = test_transformer(line)
+    assert ret == "PhysicalQuantity(10000,'m')"
+
+
+@unittest.skipIf(sys.version_info < (3, 6),
+                    reason="requires python3.6")
+def test_pep15_dB():
+    line = '10_000 dBm'
+    ret = test_transformer(line)
+    assert ret == "PhysicalQuantity(10000,'dBm')"

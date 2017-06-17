@@ -273,7 +273,6 @@ def test_le_dB_2():
     """ test le operator with different units"""
     g1 = dBQuantity(1, 'dBnV')
     g2 = dBQuantity(1, 'dBmV')
-    print('abce')
     assert g1 <= g2
     
     
