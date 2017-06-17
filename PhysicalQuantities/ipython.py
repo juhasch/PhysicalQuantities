@@ -136,6 +136,7 @@ def _transform(line):
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
     line = dB_line_match.sub(dB_replace_inline, line)
+    print(line)
     return line
 
 __transformer = _transform()
