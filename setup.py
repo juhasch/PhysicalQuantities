@@ -16,7 +16,11 @@ setup(
     url="http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
     install_requires=['numpy', 'IPython', 'wrapt'],
-    long_description=read('README.md'),
+    long_description=read('PhysicalQuantities is a python module that allows calculations to be aware of physical units'
+                          'with a focus on engineering applications. Built-in unit conversion ensures that calculations'
+                          'will result in the correct aggregate unit.'
+                          'The module also contains an extension for IPython. This allows greatly simplified use by '
+                          'typing in physical quantities directly as number and associated unit.'),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",

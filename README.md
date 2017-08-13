@@ -5,26 +5,31 @@ of physical units with a focus on engineering applications.
 Built-in unit conversion ensures that calculations will result in the correct aggregate unit.
 
 The module also contains an extension for IPython. This allows greatly simplified use by typing in physical quantities
-directly as number and unit.
+directly as number and associated unit.
+
+There are a number of implementations to allow using physical units in Python. This one
+focuses on the ease of use, especially for interactive work in IPython and the Jupyter notebook.
 
 ```
-In [1]: a = 100mm
+In [1]: %load_ext PhysicalQuantities.ipython
 
-In [2]: a
-Out[2]: 100 mm
+In [2]: a = 100mm
 
-In [3]: a.cm
-Out[3]: 10.0 cm
+In [3]: a
+Out[3]: 100 mm
 
-In [4]: a = 10_000_000 nm
+In [4]: a.cm
+Out[4]: 10.0 cm
 
-In [5]: a.autoscale
-Out[5]: 1.0 cm
+In [5]: a = 10_000_000 nm
 
-In [6]: g = 9.81 m/s
+In [6]: a.autoscale
+Out[6]: 1.0 cm
 
-In [7]: g
-Out[7]: 9.81 m/s
+In [7]: g = 9.81 m/s
+
+In [8]: g
+Out[8]: 9.81 m/s
 ```
 
 dB calculations are supported, too:
@@ -53,7 +58,7 @@ Additional units, e.g. imperial units:
 In [1]: %precision 2
 Out[1]: '%.2f'
 
-In [2]: import  PhysicalQuantities.imperial
+In [2]: import PhysicalQuantities.imperial
 
 In [3]: a = 2 inch
 
@@ -72,3 +77,6 @@ This module is originally based on the IPython extension by Georg Brandl
 (<https://bitbucket.org/birkenfeld/ipython-physics>). It was heavily extended to improve the
 ease of use.
 
+For a discussion on the difficulties and pitfalls of implementing phyiscial units support
+in Python, the talk from SciPy 2017 'MetPy’s Choice of Unit Support: A Descent into Madness'
+by Ryan May and John Leeman is quite instructive.
