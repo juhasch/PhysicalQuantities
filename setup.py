@@ -1,4 +1,5 @@
 import os
+
 from setuptools import setup
 
 
@@ -7,7 +8,7 @@ def read(fname):
 
 setup(
     name="PhysicalQuantities",
-    version="0.6.7",
+    version="0.7.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
@@ -16,7 +17,11 @@ setup(
     url="http://packages.python.org/PhysicalQuantities",
     packages=['PhysicalQuantities'],
     install_requires=['numpy', 'IPython', 'wrapt'],
-    long_description=read('README.md'),
+    long_description="""
+PhysicalQuantities is a python module that allows calculations to be aware 
+of physical units with a focus on engineering applications. 
+Built-in unit conversion ensures that calculations will result in the correct aggregate unit.
+""",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",

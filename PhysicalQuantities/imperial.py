@@ -1,7 +1,9 @@
 """ Define additional units
 """
-from .Unit import PhysicalUnit, addunit
-from PhysicalQuantities.ipython import load_ipython_extension, unload_ipython_extension
+from PhysicalQuantities.ipython import (load_ipython_extension,
+                                        unload_ipython_extension)
+
+from .unit import PhysicalUnit, addunit
 
 # Length units
 addunit('inch', '2.54*cm', verbosename='inch', url='https://en.wikipedia.org/wiki/Inch')

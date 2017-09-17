@@ -1,7 +1,7 @@
-from PhysicalQuantities.ipython import _transform, init_match, init_dB_match
-
-import unittest
 import sys
+import unittest
+
+from PhysicalQuantities.ipython import _transform, init_dB_match, init_match
 
 test_transformer = _transform().func
 init_match()

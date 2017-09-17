@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # Define additional units
-from .Unit import *
 from .prefixes import addprefixed
+from .unit import *
 
 addunit('Bq', '1/s', 'Becquerel')
 addunit('Gy', 'J/kg', 'Gray')

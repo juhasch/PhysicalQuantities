@@ -4,10 +4,11 @@
 #                  https://bitbucket.org/birkenfeld/ipython-physics
 
 import re
+
 from IPython.core.inputtransformer import StatelessInputTransformer
-from PhysicalQuantities import PhysicalQuantity, dBQuantity
+
+from PhysicalQuantities import PhysicalQuantity, dBQuantity, unit_table
 from PhysicalQuantities.dBQuantity import dB_unit_table
-from PhysicalQuantities import unit_table
 
 line_match0 = None
 line_match1 = None
@@ -136,7 +137,6 @@ def _transform(line):
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
     line = dB_line_match.sub(dB_replace_inline, line)
-    print(line)
     return line
 
 __transformer = _transform()

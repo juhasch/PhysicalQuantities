@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import PhysicalQuantities as pq
 import numpy as np
+
+import PhysicalQuantities as pq
 
 
 def test_list_0():

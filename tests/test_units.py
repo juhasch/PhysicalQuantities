@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities import PhysicalQuantity, units_list, units_html_list
-from PhysicalQuantities.Unit import isphysicalunit, UnitError, findunit, convertvalue, addunit, PhysicalUnit
 import numpy as np
 from nose.tools import raises
+
+from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
+from PhysicalQuantities.unit import (PhysicalUnit, UnitError, addunit,
+                                     convertvalue, findunit, isphysicalunit)
 
 
 def test_findunit_1():

@@ -3,12 +3,13 @@
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
 
-import numpy as np
 import sys
-from .NDict import *
+from functools import reduce
 
-if sys.version_info > (2,):
-    from functools import reduce
+import numpy as np
+import copy
+
+from .NDict import *
 
 
 class UnitError(ValueError):
@@ -622,13 +623,15 @@ def _pretty(text):
     return text
 
 
-def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
+def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, url=''):
     """ Add new PhysicalUnit entry
 
     Parameters
     -----------
     name: str
         Name of the unit
+    factor: float
+        scaling factor
     unit: str, PhysicalUnit
         Name or class of the PhysicalUnit
     verbosename: str
@@ -656,7 +659,8 @@ def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
             except KeyError:
                 pass
     else:
-        newunit = unit
+        newunit = copy.copy(unit)
+        print('newunit', unit)
     newunit.set_name(name)
     newunit.verbosename = verbosename
     if prefixed is True:
@@ -665,6 +669,7 @@ def addunit(name, unit, verbosename='', prefixed=False, baseunit=None, url=''):
         newunit.baseunit = newunit
     newunit.prefixed = prefixed
     newunit.url = url
+    newunit.factor = factor  ## TODO: correct here ?
     unit_table[name] = newunit
     return name
 
@@ -672,23 +677,21 @@ unit_table = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
 
-addunit('m', PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
+addunit('m', 1, PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre')
-addunit('kg', PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
+addunit('kg', 1, PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram')
-addunit('g', PhysicalUnit('g', 0.001, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Gram')
-addunit('s', PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
+addunit('s', 1, PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Second', verbosename='Second')
-addunit('A', PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
+addunit('A', 1, PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere')
-addunit('K', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
+addunit('K', 1, PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin')
-addunit('mol', PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
+addunit('mol', 1, PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
         url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol')
-addunit('cd', PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
+addunit('cd', 1, PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
         url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela')
-addunit('rad', PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
+addunit('rad', 1, PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
         url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian')
-addunit('sr', PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
+addunit('sr', 1, PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
         url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian')

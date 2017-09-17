@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.dBQuantity import dBQuantity, dB10, dB20
-from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.Unit import UnitError
-from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
-from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity
+from numpy.testing import assert_almost_equal
+
+from PhysicalQuantities import PhysicalQuantity
+from PhysicalQuantities.dBQuantity import (PhysicalQuantity_to_dBQuantity,
+                                           dB10, dB20, dBQuantity)
+from PhysicalQuantities.unit import UnitError
+
 
 def test_basic_properties_1():
     """ test value attribute """

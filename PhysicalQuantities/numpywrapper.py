@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from .Quantity import *
-from .Unit import UnitError
+
 from . import isphysicalquantity, q
+from .quantity import *
+from .unit import UnitError
 
 __all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 

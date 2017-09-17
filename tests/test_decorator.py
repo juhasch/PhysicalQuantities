@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.decorator import *
 from nose.tools import raises
+
+from PhysicalQuantities.decorator import *
 
 
 def test_checkbaseunit_1():

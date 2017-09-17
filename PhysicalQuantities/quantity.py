@@ -6,17 +6,18 @@
 # - deepcopy does not work
 
 
-from __future__ import division
-
 try:
     from sympy import printing
 except ImportError:
     pass
 
-import numpy as np
-from .Unit import findunit, convertvalue, unit_table, isphysicalunit, base_names, PhysicalUnit, UnitError
 import copy
+
+import numpy as np
 from IPython import get_ipython
+
+from .unit import (PhysicalUnit, UnitError, base_names, convertvalue, findunit,
+                   isphysicalunit, unit_table)
 
 __all__ = ['PhysicalQuantity']
 

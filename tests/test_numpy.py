@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.Quantity import PhysicalQuantity
-from PhysicalQuantities import isphysicalquantity
 import numpy as np
+
+from PhysicalQuantities import isphysicalquantity
+from PhysicalQuantities.quantity import PhysicalQuantity
 
 
 def test_numpy_multiplication():
@@ -22,5 +23,3 @@ def test_indexing():
     a = np.arange(10) * PhysicalQuantity(1, 'm')
     b = a[0:2]
     assert (b.m_ == [0, 1]).all()
-
-
