@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Physical Quantities for Python and IPython
 
@@ -29,28 +28,17 @@ Then you can type directly:
 without explicitly calling a function constructor
 
 """
-from __future__ import absolute_import
-from .Quantity import unit_table, PhysicalQuantity
-from .Unit import addunit, isphysicalunit, PhysicalUnit
+from .quantity import unit_table, PhysicalQuantity
+from .unit import addunit, isphysicalunit, PhysicalUnit
 from .prefixes import *
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
-from math import pi
 import collections
+from .default_units import *
+from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
 
-import pkg_resources
-__version__ = '0.6.7'
+__version__ = '0.7.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
-
-unit_table['pi'] = pi
-addunit('deg', 'pi*rad/180', 'Degree', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
-addunit('arcmin', 'pi*rad/180/60', 'minutes of arc')
-addunit('arcsec', 'pi*rad/180/3600', 'seconds of arc')
-del unit_table['pi']
-addunit('min', '60*s', 'Minute', url='https://en.wikipedia.org/wiki/Hour')
-addunit('h', '60*60*s', 'Hour', url='https://en.wikipedia.org/wiki/Hour')
-
 
 class _Quantity:
     def __init__(self):
@@ -82,6 +70,7 @@ class _Quantity:
     
     def _ipython_key_completions_(self):
         return list(self.table.keys())
+
 
 q = _Quantity()
 

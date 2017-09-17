@@ -7,10 +7,12 @@ Example:
 
 """
 
-import numpy as np
 import copy
+
+import numpy as np
 from IPython import get_ipython
-from .Quantity import PhysicalQuantity, unit_table, UnitError, PhysicalUnit
+
+from .quantity import PhysicalQuantity, PhysicalUnit, UnitError, unit_table
 
 __all__ = ['dB10', 'dB20', 'PhysicalQuantity_to_dBQuantity', 'dBQuantity', 'dB_unit_table']
 
