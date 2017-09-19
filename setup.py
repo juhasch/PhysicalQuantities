@@ -2,6 +2,10 @@ import os
 
 from setuptools import setup
 
+import sys
+if sys.version_info < (3,6):
+    sys.exit('Sorry, Python < 3.6 is not supported')
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()

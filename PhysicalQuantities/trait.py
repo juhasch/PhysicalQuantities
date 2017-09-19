@@ -25,14 +25,6 @@ class PhysicalTrait(TraitType):
 
         >>> PhysicalQuantity(1, 'V')
         """
-        ip = get_ipython()
-        if ip is not None:
-            self.ptformatter = ip.display_formatter.formatters['text/plain']
-        else:
-            self.ptformatter = None
-        self.format = ''  # display format for number to string conversion
-        self.value = value
-        self.unit = findunit(unit)
 
     def to_xarray(self):
 

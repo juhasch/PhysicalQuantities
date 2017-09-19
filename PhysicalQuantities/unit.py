@@ -3,7 +3,6 @@
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
 
-import sys
 from functools import reduce
 
 import numpy as np
@@ -74,6 +73,7 @@ def convertvalue(value, src_unit, target_unit):
 
     Example
     -------
+    >>> from PhysicalQuantities import q
     >>> convertvalue(1, q.mm.unit, q.km.unit)
     1e-06
     """
@@ -106,9 +106,9 @@ class PhysicalUnit:
         If instance is a scaled version of a unit
     baseunit: PhysicalUnit
         Base unit if prefixed, otherwise self
-    names: dict|str
+    names: NumberDict
         A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
-        for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
+        for M{m/s})
     factor: float
         A scaling factor from base units
     powers: list
@@ -120,15 +120,18 @@ class PhysicalUnit:
         URL describing the unit
     verbosename: str
         The verbose name of the unit (e.g. Coulomb)
+    unece_code: str
+        Official unit code
+        (see http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
 
     """
 
-    def __init__(self, names, factor, powers, offset=0, url='', verbosename=''):
+    def __init__(self, names, factor, powers, offset=0, url=None, verbosename=None, unece_code=None):
         """ Initialize object
 
         Parameters
         ----------
-        names: dict|str
+        names: NumberDict|str
             A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
             for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
         factor: float
@@ -142,6 +145,9 @@ class PhysicalUnit:
             URL describing the unit
         verbosename: str
             The verbose name of the unit (e.g. Coulomb)
+        unece_code: str
+            Official unit code
+            (see http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
 
         """
         self.prefixed = False
@@ -152,12 +158,22 @@ class PhysicalUnit:
             self.names = NumberDict()
             self.names[names] = 1
         else:
-            self.names = names
+            self.names = NumberDict()
+            for _name in names:
+                self.names[_name] = names[_name]
         self.factor = factor
         self.offset = offset
         self.powers = powers
+        self.unece_code = unece_code
 
     def set_name(self, name):
+        """Set unit name as NumberDict
+
+        Parameters
+        ----------
+        name: str
+            Unit name
+        """
         self.names = NumberDict()
         self.names[name] = 1
 
@@ -437,7 +453,7 @@ class PhysicalUnit:
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
-                                self.factor*other, self.powers, self.offset)
+                                self.factor*other.factor, self.powers, self.offset)
 
     __rmul__ = __mul__
 
@@ -468,7 +484,7 @@ class PhysicalUnit:
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
             return PhysicalUnit(self.names + NumberDict({str(other): -1}),
-                                self.factor/other, self.powers)
+                                self.factor/other.factor, self.powers)
 
     def __rdiv__(self, other):
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
@@ -507,7 +523,7 @@ class PhysicalUnit:
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units %s and %s with non-zero offset' % (self, exponent))
         if isinstance(exponent, int):
-            p = list(map(lambda x, p=exponent: x * p, self.powers))
+            p = list(map(lambda x, _p=exponent: x * _p, self.powers))
             f = pow(self.factor, exponent)
             names = NumberDict((k, self.names[k] * exponent) for k in self.names)
             return PhysicalUnit(names, f, p)
@@ -518,7 +534,7 @@ class PhysicalUnit:
                 if reduce(lambda a, b: a and b,
                           list(map(lambda x, e=rounded: x % e == 0, self.powers))):
                     f = pow(self.factor, exponent)
-                    p = list(map(lambda x, p=rounded: x / p, self.powers))
+                    p = list(map(lambda x, _p=rounded: x / _p, self.powers))
                     p = [int(x) for x in p]
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x % e == 0,
@@ -623,8 +639,60 @@ def _pretty(text):
     return text
 
 
-def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, url=''):
-    """ Add new PhysicalUnit entry
+def addunit(unit):
+    """ Add new PhysicalUnit entry to the unit_table
+
+    Parameters
+    -----------
+    unit: Physicalunit
+        PhysicalUnit object
+
+    Raises
+    ------
+    KeyError
+        If unit already exists
+
+    """
+    if unit.name in unit_table:
+        raise KeyError(f'Unit {unit.name} already defined')
+    unit_table[unit.name] = unit
+
+
+unit_table = {}
+# These are predefined base units 
+base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+
+addunit(PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre',
+        unece_code='MTR'))
+addunit(PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram',
+        unece_code='KGM'))
+addunit(PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Second', verbosename='Second',
+        unece_code='SEC'))
+addunit(PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere',
+        unece_code='AMP'))
+addunit(PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin',
+        unece_code='KEL'))
+addunit(PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0],
+        url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol',
+        unece_code='C34'))
+addunit(PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0],
+        url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela',
+        unece_code='CDL'))
+addunit(PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0],
+        url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian',
+        unece_code='C81'))
+addunit(PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1],
+        url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian',
+        unece_code='D27'))
+
+
+def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, baseunit=None, url=''):
+    """ Add new unit to the unit_table
 
     Parameters
     -----------
@@ -632,8 +700,10 @@ def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, u
         Name of the unit
     factor: float
         scaling factor
-    unit: str, PhysicalUnit
-        Name or class of the PhysicalUnit
+    units: str
+        Composed units of new unit
+    offset: float
+        Offset factor
     verbosename: str
         A more verbose name for the unit
     prefixed: bool
@@ -643,6 +713,11 @@ def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, u
     url: str
         A URL linking to more information about the unit
 
+    Returns
+    -------
+    str
+        Name of new unit
+
     Raises
     ------
     KeyError
@@ -651,16 +726,14 @@ def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, u
     """
     if name in unit_table:
         raise KeyError('Unit ' + name + ' already defined')
-    if isinstance(unit, str):
-        newunit = eval(unit, unit_table)
-        for cruft in ['__builtins__', '__args__']:
-            try:
-                del unit_table[cruft]
-            except KeyError:
-                pass
-    else:
-        newunit = copy.copy(unit)
-        print('newunit', unit)
+    baseunit = eval(units, unit_table)
+    for cruft in ['__builtins__', '__args__']:
+        try:
+            del unit_table[cruft]
+        except KeyError:
+            pass
+    newunit = copy.deepcopy(baseunit)
+    print(newunit, name, units)
     newunit.set_name(name)
     newunit.verbosename = verbosename
     if prefixed is True:
@@ -669,29 +742,7 @@ def addunit(name, factor, unit, verbosename='', prefixed=False, baseunit=None, u
         newunit.baseunit = newunit
     newunit.prefixed = prefixed
     newunit.url = url
-    newunit.factor = factor  ## TODO: correct here ?
+    newunit.factor = newunit.factor * factor
+    newunit.offset = newunit.offset + offset
     unit_table[name] = newunit
     return name
-
-unit_table = {}
-# These are predefined base units 
-base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
-
-addunit('m', 1, PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre')
-addunit('kg', 1, PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram')
-addunit('s', 1, PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Second', verbosename='Second')
-addunit('A', 1, PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere')
-addunit('K', 1, PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin')
-addunit('mol', 1, PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol')
-addunit('cd', 1, PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0]),
-        url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela')
-addunit('rad', 1, PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0]),
-        url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian')
-addunit('sr', 1, PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1]),
-        url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian')

@@ -40,6 +40,7 @@ __version__ = '0.7.0'
 Q = PhysicalQuantity
 U = PhysicalUnit
 
+
 class _Quantity:
     def __init__(self):
         self.table = {}
@@ -58,14 +59,14 @@ class _Quantity:
             else:
                 _Q = self.table[key.name]
         except KeyError:
-            raise KeyError('Unit %s not found' % key)
+            raise KeyError(f'Unit {key} not found')
         return _Q
 
     def __getattr__(self, attr):
         try:
             _Q = self.table[attr]
-        except:
-            raise AttributeError('Unit %s not found' % attr)
+        except KeyError:
+            raise KeyError(f'Unit {attr} not found')
         return _Q
     
     def _ipython_key_completions_(self):

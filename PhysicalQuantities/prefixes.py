@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .quantity import unit_table
-from .unit import addunit
+from .unit import add_composite_unit
 
 # add scaling prefixes
 _full_prefixes = [
@@ -39,5 +39,5 @@ def addprefixed(unitname, prefixrange='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            addunit(prefixedname, prefix[1], unit, prefixed=True, baseunit=unit, verbosename=unit.verbosename,
+            add_composite_unit(prefixedname, prefix[1], unitname, prefixed=True, baseunit=unit, verbosename=unit.verbosename,
                     url=unit.url)

@@ -758,3 +758,22 @@ class PhysicalQuantity:
             return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         else:
             raise UnitError('Argument of tan must be an angle')
+
+    def to_json(self):
+        """Export as JSON
+        {
+            "radius": {
+                "@context": [
+                    "http://schema.org/",
+                    {
+                        "ex": "http://example.com#",
+                        "radius": "ex:radius",
+                        "unit": "http://qudt.org/1.1/vocab/unit#"
+                    }
+                ],
+                "@type": "QuantitativeValue",
+                "value": 1.21,
+                "unitCode": "unit:Meter"
+            }
+        }
+        """

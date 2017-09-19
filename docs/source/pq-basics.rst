@@ -185,6 +185,34 @@ of attributes:
 
 .. code:: python
 
+    >>> from PhysicalQuantities.unit import base_names
+    >>> print(base_names) # list containing names of base units
+    ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+    >>> a = q.m
+    >>> print(a.unit.powers)
+    [1, 0, 0, 0, 0, 0, 0, 0, 0]
+    >>> print(a.unit.baseunit)
+    m
+
+
+A more complex example:
+
+
+
+    >>> from PhysicalQuantities.unit import base_names
+    >>> print(base_names) # list containing names of base units
+    ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+    >>> a = q.m
+    >>> print(a.unit.powers)
+    [1, 0, 0, 0, 0, 0, 0, 0, 0]
+    >>> print(a.unit.baseunit)
+    m
+
+
+A more complex example:
+
+
+
     >>> from PhysicalQuantities.Unit import base_names
     >>> print(base_names) # list containing names of base units
     ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
