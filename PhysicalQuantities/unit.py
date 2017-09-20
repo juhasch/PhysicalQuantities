@@ -733,7 +733,6 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
         except KeyError:
             pass
     newunit = copy.deepcopy(baseunit)
-    print(newunit, name, units)
     newunit.set_name(name)
     newunit.verbosename = verbosename
     if prefixed is True:
