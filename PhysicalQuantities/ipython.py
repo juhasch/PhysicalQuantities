@@ -139,6 +139,7 @@ def _transform(line):
     line = dB_line_match.sub(dB_replace_inline, line)
     return line
 
+
 __transformer = _transform()
 
 

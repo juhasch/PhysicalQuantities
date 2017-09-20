@@ -40,7 +40,8 @@ __version__ = '0.7.0'
 Q = PhysicalQuantity
 U = PhysicalUnit
 
-
+# TODO: reinit after a new PhysicalQuantity is added
+# Make traitlets out of it ??
 class _Quantity:
     def __init__(self):
         self.table = {}

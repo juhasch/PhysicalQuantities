@@ -65,7 +65,7 @@ add_composite_unit('hp', 745.7, 'W', verbosename='horsepower',
 add_composite_unit('psi', 6894.75729317, 'Pa', verbosename='pounds per square inch',
                    url='https://en.wikipedia.org/wiki/Pounds_per_square_inch')
 
-add_composite_unit('degF', 1, 'K', offset=459.67,
+add_composite_unit('degF', 5/9, 'K', offset=459.67,
                    verbosename='degree Fahrenheit',
                    url='https://en.wikipedia.org/wiki/Fahrenheit')
 
