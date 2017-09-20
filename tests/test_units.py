@@ -2,8 +2,22 @@ import numpy as np
 from nose.tools import raises
 
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
-from PhysicalQuantities.unit import (PhysicalUnit, UnitError, addunit, add_composite_unit,
-                                     convertvalue, findunit, isphysicalunit)
+from PhysicalQuantities.unit import (PhysicalUnit, UnitError,
+                                     add_composite_unit, addunit, convertvalue,
+                                     findunit, isphysicalunit)
+
+
+def test_addunit():
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
+    a = PhysicalQuantity(1, 'degC')
+    assert(type(a.unit) == PhysicalUnit)
+
+
+def test_add_composite_unit():
+    add_composite_unit('test', 4.92892159375, 'cm**3')
+    a = PhysicalQuantity(1, 'test')
+    assert(type(a.unit) == PhysicalUnit)
 
 
 def test_findunit_1():
@@ -134,9 +148,8 @@ def test_pow_2():
 @raises(UnitError)
 def test_pow_3():
     """Offsets are not allowed"""
-    addunit_('degC', PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15),
-            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
-    a = PhysicalQuantity(1, 'degC')
+    addunit(PhysicalUnit('degX', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15))
+    a = PhysicalQuantity(1, 'degX')
     a.unit.offset = 1
     a**2
 

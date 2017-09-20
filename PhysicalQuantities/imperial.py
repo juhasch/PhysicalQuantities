@@ -1,10 +1,11 @@
 """ Define imperial units
 """
+from IPython import get_ipython
+
 from PhysicalQuantities.ipython import (load_ipython_extension,
                                         unload_ipython_extension)
 
 from .unit import add_composite_unit
-from IPython import get_ipython
 
 # Length units
 add_composite_unit('inch', 2.54, 'cm', verbosename='inch',

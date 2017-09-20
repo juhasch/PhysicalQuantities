@@ -107,9 +107,8 @@ def units_html_list():
             if unit.prefixed is False:
                 a = PhysicalQuantity(1, name)
                 baseunit = a.base._repr_latex_()
-                table += "<tr><td>" + name + '</td><td>' + baseunit + \
-                         '</td><td><a href="' + unit.url + '" target="_blank">' + unit.verbosename + \
-                         '</a></td></tr>'
+                table += f'<tr><td>{name}</td><td>{baseunit}' + \
+                         f'</td><td><a href="{unit.url}" target="_blank">{unit.verbosename}</a></td></tr>'
     table += "</table>"
     return HTML(table)
 

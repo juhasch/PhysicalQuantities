@@ -1,9 +1,10 @@
 """
 
 """
+from math import pi
+
 from .prefixes import addprefixed
 from .unit import add_composite_unit
-from math import pi
 
 add_composite_unit('g', 0.001, 'kg', verbosename='Gramm', url='https://en.wikipedia.org/wiki/Kilogram')
 

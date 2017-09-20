@@ -3,10 +3,10 @@
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
 
+import copy
 from functools import reduce
 
 import numpy as np
-import copy
 
 from .NDict import *
 
@@ -598,7 +598,7 @@ class PhysicalUnit:
         (1000.0, 0.0)
         """
         if self.powers != other.powers:
-            raise UnitError('Incompatible unit for conversion from %s to %s' % (self, other))
+            raise UnitError(f'Incompatible unit for conversion from {self} to {other}')
 
         # let (s1,d1) be the conversion tuple from 'self' to base units
         #   (ie. (x+d1)*s1 converts a value x from 'self' to base units,
@@ -725,7 +725,7 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
 
     """
     if name in unit_table:
-        raise KeyError('Unit ' + name + ' already defined')
+        raise KeyError(f'Unit {name} already defined')
     baseunit = eval(units, unit_table)
     for cruft in ['__builtins__', '__args__']:
         try:

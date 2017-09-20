@@ -297,7 +297,7 @@ def test_le_dB_4():
 def test_lin_1():
     a = dBQuantity(6, 'dBV')
     b = a.lin
-    assert b.dB == a
+    assert_almost_equal(b.dB.value, a._)
 
 
 @raises(UnitError)
