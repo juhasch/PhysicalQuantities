@@ -35,7 +35,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value, unit=None):
+    def __init__(self, value: object, unit: object = None) -> object:
         """There are two constructor calling patterns
 
         Parameters
@@ -103,15 +103,13 @@ class PhysicalQuantity:
             return self.value
         try:
             attrunit = unit_table[attr]
-        except:
-            raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(attrunit):
-            if dropunit is True:
-                return self.to(attrunit.name).value
-            else:
-                return self.to(attrunit.name)
-        raise AttributeError('Unknown attribute %s' % attr)
-        
+        except KeyError:
+            raise AttributeError(f'Unit {attr} not found')
+        if dropunit is True:
+            return self.to(attrunit.name).value
+        else:
+            return self.to(attrunit.name)
+
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list
             e.g. obj[0] or obj[0:4]
@@ -597,6 +595,10 @@ class PhysicalQuantity:
         -------
             >>> b = PhysicalQuantity(4, 'J/s')
             >>> b.to('W')
+            4.0 W
+            >>> b = PhysicalQuantity(1000, 's')
+            >>> b.to('h', 'min, ''s')
+            (0.0 h, 16.0 min, 40.000000000000071 s)
 
         Notes
         -----

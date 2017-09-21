@@ -93,10 +93,7 @@ def dB_replace_inline(ml):
         return ml.group()
 
     def replace_unit(mo):
-        try:
-            return "dBQuantity(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
-        except KeyError:
-            return mo.group()
+        return "dBQuantity(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
 
     return dB_unit_match.sub(replace_unit, ml.group())
 

@@ -64,6 +64,12 @@ def test_getattr2():
     assert a._ == 3
 
 
+@raises(AttributeError)
+def test_getattr3():
+    a = PhysicalQuantity(3, 'mm')
+    assert a.xyz
+
+
 def test_decorators():
     """ Test .base and .value decorators """
     g = PhysicalQuantity(98, 'mm')/ PhysicalQuantity(1, 's**2')
@@ -72,17 +78,35 @@ def test_decorators():
     assert str(g.unit) == "mm/s^2"    
 
 
-def test_getitem():
+def test_getitem_1():
     a = [1, 2, 3] * PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(1, 'mm')
     assert a[0] == b
 
 
-def test_setitem():
+@raises(AttributeError)
+def test_getitem_2():
+    a = PhysicalQuantity(1, 'mm')
+    assert a[0]
+
+
+def test_setitem_1():
     a = [1, 2, 3] * PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(5, 'mm')
     a[0] = b
     assert a[0] == b
+
+
+@raises(AttributeError)
+def test_setitem_2():
+    a = [1, 2, 3] * PhysicalQuantity(1, 'mm')
+    a[0] = 1
+
+
+@raises(AttributeError)
+def test_setitem_3():
+    a = PhysicalQuantity(1, 'mm')
+    a[1] = PhysicalQuantity(5, 'mm')
 
 
 def test_len():
@@ -110,10 +134,17 @@ def test_repr_markdown():
     assert b._repr_markdown_() == '1 $\\text{mm}$'
 
 
-def test_sum():
+def test_sum_1():
     a = PhysicalQuantity(1, 'mm')
     b = PhysicalQuantity(2, 'mm')
     assert a+b == PhysicalQuantity(3, 'mm')
+
+
+@raises(UnitError)
+def test_sum_2():
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(2, 's')
+    a+b
 
 
 def test_sub():
@@ -141,6 +172,18 @@ def test_div():
     assert b/b == 1
 
 
+def test_rdiv_1():
+    a = PhysicalQuantity(3, 'm')
+    b = PhysicalQuantity(4, 'm')
+    assert a.__rdiv__(b) == 4/3
+
+
+def test_rdiv_2():
+    a = PhysicalQuantity(3, 'm')
+    b = PhysicalQuantity(4, 'm^2')
+    assert a.__rdiv__(b) == PhysicalQuantity(4/3, 'm')
+
+
 def test_eq():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 'm')
@@ -155,11 +198,17 @@ def test_eq_prefixed():
     assert not a == b
 
 
-def test_ne():
+def test_ne_1():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 'm')
     assert a != b
     assert not a != a
+
+
+@raises(UnitError)
+def test_ne_2():
+    a = PhysicalQuantity(2, 'm')
+    assert a != 3
 
 
 def test_ne_prefixed():
@@ -169,11 +218,17 @@ def test_ne_prefixed():
     assert not a != a
 
 
-def test_lt():
+def test_lt_1():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 'm')
     assert a < b
     assert not a < a
+
+
+@raises(UnitError)
+def test_lt_2():
+    a = PhysicalQuantity(2, 'm')
+    assert a < 3
 
 
 def test_lt_prefixed():
@@ -183,11 +238,17 @@ def test_lt_prefixed():
     assert not a < a
 
 
-def test_le():
+def test_le_1():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 'm')
     assert a <= b
     assert a <= a
+
+
+@raises(UnitError)
+def test_le_2():
+    a = PhysicalQuantity(2, 'm')
+    assert a <= 3
 
 
 def test_le_prefixed():
@@ -197,11 +258,17 @@ def test_le_prefixed():
     assert a <= a
 
 
-def test_gt():
+def test_gt_1():
     a = PhysicalQuantity(2, 'm')
     b = PhysicalQuantity(1, 'm')
     assert a > b
     assert not a > a
+
+
+@raises(UnitError)
+def test_gt_2():
+    a = PhysicalQuantity(2, 'm')
+    assert a > 3
 
 
 def test_gt_prefixed():
@@ -211,11 +278,17 @@ def test_gt_prefixed():
     assert not a > a
 
 
-def test_ge():
+def test_ge_1():
     a = PhysicalQuantity(2, 'm')
     b = PhysicalQuantity(1, 'm')
     assert a >= b
     assert a >= a
+
+
+@raises(UnitError)
+def test_ge_2():
+    a = PhysicalQuantity(2, 'm')
+    assert a >= 3
 
 
 def test_ge_prefixed():
@@ -236,6 +309,24 @@ def test_to_1():
     assert a.to('m/s') == a
 
 
+def test_to_2():
+    a = PhysicalQuantity(5000, 's')
+    tuple = a.to('h', 'min', 's')
+    assert_almost_equal(tuple[0].value, 1.)
+    assert_almost_equal(tuple[1].value, 23.)
+    assert_almost_equal(tuple[2].value, 20.)
+
+
+def test_to_3():
+    """test _round()"""
+    a = PhysicalQuantity(-5000, 's')
+    tuple = a.to('h', 'min', 's')
+    assert_almost_equal(tuple[0].value, -1.)
+    assert_almost_equal(tuple[1].value, -23.)
+    assert_almost_equal(tuple[2].value, -20.)
+
+
+
 def test_base():
     a = PhysicalQuantity(1, 'V')
     b = PhysicalQuantity(1, 'kg*m^2/A/s^3')
@@ -250,6 +341,12 @@ def test_real():
 def test_imag():
     b = PhysicalQuantity(2 + 1j, 'V')
     assert b.imag == PhysicalQuantity(1, 'V')
+
+
+@raises(UnitError)
+def test_pow():
+    a = PhysicalQuantity(2, 'm')
+    a.pow(a)
 
 
 def test_pow_builtin():
@@ -299,12 +396,6 @@ def test_round():
     a = PhysicalQuantity(1.123123, 'm')
     b = round(a)
     assert b.value == 1
-
-
-def test_round_2():
-    a = np.array([1.2, 2.8]) * PhysicalQuantity(1, 'm')
-    b = round(a)
-    assert_almost_equal(b.value, np.array([1, 3]))
 
 
 def test_floordiv():
@@ -426,3 +517,12 @@ def test_q_3():
 def test_ipython_key_completions_():
     l = q._ipython_key_completions_()
     assert len(l) > 1
+
+def test_repr():
+    a = PhysicalQuantity(1, 'm')
+    assert a.__repr__() == '1 m'
+
+def test_convert():
+    a = PhysicalQuantity(1, 'km')
+    a.convert('m')
+    assert a.value == 1000

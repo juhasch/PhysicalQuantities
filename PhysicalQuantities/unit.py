@@ -35,6 +35,8 @@ def findunit(unitname):
      <PhysicalUnit mm>
     """
     if isinstance(unitname, str):
+        if unitname == '':
+            raise UnitError('Empty unit name is not valid')
         name = str(unitname).strip().replace('^', '**')
         if name[0:2] == '1/':
             name = '(' + name[2:] + ')**-1'
@@ -50,7 +52,7 @@ def findunit(unitname):
     else:
         unit = unitname
     if not isphysicalunit(unit):
-        raise UnitError('%s is not a unit' % str(unit))
+        raise UnitError(f'{str(unit)} is not a unit')
     return unit
 
 
@@ -446,12 +448,13 @@ class PhysicalUnit:
         m*s
         """
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError('Cannot multiply units %s and %s with non-zero offset' % (self, other))
+            raise UnitError(f'Cannot multiply units {self} and {other} with non-zero offset')
         if isphysicalunit(other):
             return PhysicalUnit(self.names + other.names,
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         else:
+            # TODO: add test
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
                                 self.factor*other.factor, self.powers, self.offset)
 
@@ -477,12 +480,13 @@ class PhysicalUnit:
         m/s
         """
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self, other))
+            raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
         if isphysicalunit(other):
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
+            # TODO: add test
             return PhysicalUnit(self.names + NumberDict({str(other): -1}),
                                 self.factor/other.factor, self.powers)
 
