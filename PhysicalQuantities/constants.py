@@ -1,9 +1,10 @@
 # Define additional physical constants
 
 from math import pi
-from .Quantity import *
+
 import numpy as np
 
+from .quantity import *
 
 c0 = PhysicalQuantity(299792458., 'm/s')
 mu0 = PhysicalQuantity(4*np.pi*1e-7, 'N/A**2')

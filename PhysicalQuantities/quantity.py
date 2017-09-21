@@ -6,17 +6,18 @@
 # - deepcopy does not work
 
 
-from __future__ import division
-
 try:
     from sympy import printing
 except ImportError:
     pass
 
-import numpy as np
-from .Unit import findunit, convertvalue, unit_table, isphysicalunit, base_names, PhysicalUnit, UnitError
 import copy
+
+import numpy as np
 from IPython import get_ipython
+
+from .unit import (PhysicalUnit, UnitError, base_names, convertvalue, findunit,
+                   isphysicalunit, unit_table)
 
 __all__ = ['PhysicalQuantity']
 
@@ -34,7 +35,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value, unit=None):
+    def __init__(self, value: object, unit: object = None) -> object:
         """There are two constructor calling patterns
 
         Parameters
@@ -102,15 +103,13 @@ class PhysicalQuantity:
             return self.value
         try:
             attrunit = unit_table[attr]
-        except:
-            raise AttributeError('Unit %s not found' % attr)
-        if isphysicalunit(attrunit):
-            if dropunit is True:
-                return self.to(attrunit.name).value
-            else:
-                return self.to(attrunit.name)
-        raise AttributeError('Unknown attribute %s' % attr)
-        
+        except KeyError:
+            raise AttributeError(f'Unit {attr} not found')
+        if dropunit is True:
+            return self.to(attrunit.name).value
+        else:
+            return self.to(attrunit.name)
+
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list
             e.g. obj[0] or obj[0:4]
@@ -596,6 +595,10 @@ class PhysicalQuantity:
         -------
             >>> b = PhysicalQuantity(4, 'J/s')
             >>> b.to('W')
+            4.0 W
+            >>> b = PhysicalQuantity(1000, 's')
+            >>> b.to('h', 'min, ''s')
+            (0.0 h, 16.0 min, 40.000000000000071 s)
 
         Notes
         -----
@@ -757,3 +760,22 @@ class PhysicalQuantity:
             return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         else:
             raise UnitError('Argument of tan must be an angle')
+
+    def to_json(self):
+        """Export as JSON
+        {
+            "radius": {
+                "@context": [
+                    "http://schema.org/",
+                    {
+                        "ex": "http://example.com#",
+                        "radius": "ex:radius",
+                        "unit": "http://qudt.org/1.1/vocab/unit#"
+                    }
+                ],
+                "@type": "QuantitativeValue",
+                "value": 1.21,
+                "unitCode": "unit:Meter"
+            }
+        }
+        """

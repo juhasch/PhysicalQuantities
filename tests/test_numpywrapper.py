@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from PhysicalQuantities.Quantity import PhysicalQuantity, UnitError
-import PhysicalQuantities.numpywrapper as nw
-from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
+from numpy.testing import assert_almost_equal
+
+import PhysicalQuantities.numpywrapper as nw
+from PhysicalQuantities.quantity import PhysicalQuantity, UnitError
 
 
 def test_max():

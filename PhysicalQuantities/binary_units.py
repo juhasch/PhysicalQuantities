@@ -7,6 +7,7 @@ the file COPYING, distributed as part of this software.
 """
 
 import re
+
 from IPython.core.inputtransformer import StatelessInputTransformer
 
 _units = {'Ki': 2 ** 10,

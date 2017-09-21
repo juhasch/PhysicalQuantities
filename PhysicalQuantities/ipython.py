@@ -4,10 +4,11 @@
 #                  https://bitbucket.org/birkenfeld/ipython-physics
 
 import re
+
 from IPython.core.inputtransformer import StatelessInputTransformer
-from PhysicalQuantities import PhysicalQuantity, dBQuantity
+
+from PhysicalQuantities import PhysicalQuantity, dBQuantity, unit_table
 from PhysicalQuantities.dBQuantity import dB_unit_table
-from PhysicalQuantities import unit_table
 
 line_match0 = None
 line_match1 = None
@@ -92,10 +93,7 @@ def dB_replace_inline(ml):
         return ml.group()
 
     def replace_unit(mo):
-        try:
-            return "dBQuantity(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
-        except KeyError:
-            return mo.group()
+        return "dBQuantity(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
 
     return dB_unit_match.sub(replace_unit, ml.group())
 
@@ -136,8 +134,8 @@ def _transform(line):
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
     line = dB_line_match.sub(dB_replace_inline, line)
-    print(line)
     return line
+
 
 __transformer = _transform()
 

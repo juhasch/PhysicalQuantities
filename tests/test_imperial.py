@@ -1,7 +1,8 @@
 """ Test imperial units """
-from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities import imperial
 from numpy.testing import assert_almost_equal
+
+from PhysicalQuantities import PhysicalQuantity
+from PhysicalQuantities.imperial import *
 
 
 def test_inch():

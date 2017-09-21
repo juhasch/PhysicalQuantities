@@ -1,7 +1,7 @@
-from PhysicalQuantities.ipython import _transform, init_match, init_dB_match
-
-import unittest
 import sys
+import unittest
+
+from PhysicalQuantities.ipython import _transform, init_dB_match, init_match
 
 test_transformer = _transform().func
 init_match()
@@ -82,7 +82,7 @@ def test_10():
 def test_pep15():
     line = '10_000 m'
     ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(10000,'m')"
+    assert ret == "PhysicalQuantity(10_000,'m')"
 
 
 @unittest.skipIf(sys.version_info < (3, 6),
@@ -90,4 +90,4 @@ def test_pep15():
 def test_pep15_dB():
     line = '10_000 dBm'
     ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(10000,'dBm')"
+    assert ret == "dBQuantity(10_000, 'dBm', islog=True)"

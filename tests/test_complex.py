@@ -1,5 +1,6 @@
-from PhysicalQuantities import PhysicalQuantity
 from numpy.testing import assert_almost_equal
+
+from PhysicalQuantities import PhysicalQuantity
 
 
 def test_complex_assign():

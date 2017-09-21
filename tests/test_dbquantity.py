@@ -1,11 +1,27 @@
-# -*- coding: utf-8 -*-
-from PhysicalQuantities.dBQuantity import dBQuantity, dB10, dB20
-from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.Unit import UnitError
-from numpy.testing import assert_almost_equal
 import numpy as np
 from nose.tools import raises
-from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity
+from numpy.testing import assert_almost_equal
+
+from PhysicalQuantities import PhysicalQuantity
+from PhysicalQuantities.dBQuantity import (PhysicalQuantity_to_dBQuantity,
+                                           dB10, dB20, dBQuantity)
+from PhysicalQuantities.unit import UnitError
+
+
+def test_name():
+    a = dBQuantity(1, 'dBm')
+    assert a.unit.__name__ == 'dBm'
+
+
+@raises(UnitError)
+def test_init():
+    a = dBQuantity(1, 'x')
+
+
+@raises(UnitError)
+def test_len_1():
+    a = dBQuantity(1, 'x')
+    len(a)
 
 def test_basic_properties_1():
     """ test value attribute """
@@ -132,7 +148,7 @@ def test_lt_dB_2():
 def test_lt_dB_3():
     """ test lt operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g <= 0
+    assert g < 0
 
 
 @raises(UnitError)
@@ -295,7 +311,7 @@ def test_le_dB_4():
 def test_lin_1():
     a = dBQuantity(6, 'dBV')
     b = a.lin
-    assert b.dB == a
+    assert_almost_equal(b.dB.value, a._)
 
 
 @raises(UnitError)
@@ -304,16 +320,41 @@ def test_lin_2():
     a.lin
 
 
-def test_lin10():
+def test_lin10_1():
     a = dBQuantity(6, 'dB')
     b = a.lin10
     assert_almost_equal(b, 3.9810717055349722)
+
+
+def test_lin10_2():
+    a = dBQuantity(6, 'dBm')
+    b = a.lin10
+    assert_almost_equal(b.value, 3.9810717055349722)
+
+
+@raises(ValueError)
+def test_lin10_3():
+    a = dBQuantity(6, 'dBV')
+    b = a.lin10
+    assert_almost_equal(b.value, 3.9810717055349722)
 
 
 def test_lin20():
     a = dBQuantity(6, 'dB')
     b = a.lin20
     assert_almost_equal(b, 1.9952623149688795)
+
+def test_lin20_2():
+    a = dBQuantity(6, 'dBV')
+    b = a.lin20
+    assert_almost_equal(b.value, 1.9952623149688795)
+
+
+@raises(ValueError)
+def test_lin20_3():
+    a = dBQuantity(6, 'dBm')
+    b = a.lin20
+    assert_almost_equal(b.value, 1.9952623149688795)
 
 
 def test_calculation_1():
@@ -341,16 +382,28 @@ def test_numpy_dB():
     assert_almost_equal(c.lin.value, a)
 
 
-def test_add_dB():
+def test_add_db_1():
     g1 = dBQuantity(1,'dB')
     g2 = dBQuantity(2,'dB')
     assert (g1 + g2).value == 3
 
 
-def test_sub_dB():
+def test_add_db_2():
+    g1 = dBQuantity(0, 'dBm')
+    g2 = dBQuantity(0, 'dBm')
+    assert_almost_equal((g1 + g2).value, 3.0102999566398121)
+
+
+def test_sub_db_1():
     g1 = dBQuantity(1,'dB')
     g2 = dBQuantity(2,'dB')
     assert (g1 - g2).value == -1
+
+
+def test_sub_db_2():
+    g1 = dBQuantity(1, 'dBm')
+    g2 = dBQuantity(0, 'dBm')
+    assert_almost_equal((g1 - g2).value,-5.8682532438011537)
 
 
 def test_dB10():
@@ -377,10 +430,27 @@ def test_dB20_1():
     assert b.value == -20
 
 
-def setitem():
+def test_getitem_1():
+    a = np.ones(2) * dBQuantity(1, 'dBm')
+    assert a[0].value == 1.0
+
+
+@raises(AttributeError)
+def test_getitem_2():
+    a = dBQuantity(1, 'dBm')
+    assert a[0].value == 1.0
+
+
+def test_setitem_1():
     a = np.ones(2) * dBQuantity(1, 'dBm')
     a[0] = dBQuantity(2, 'dBm')
     assert a[0] == dBQuantity(2, 'dBm')
+
+
+@raises(AttributeError)
+def test_setitem_2():
+    a = dBQuantity(1, 'dBm')
+    a[0] = 1
 
 
 def test_to_dB_0():
@@ -481,6 +551,11 @@ def test_len_db_2():
     assert(len(a) == 1)
 
 
+def test_len_db_3():
+    a = np.ones(2) * dBQuantity(4, 'dBm')
+    assert(len(a) == 2)
+
+
 def test_to_db():
     a = dBQuantity(4, 'dBm')
     b = a.to('dBW')
@@ -526,3 +601,7 @@ def test_m2_to_dBsm():
     b = a.dB
     assert(b.unit.name == 'dBsm')
     assert(b.value == 20)
+
+def test_repr():
+    a = dBQuantity(0, 'dBm')
+    assert a.__repr__() == '0 dBm'

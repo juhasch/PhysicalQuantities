@@ -1,7 +1,8 @@
 """Decorators to check units in parameters"""
 import wrapt
-from .Quantity import *
-from .Unit import *
+
+from .quantity import *
+from .unit import *
 
 
 def checkbaseunit(arg, unit):
