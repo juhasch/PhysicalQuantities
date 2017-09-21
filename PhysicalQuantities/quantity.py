@@ -12,6 +12,7 @@ except ImportError:
     pass
 
 import copy
+import json
 
 import numpy as np
 from IPython import get_ipython
@@ -759,21 +760,29 @@ class PhysicalQuantity:
         else:
             raise UnitError('Argument of tan must be an angle')
 
+    @property
+    def to_dict(self):
+        """Export as dict
+
+        Returns
+        -------
+        dict
+            Dict describing PhysicalQuantity
+        """
+        q_dict = {'value': self.value,
+                  'PhysicalUnit': self.unit.to_dict
+                  }
+        return q_dict
+
+    @property
     def to_json(self):
         """Export as JSON
-        {
-            "radius": {
-                "@context": [
-                    "http://schema.org/",
-                    {
-                        "ex": "http://example.com#",
-                        "radius": "ex:radius",
-                        "unit": "http://qudt.org/1.1/vocab/unit#"
-                    }
-                ],
-                "@type": "QuantitativeValue",
-                "value": 1.21,
-                "unitCode": "unit:Meter"
-            }
-        }
+
+        Returns
+        -------
+        str
+            JSON string describing PhysicalQuantity
+
         """
+        json_quantity = json.dumps({ 'PhysicalQuantity' : self.to_dict})
+        return json_quantity
