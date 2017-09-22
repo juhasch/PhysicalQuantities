@@ -1,4 +1,5 @@
 import numpy as np
+import json
 from nose.tools import raises
 
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
@@ -7,11 +8,19 @@ from PhysicalQuantities.unit import (PhysicalUnit, UnitError,
                                      findunit, isphysicalunit)
 
 
-def test_addunit():
+def test_addunit_1():
     addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
             url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
     a = PhysicalQuantity(1, 'degC')
     assert(type(a.unit) == PhysicalUnit)
+
+
+@raises(KeyError)
+def test_addunit_2():
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
 
 
 def test_add_composite_unit():
@@ -223,3 +232,27 @@ def test_units_html_list():
 def test_units_list():
     a,b = units_list()
     assert(len(a) > 10)
+
+
+def test_to_dict():
+    a = PhysicalQuantity(1, 'm')
+    d = a.unit.to_dict
+    assert type(d) is dict
+    assert 'base_exponents' in d.keys()
+    assert 'factor' in d.keys()
+    assert 'offset' in d.keys()
+    assert 'name' in d.keys()
+
+
+def test_to_json():
+    a = PhysicalQuantity(1, 'm')
+    j = a.unit.to_json
+    u = json.loads(j)
+    assert type(u) is dict
+    assert 'PhysicalUnit' in u.keys()
+    d = u['PhysicalUnit']
+    assert 'base_exponents' in d.keys()
+    assert 'factor' in d.keys()
+    assert 'offset' in d.keys()
+    assert 'name' in d.keys()
+
