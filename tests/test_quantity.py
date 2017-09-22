@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 import operator
 
 import numpy as np
+import json
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
 
@@ -564,4 +564,23 @@ def test_round():
     a = np.array([1.4, 1.5]) * PhysicalQuantity(1, 'km')
     b = np.array([1., 2]) * PhysicalQuantity(1, 'km')
     assert np.any(a.__round__() == b)
+
+
+def test_to_dict():
+    a = PhysicalQuantity(1, 'm')
+    d = a.to_dict
+    assert type(d) is dict
+    assert 'PhysicalUnit' in d.keys()
+    assert 'value' in d.keys()
+
+
+def test_to_json():
+    a = PhysicalQuantity(1, 'm')
+    j = a.to_json
+    q = json.loads(j)
+    assert type(q) is dict
+    assert 'PhysicalQuantity' in q.keys()
+    d = q['PhysicalQuantity']
+    assert 'PhysicalUnit' in d.keys()
+    assert 'value' in d.keys()
 
