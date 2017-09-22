@@ -326,10 +326,15 @@ def test_to_3():
     assert_almost_equal(tuple[2].value, -20.)
 
 
-
-def test_base():
+def test_base_1():
     a = PhysicalQuantity(1, 'V')
     b = PhysicalQuantity(1, 'kg*m^2/A/s^3')
+    assert a.base == b
+
+
+def test_base_2():
+    a = PhysicalQuantity([1, 2], 'V')
+    b = PhysicalQuantity([1, 2], 'kg*m^2/A/s^3')
     assert a.base == b
 
 
@@ -485,14 +490,30 @@ def test_sin():
     a = PhysicalQuantity(0, 'deg')
     assert a.sin() == 0
 
+@raises(UnitError)
+def test_sin_unit():
+    a = PhysicalQuantity(0, 'm')
+    assert a.sin() == 0
+
 
 def test_cos():
     a = PhysicalQuantity(0, 'deg')
     assert a.cos() == 1
 
+@raises(UnitError)
+def test_cos_unit():
+    a = PhysicalQuantity(0, 'm')
+    assert a.cos() == 1
+
     
 def test_tan():
     a = PhysicalQuantity(0, 'deg')
+    assert a.tan() == 0
+
+
+@raises(UnitError)
+def test_tan_unit():
+    a = PhysicalQuantity(0, 'm')
     assert a.tan() == 0
 
 
@@ -522,7 +543,25 @@ def test_repr():
     a = PhysicalQuantity(1, 'm')
     assert a.__repr__() == '1 m'
 
+
 def test_convert():
     a = PhysicalQuantity(1, 'km')
     a.convert('m')
     assert a.value == 1000
+
+
+def test_format():
+    a = PhysicalQuantity(1, 'km')
+    assert a.__format__('x') == '1 km'
+
+
+def rest_str():
+    a = PhysicalQuantity(1, 'km')
+    assert str(a) == '1 km'
+
+
+def test_round():
+    a = np.array([1.4, 1.5]) * PhysicalQuantity(1, 'km')
+    b = np.array([1., 2]) * PhysicalQuantity(1, 'km')
+    assert np.any(a.__round__() == b)
+

@@ -35,7 +35,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value: object, unit: object = None) -> object:
+    def __init__(self, value, unit = None):
         """There are two constructor calling patterns
 
         Parameters
@@ -154,12 +154,7 @@ class PhysicalQuantity:
         10.0 dBW
         """
         from .dBQuantity import dBQuantity, PhysicalQuantity_to_dBQuantity
-        try:
-            return PhysicalQuantity_to_dBQuantity(self)
-        except UnitError:
-            if self.unit.is_power is True:
-                return dBQuantity(10*np.log10(self.value), 'dB', islog=True)
-            return dBQuantity(20*np.log10(self.value), 'dB', islog=True)
+        return PhysicalQuantity_to_dBQuantity(self)
 
     def rint(self):
         """ Round elements to the nearest integer
@@ -225,7 +220,7 @@ class PhysicalQuantity:
         Parameters
         ----------
         other: PhysicalQuantity
-            quantity to add
+            Quantity to add
         
         sign1: float
             factor +1 or -1 with sign for self
@@ -273,7 +268,8 @@ class PhysicalQuantity:
         
         Parameters
         ----------
-        other
+        other: PhysicalQuantity
+            Quantity to divide by
         """
         if not isinstance(other, PhysicalQuantity):
             return self.__class__(self.value // other, self.unit)
@@ -417,9 +413,9 @@ class PhysicalQuantity:
             if self.base.unit == other.base.unit:
                 return self.base.value > other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __ge__(self, other):
         """ Test if quantity is greater or equal than other
@@ -438,9 +434,9 @@ class PhysicalQuantity:
             if self.base.unit == other.base.unit:
                 return self.base.value >= other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __lt__(self, other):
         """ Test if quantity is less than other
@@ -459,9 +455,9 @@ class PhysicalQuantity:
             if self.base.unit == other.base.unit:
                 return self.base.value < other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __le__(self, other):
         """ Test if quantity is less or equal than other
@@ -482,9 +478,9 @@ class PhysicalQuantity:
             if self.base.unit == other.base.unit:
                 return self.base.value <= other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __eq__(self, other):
         """ Test if two quantities are equal
@@ -503,12 +499,12 @@ class PhysicalQuantity:
             if self.base.unit.name == other.base.unit.name:
                 return self.base.value == other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __ne__(self, other):
-        """ Test if two quantities are not equal
+        """Test if two quantities are not equal
 
         Parameters
         ----------
@@ -524,9 +520,9 @@ class PhysicalQuantity:
             if self.base.unit == other.base.unit:
                 return not self.base.value == other.base.value
             else:
-                raise UnitError('Cannot compare unit %s with unit %s' % (self.unit, other.unit))
+                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
         else:
-            raise UnitError('Cannot compare PhysicalQuantity with type %s' % type(other))
+            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
 
     def __format__(self, *args, **kw):
         return "{1:{0}} {2}".format(args[0], self.value, self.unit)
@@ -731,6 +727,11 @@ class PhysicalQuantity:
         Returns
         -------
             Sine values
+
+        Raises
+        ------
+        UnitError
+            If quantity is not of unit angle
         """
         if self.unit.is_angle:
             return np.sin(self.value * self.unit.conversion_factor_to(unit_table['rad']))
@@ -743,6 +744,11 @@ class PhysicalQuantity:
         Returns
         -------
             Cosine values
+
+        Raises
+        ------
+        UnitError
+            If quantity is not of unit angle
         """
         if self.unit.is_angle:
             return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
@@ -755,6 +761,11 @@ class PhysicalQuantity:
         Returns
         -------
             Tangens values
+
+        Raises
+        ------
+        UnitError
+            If quantity is not of unit angle
         """
         if self.unit.is_angle:
             return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))

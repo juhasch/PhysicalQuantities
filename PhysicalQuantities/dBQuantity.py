@@ -285,7 +285,7 @@ class dBQuantity:
         # convert to different scaling
         if self.unit.name is unitname:
             return self
-        elif unitname in dB_unit_table.keys():
+        else:
             # convert to same base unit, only scaling
             if self.unit.physicalunit is not None:
                 scaling = self.unit.factor * np.log10( self.unit.physicalunit.factor / dB_unit_table[unitname].physicalunit.factor)
@@ -296,8 +296,6 @@ class dBQuantity:
                 return self.__class__(value, unitname, islog=True)
             else:
                 return value
-        else:
-            raise UnitError('No conversion between units %s and %s' % (self.unit.name, unitname))
 
     def __len__(self):
         """ Return length of quantity if underlying object is array or list
