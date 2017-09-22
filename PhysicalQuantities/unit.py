@@ -7,6 +7,7 @@ import copy
 from functools import reduce
 
 import numpy as np
+import json
 
 from .NDict import *
 
@@ -622,6 +623,51 @@ class PhysicalUnit:
         factor = self.factor / other.factor
         offset = self.offset - (other.offset * other.factor / self.factor)
         return factor, offset
+
+    @property
+    def to_dict(self):
+        """Export unit as dict
+
+        Returns
+        -------
+        dict
+            Dict containing unit description
+
+        Notes
+        -----
+        Give unit and iterate over base units
+
+        """
+        unit_dict = { 'name': self.name,
+                             'verbosename': self.name,
+                             'offset': self.offset,
+                             'factor': self.factor
+                             }
+        b = self.baseunit
+        p = b.powers
+        base_dict = {}
+        for i,exponent in enumerate(p):
+            base_dict[base_names[i]] = exponent
+        unit_dict['base_exponents'] = base_dict
+        return unit_dict
+
+    @property
+    def to_json(self):
+        """Export unit as JSON
+
+
+        Notes
+        -----
+        Give unit and iterate over base units
+
+        """
+
+        json_unit = json.dumps({ 'PhysicalUnit' : self.to_dict})
+        return json_unit
+
+    def from_json(self):
+        """TODO"""
+        pass
 
 
 def _pretty(text):
