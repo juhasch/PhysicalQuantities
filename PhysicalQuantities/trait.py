@@ -64,4 +64,3 @@ class PhysicalTrait(TraitType):
         elif self.domain == 'negative':
             if any(self.value <= 0):
                 raise TraitError('Domain allows only strictly positive values')
-

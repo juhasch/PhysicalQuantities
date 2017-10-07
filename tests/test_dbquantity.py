@@ -25,58 +25,58 @@ def test_len_1():
 
 def test_basic_properties_1():
     """ test value attribute """
-    g = dBQuantity(0.1,'dBm')
+    g = dBQuantity(0.1, 'dBm')
     assert g.value == 0.1
 
 
 def test_basic_properties_2():
     """ test unit attribute """
-    g = dBQuantity(0.1,'dBm')
+    g = dBQuantity(0.1, 'dBm')
     assert g.unit.name == 'dBm'
 
 
 def test_basic_properties_3():
     """ test log10 factor """
-    g = dBQuantity(0.1,'dBm')
+    g = dBQuantity(0.1, 'dBm')
     assert g.unit.factor == 10
 
 
 def test_basic_properties_4():
     """ test default impedance """
-    g = dBQuantity(0.1,'dBm')
+    g = dBQuantity(0.1, 'dBm')
     assert g.unit.z0 == PhysicalQuantity(50, 'Ohm')
 
 
 def test_basic_properties_5():
     """ test conversion back to linear """
-    g = dBQuantity(0.1,'dBm')
+    g = dBQuantity(0.1, 'dBm')
     assert_almost_equal(g.lin.value, 1.023292992280754)
 
 
 def test_conversion_1():
     """ test conversion back to linear using attribute """
-    g = dBQuantity(0,'dBm')
+    g = dBQuantity(0, 'dBm')
     glin = PhysicalQuantity(1, 'mW')
     assert g.mW == glin
 
 
 def test_conversion_2():
     """ test conversion back to linear using attribute """
-    g = dBQuantity(0,'dBm')
+    g = dBQuantity(0, 'dBm')
     glin = PhysicalQuantity(1, 'mW')
     assert g.mW_ == 1
 
 
 def test_conversion_3():
     """ test conversion back to linear using attribute """
-    g = dBQuantity(0,'dBm')
+    g = dBQuantity(0, 'dBm')
     glin = PhysicalQuantity(1, 'mW')
     assert g.dBW_ == -30
     
 
 def test_conversion_4():
     """ test conversion back to linear using attribute """
-    g = dBQuantity(0,'dBm')
+    g = dBQuantity(0, 'dBm')
     glin = PhysicalQuantity(1, 'mW')
     assert g.W_ == 0.001
 
@@ -298,7 +298,7 @@ def test_le_dB_3():
     """ test le operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    g1 <= g2
+    assert g1 <= g2
 
 
 @raises(UnitError)

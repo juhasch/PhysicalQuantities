@@ -1,12 +1,46 @@
 import sys
 import unittest
+import numpy as np
 
 from PhysicalQuantities.ipython import _transform, init_dB_match, init_match
+from PhysicalQuantities import unit_table
 
 test_transformer = _transform().func
 init_match()
 init_dB_match()
 
+units_list = list(unit_table.keys())
+
+
+# TODO: use sample, choices
+def number_unit_generator():
+    number_template = [f'1',
+                       f'1.',
+                       f'1.1',
+                       f'1_00',
+                       f'1_00.0_0',
+                       f'1e3',
+                       f'1.e3',
+                       f'1e-3',
+                       f'1.1e3',
+                       f'1e-3',
+                       ]
+
+    i1 = np.random.randint(len(units_list))
+    i2 = np.random.randint(len(units_list))
+    u1 = units_list[i1]
+    u2 = units_list[i2]
+    unit_template = [f'{u1}',
+                     f' {u1}**2',
+                     f' {u1}/{u2}',
+#                     f' {u1}/{u2}**2'
+                     ]
+    for nt in number_template:
+        for ut in unit_template:
+            number = nt
+            unit = ut
+            yield number, unit
+    return 0, 0
 
 def test_simple():
     """ No transformation """
@@ -23,28 +57,13 @@ def test_1():
 
 
 def test_2():
-    line = '1 V'
-    ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(1,'V')"
-
-
-def test_3():
-    line = '1 m/s'
-    ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(1,'m/s')"
-
-
-def test_4():
-    line = '1 km/h'
-    ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(1,'km/h')"
-
-
-def test_5():
-    """ Exponentials """
-    line = '1 m**2'
-    ret = test_transformer(line)
-    assert ret == "PhysicalQuantity(1,'m**2')"
+    """Iterate through variations"""
+    for number, unit in number_unit_generator():
+        line = number + unit
+        expected = f"PhysicalQuantity({number},'{unit.strip()}')"
+        ret = test_transformer(line)
+        print(line, '|',  expected, '|', ret)
+        assert ret == expected
 
 
 def test_6():

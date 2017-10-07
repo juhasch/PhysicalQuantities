@@ -1,4 +1,28 @@
-""" IPython extension for physical quantity input """
+""" IPython extension for physical quantity input
+
+Examples:
+    1m
+    1 m
+    1 m/s
+    1.0 m
+    -1.0 m
+    1e-3 m
+    1.e-3 m
+    1.4e-3 m
+    1m**2
+    1 m/s**2
+    10_000 s
+
+  '-' <number> '.' <number> 'e' '-' <number> <unit>'**'<number> '/' <unit> '**' <number>
+
+<number> = \d+
+
+
+number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
+
+
+
+"""
 
 # Original author: Georg Brandl <georg@python.org>.
 #                  https://bitbucket.org/birkenfeld/ipython-physics
@@ -75,7 +99,7 @@ subst_re = re.compile(r'\?' + name)
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
 number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
-number1 = r'(?<![\w])([0-9_]+\.?[0-9]*[eE]?-?[0-9]*)'
+number1 = r'(?<![\w])([0-9]+[_]*\.?[0-9]*[eE]?-?[0-9]*)'
 number2 = r'(?<![\w])([0-9_]*\.?[0-9]+[eE]?-?[0-9]*)'
 
 # =========================================
@@ -103,6 +127,8 @@ def dB_replace_inline(ml):
 def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
+    #print(m)
+    #print(m.group())
     if m:
         if m.group(3) is None or m.group(3) == '':
             return m.group(0)
@@ -133,6 +159,7 @@ def _transform(line):
     line = line_match2.sub(replace_inline1, line)  # unit**n
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
+    #print(line)
     line = dB_line_match.sub(dB_replace_inline, line)
     return line
 

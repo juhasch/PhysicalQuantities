@@ -4,10 +4,10 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 """
 
 import copy
+import json
 from functools import reduce
 
 import numpy as np
-import json
 
 from .NDict import *
 
@@ -638,11 +638,11 @@ class PhysicalUnit:
         Give unit and iterate over base units
 
         """
-        unit_dict = { 'name': self.name,
-                             'verbosename': self.name,
-                             'offset': self.offset,
-                             'factor': self.factor
-                             }
+        unit_dict = {'name': self.name,
+                     'verbosename': self.name,
+                     'offset': self.offset,
+                     'factor': self.factor
+                     }
         b = self.baseunit
         p = b.powers
         base_dict = {}
@@ -662,31 +662,48 @@ class PhysicalUnit:
 
         """
 
-        json_unit = json.dumps({ 'PhysicalUnit' : self.to_dict})
+        json_unit = json.dumps({'PhysicalUnit': self.to_dict})
         return json_unit
 
-    def from_json(self):
-        """TODO"""
-        pass
+    @staticmethod
+    def from_dict(unit_dict):
+        """Create PhysicalUnit from dict
 
+        Parameters
+        ----------
+        unit_dict: dict
+            PhysicalQuantity stored as dict
 
-def _pretty(text):
-    """ Pretty up unit name string
+        Returns
+        -------
+        PhysicalUnit
+            New PhysicalUnit
+        """
+        name = unit_dict['name']
+        factor = unit_dict['factor']
+        base_exponents = unit_dict['base_exponents']
+        powers=[]
+        for name in base_names:
+            powers.append(base_exponents[name])
+        phu = PhysicalUnit(name, factor, powers)
+        phu.verbosename = unit_dict['verbosename']
+        phu.offset = unit_dict['offset']
+        return phu
 
-    Parameters
-    ----------
-    text: str
-        Input string
+    @staticmethod
+    def from_json(json_unit):
+        """Create PhysicalUnit from JSON
 
-    Returns
-    -------
-    str
-        String with replaced characters
-    """
-    rep = {'**': '^', 'deg': '°', '*': '·', 'pi': 'π'}
-    for k, v in rep.items():
-        text = text.replace(k, v)
-    return text
+        Parameters
+        ----------
+        json_unit: str
+            PhysicalUnit encoded as JSON string
+
+        Returns
+        -------
+        PhysicalUnit
+            New PhysicalUnit
+        """
 
 
 def addunit(unit):
