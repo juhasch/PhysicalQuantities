@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
@@ -7,9 +6,14 @@ import PhysicalQuantities.numpywrapper as nw
 from PhysicalQuantities.quantity import PhysicalQuantity, UnitError
 
 
-def test_max():
+def test_max_1():
     a = np.array([1.3, 2.5]) * PhysicalQuantity(1, 'mm')
     assert_almost_equal(nw.max(a).value, 2.5)
+
+
+def test_max_2():
+    a = np.array([1.3, 2.5])
+    assert_almost_equal(nw.max(a), 2.5)
 
 
 def test_floor():
@@ -110,6 +114,31 @@ def test_tophysicalquantity_5():
     b = nw.tophysicalquantity(a)
     assert_almost_equal(a.value, b.value)
     assert a.unit == b.unit
+
+
+@raises(UnitError)
+def test_tophysicalquantity_6():
+    # no units
+    a = [ 1, 2, 3]
+    b = nw.tophysicalquantity(a)
+    assert_almost_equal(a.value, b.value)
+    assert a.unit == b.unit
+
+
+@raises(UnitError)
+def test_tophysicalquantity_7():
+    # don't allow different units
+    a = [ PhysicalQuantity(1, 'm'), PhysicalQuantity(1, 's')]
+    b = nw.tophysicalquantity(a)
+    assert_almost_equal(a.value, b.value)
+    assert a.unit == b.unit
+
+
+def test_tophysicalquantity_8():
+    a = [PhysicalQuantity(1, 'm'), PhysicalQuantity(1, 'm')]
+    b = nw.tophysicalquantity(a)
+    assert_almost_equal(a[0].value, b[0].value)
+    assert a[0].unit == b.unit
 
 
 def test_argsort_1():
