@@ -8,7 +8,7 @@
 
 try:
     from sympy import printing
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 import copy
@@ -50,7 +50,7 @@ class PhysicalQuantity:
         >>> PhysicalQuantity(1, 'V')
         """
         ip = get_ipython()
-        if ip is not None:
+        if ip is not None:  # pragma: no cover
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
@@ -177,7 +177,7 @@ class PhysicalQuantity:
         string
             string representation of PhysicalQuantity            
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, str(self.unit))
@@ -201,7 +201,7 @@ class PhysicalQuantity:
     def _repr_markdown_(self):
         """ Return markdown representation for IPython notebook
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())

@@ -199,10 +199,7 @@ def tophysicalquantity(arr, unit=None):
 
     if unit is None:
         unit = arr[0].unit
-    if isphysicalquantity(arr[0]):
-        valuetype = type(arr[0].value)
-    else:
-        valuetype = type(arr[0])
+    valuetype = type(arr[0].value)
 
     newarr = np.zeros_like(arr, dtype=valuetype )
     for i, _a in enumerate(arr):

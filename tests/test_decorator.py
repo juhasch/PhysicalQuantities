@@ -63,3 +63,19 @@ def test_optional_units():
     p = power(u, 4)
     assert p.value == 8
     assert p.unit == w.unit
+
+
+def test_optional_units_2():
+    u = PhysicalQuantity(2, 'V')
+    i = PhysicalQuantity(3, 'A')
+    w = PhysicalQuantity(1, 'W')
+
+    @optional_units(u='V', i='A', return_unit='W')
+    def power(u, i):
+        return u*i
+    p = power(u=u, i=i)
+    assert p.value == 6
+    assert p.unit == w.unit
+    p = power(u=u, i=4)
+    assert p.value == 8
+    assert p.unit == w.unit

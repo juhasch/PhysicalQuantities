@@ -72,6 +72,6 @@ add_composite_unit('degF', 5/9, 'K', offset=459.67,
 
 # Reload transformer in IPython
 ip = get_ipython()
-if ip is not None and 'PhysicalQuantity' in ip.user_ns:
+if ip is not None and 'PhysicalQuantity' in ip.user_ns:  # pragma: no cover
     unload_ipython_extension(ip)
     load_ipython_extension(ip)

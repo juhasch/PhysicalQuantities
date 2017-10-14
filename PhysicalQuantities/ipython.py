@@ -178,7 +178,7 @@ def _transform(line):
 __transformer = _transform()
 
 
-def load_ipython_extension(ip):
+def load_ipython_extension(ip):  # pragma: no cover
     global __transformer
     ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
 
@@ -189,7 +189,7 @@ def load_ipython_extension(ip):
     init_dB_match()
 
 
-def unload_ipython_extension(ip):
+def unload_ipython_extension(ip):  # pragma: no cover
     global __transformer
     if type(__transformer) is StatelessInputTransformer:
         ip.input_transformer_manager.logical_line_transforms.remove(__transformer)
