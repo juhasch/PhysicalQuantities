@@ -2,7 +2,7 @@
 Unit
 ====
 
-.. automodule:: PhysicalQuantities.Unit
+.. automodule:: PhysicalQuantities.unit
    :members:
 
 

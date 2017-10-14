@@ -1,7 +1,7 @@
+import json
 import operator
 
 import numpy as np
-import json
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
 
@@ -583,4 +583,11 @@ def test_to_json():
     d = q['PhysicalQuantity']
     assert 'PhysicalUnit' in d.keys()
     assert 'value' in d.keys()
+
+
+def test_from_json():
+    a = PhysicalQuantity(1, 'm')
+    j = a.to_json
+    b = PhysicalQuantity.from_json(j)
+    assert a == b
 

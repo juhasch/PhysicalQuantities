@@ -2,7 +2,7 @@
 Quantity
 ========
 
-.. automodule:: PhysicalQuantities.Quantity
+.. automodule:: PhysicalQuantities.quantity
    :members:
    :special-members:
 

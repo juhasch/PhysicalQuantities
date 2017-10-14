@@ -8,7 +8,7 @@
 
 try:
     from sympy import printing
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 import copy
@@ -50,7 +50,7 @@ class PhysicalQuantity:
         >>> PhysicalQuantity(1, 'V')
         """
         ip = get_ipython()
-        if ip is not None:
+        if ip is not None:  # pragma: no cover
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
@@ -177,7 +177,7 @@ class PhysicalQuantity:
         string
             string representation of PhysicalQuantity            
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, str(self.unit))
@@ -201,7 +201,7 @@ class PhysicalQuantity:
     def _repr_markdown_(self):
         """ Return markdown representation for IPython notebook
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):
+        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())
@@ -799,3 +799,42 @@ class PhysicalQuantity:
         """
         json_quantity = json.dumps({ 'PhysicalQuantity' : self.to_dict})
         return json_quantity
+
+    @staticmethod
+    def from_dict(quantity_dict):
+        """Retrieve PhysicalUnit from dict description
+
+        Parameters
+        ----------
+        unit_dict: dict
+            PhysicalUnit stored as dict
+
+        Returns
+        -------
+        PhysicalUnit
+            Retrieved PhysicalUnit
+
+        Notes
+        -----
+        Current implementation: throw exception of unit has not already been defined
+        """
+        u = PhysicalUnit.from_dict(quantity_dict['PhysicalUnit'])
+        q = PhysicalQuantity(quantity_dict['value'], u)
+        return q
+
+    @staticmethod
+    def from_json(json_quantity):
+        """Retrieve PhysicaQuantity from JSON string description
+
+        Parameters
+        ----------
+        json_quantity: str
+            PhysicalQuantity encoded as JSON string
+
+        Returns
+        -------
+        PhysicalUnit
+            New PhysicalUnit
+        """
+        quantity_dict = json.loads(json_quantity)
+        return PhysicalQuantity.from_dict(quantity_dict['PhysicalQuantity'])

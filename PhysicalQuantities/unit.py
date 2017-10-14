@@ -4,10 +4,10 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 """
 
 import copy
+import json
 from functools import reduce
 
 import numpy as np
-import json
 
 from .NDict import *
 
@@ -638,11 +638,11 @@ class PhysicalUnit:
         Give unit and iterate over base units
 
         """
-        unit_dict = { 'name': self.name,
-                             'verbosename': self.name,
-                             'offset': self.offset,
-                             'factor': self.factor
-                             }
+        unit_dict = {'name': self.name,
+                     'verbosename': self.verbosename,
+                     'offset': self.offset,
+                     'factor': self.factor
+                     }
         b = self.baseunit
         p = b.powers
         base_dict = {}
@@ -662,31 +662,48 @@ class PhysicalUnit:
 
         """
 
-        json_unit = json.dumps({ 'PhysicalUnit' : self.to_dict})
+        json_unit = json.dumps({'PhysicalUnit': self.to_dict})
         return json_unit
 
-    def from_json(self):
-        """TODO"""
-        pass
+    @staticmethod
+    def from_dict(unit_dict):
+        """Retrieve PhysicalUnit from dict description
 
+        Parameters
+        ----------
+        unit_dict: dict
+            PhysicalUnit stored as dict
 
-def _pretty(text):
-    """ Pretty up unit name string
+        Returns
+        -------
+        PhysicalUnit
+            Retrieved PhysicalUnit
 
-    Parameters
-    ----------
-    text: str
-        Input string
+        Notes
+        -----
+        Current implementation: throw exception of unit has not already been defined
+        """
+        u = findunit(unit_dict['name'])
+        if u.to_dict != unit_dict:
+            raise UnitError(f'Unit {str(u)} does not correspond to given dict')
+        return u
 
-    Returns
-    -------
-    str
-        String with replaced characters
-    """
-    rep = {'**': '^', 'deg': '°', '*': '·', 'pi': 'π'}
-    for k, v in rep.items():
-        text = text.replace(k, v)
-    return text
+    @staticmethod
+    def from_json(json_unit):
+        """Retrieve PhysicalUnit from JSON string description
+
+        Parameters
+        ----------
+        json_unit: str
+            PhysicalUnit encoded as JSON string
+
+        Returns
+        -------
+        PhysicalUnit
+            New PhysicalUnit
+        """
+        unit_dict = json.loads(json_unit)
+        return PhysicalUnit.from_dict(unit_dict['PhysicalUnit'])
 
 
 def addunit(unit):

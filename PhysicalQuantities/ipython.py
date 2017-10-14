@@ -1,4 +1,16 @@
-""" IPython extension for physical quantity input """
+""" IPython extension for physical quantity input
+
+Extract occurences of:
+   <number> '.' <number> 'e' '-' <number> <unit>'**'<number> '/' <unit> '**' <number>
+
+<number> = \d+
+
+
+number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
+
+
+
+"""
 
 # Original author: Georg Brandl <georg@python.org>.
 #                  https://bitbucket.org/birkenfeld/ipython-physics
@@ -14,13 +26,15 @@ line_match0 = None
 line_match1 = None
 line_match2 = None
 line_match3 = None
+line_match4 = None
+line_match5 = None
 
 dB_line_match = None
 dB_unit_match = None
 
 
 def init_match():
-    global line_match0, line_match1, line_match2, line_match3
+    global line_match0, line_match1, line_match2, line_match3, line_match4, line_match5
 
     # sort units after length for Regex matching
     _li = sorted(unit_table, key=len)
@@ -30,14 +44,18 @@ def init_match():
     _unit_list = _unit_list[0:-1]
 
     match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
-    match1 = stringmatch + '|' + number2 + r'(\s*)' + '(' + _unit_list + ')'
-    match2 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
-    match3 = stringmatch + '|' + number + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')'
+    match1 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
+    match2 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
+    match3 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')'
+    match4 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')\/(' + _unit_list + ')'
+    match5 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
 
     line_match0 = re.compile(match0)
     line_match1 = re.compile(match1)
     line_match2 = re.compile(match2)
     line_match3 = re.compile(match3)
+    line_match4 = re.compile(match4)
+    line_match5 = re.compile(match5)
 
 
 def init_dB_match():
@@ -71,12 +89,11 @@ nice_assign_re = re.compile(r'^%s\s*=\s*(%s)$' % (name, quantity))
 quantity_re = re.compile(quantity)
 subst_re = re.compile(r'\?' + name)
 
-
 # regex for finding units and quoted strings
 stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
-number1 = r'(?<![\w])([0-9_]+\.?[0-9]*[eE]?-?[0-9]*)'
-number2 = r'(?<![\w])([0-9_]*\.?[0-9]+[eE]?-?[0-9]*)'
+#number1 = r'(?<![\w])([0-9]+[_]*\.?[0-9]*[eE]?-?[0-9]*)'
+number1 = r'(?<![\w])([0-9_]+\.?[0-9_]*[eE]?-?[0-9]*)'
+
 
 # =========================================
 # dB
@@ -103,6 +120,8 @@ def dB_replace_inline(ml):
 def replace_inline(m):
     """Replace an inline unit expression by valid Python code
     """
+    #print(m)
+    #print(m.group())
     if m:
         if m.group(3) is None or m.group(3) == '':
             return m.group(0)
@@ -126,13 +145,32 @@ def replace_inline2(m):
             return m.group(0)
     return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '/' + m.group(6) + '\')'
 
+def replace_inline3(m):
+    """Replace an inline unit expression by valid Python code
+    """
+    if m:
+        if m.group(3) is None or m.group(3) == '':
+            return m.group(0)
+    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + m.group(6) + '/' + m.group(7) + '\')'
+
+def replace_inline4(m):
+    """Replace an inline unit expression by valid Python code
+    """
+    if m:
+        if m.group(3) is None or m.group(3) == '':
+            return m.group(0)
+    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '/'  + m.group(6) + m.group(7) + '\')'
+
 
 @StatelessInputTransformer.wrap
 def _transform(line):
+    line = line_match4.sub(replace_inline3, line)  # unit**n/unit
+    line = line_match5.sub(replace_inline4, line)  # unit/unit**n
     line = line_match3.sub(replace_inline2, line)  # unit/unit
     line = line_match2.sub(replace_inline1, line)  # unit**n
     line = line_match1.sub(replace_inline, line)
     line = line_match0.sub(replace_inline, line)
+    #print(line)
     line = dB_line_match.sub(dB_replace_inline, line)
     return line
 
@@ -140,7 +178,7 @@ def _transform(line):
 __transformer = _transform()
 
 
-def load_ipython_extension(ip):
+def load_ipython_extension(ip):  # pragma: no cover
     global __transformer
     ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
 
@@ -150,7 +188,8 @@ def load_ipython_extension(ip):
     init_match()
     init_dB_match()
 
-def unload_ipython_extension(ip):
+
+def unload_ipython_extension(ip):  # pragma: no cover
     global __transformer
     if type(__transformer) is StatelessInputTransformer:
         ip.input_transformer_manager.logical_line_transforms.remove(__transformer)

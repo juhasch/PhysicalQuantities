@@ -1,5 +1,6 @@
-import numpy as np
 import json
+
+import numpy as np
 from nose.tools import raises
 
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
@@ -256,3 +257,9 @@ def test_to_json():
     assert 'offset' in d.keys()
     assert 'name' in d.keys()
 
+
+def test_from_json():
+    a = PhysicalQuantity(1, 'm')
+    j = a.unit.to_json
+    b = PhysicalUnit.from_json(j)
+    assert a.unit == b
