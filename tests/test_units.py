@@ -256,3 +256,10 @@ def test_to_json():
     assert 'factor' in d.keys()
     assert 'offset' in d.keys()
     assert 'name' in d.keys()
+
+
+def test_from_json():
+    a = PhysicalQuantity(1, 'm')
+    j = a.unit.to_json
+    b = PhysicalUnit.from_json(j)
+    assert a.unit == b

@@ -639,7 +639,7 @@ class PhysicalUnit:
 
         """
         unit_dict = {'name': self.name,
-                     'verbosename': self.name,
+                     'verbosename': self.verbosename,
                      'offset': self.offset,
                      'factor': self.factor
                      }
@@ -667,32 +667,30 @@ class PhysicalUnit:
 
     @staticmethod
     def from_dict(unit_dict):
-        """Create PhysicalUnit from dict
+        """Retrieve PhysicalUnit from dict description
 
         Parameters
         ----------
         unit_dict: dict
-            PhysicalQuantity stored as dict
+            PhysicalUnit stored as dict
 
         Returns
         -------
         PhysicalUnit
-            New PhysicalUnit
+            Retrieved PhysicalUnit
+
+        Notes
+        -----
+        Current implementation: throw exception of unit has not already been defined
         """
-        name = unit_dict['name']
-        factor = unit_dict['factor']
-        base_exponents = unit_dict['base_exponents']
-        powers=[]
-        for name in base_names:
-            powers.append(base_exponents[name])
-        phu = PhysicalUnit(name, factor, powers)
-        phu.verbosename = unit_dict['verbosename']
-        phu.offset = unit_dict['offset']
-        return phu
+        u = findunit(unit_dict['name'])
+        if u.to_dict != unit_dict:
+            raise UnitError(f'Unit {str(u)} does not correspond to given dict')
+        return u
 
     @staticmethod
     def from_json(json_unit):
-        """Create PhysicalUnit from JSON
+        """Retrieve PhysicalUnit from JSON string description
 
         Parameters
         ----------
@@ -704,6 +702,8 @@ class PhysicalUnit:
         PhysicalUnit
             New PhysicalUnit
         """
+        unit_dict = json.loads(json_unit)
+        return PhysicalUnit.from_dict(unit_dict['PhysicalUnit'])
 
 
 def addunit(unit):

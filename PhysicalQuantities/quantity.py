@@ -799,3 +799,42 @@ class PhysicalQuantity:
         """
         json_quantity = json.dumps({ 'PhysicalQuantity' : self.to_dict})
         return json_quantity
+
+    @staticmethod
+    def from_dict(quantity_dict):
+        """Retrieve PhysicalUnit from dict description
+
+        Parameters
+        ----------
+        unit_dict: dict
+            PhysicalUnit stored as dict
+
+        Returns
+        -------
+        PhysicalUnit
+            Retrieved PhysicalUnit
+
+        Notes
+        -----
+        Current implementation: throw exception of unit has not already been defined
+        """
+        u = PhysicalUnit.from_dict(quantity_dict['PhysicalUnit'])
+        q = PhysicalQuantity(quantity_dict['value'], u)
+        return q
+
+    @staticmethod
+    def from_json(json_quantity):
+        """Retrieve PhysicaQuantity from JSON string description
+
+        Parameters
+        ----------
+        json_quantity: str
+            PhysicalQuantity encoded as JSON string
+
+        Returns
+        -------
+        PhysicalUnit
+            New PhysicalUnit
+        """
+        quantity_dict = json.loads(json_quantity)
+        return PhysicalQuantity.from_dict(quantity_dict['PhysicalQuantity'])

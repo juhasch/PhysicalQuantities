@@ -33,7 +33,8 @@ def number_unit_generator():
     unit_template = [f'{u1}',
                      f' {u1}**2',
                      f' {u1}/{u2}',
-#                     f' {u1}/{u2}**2'
+                     f' {u1}**2/{u2}',
+                     f' {u1}/{u2}**2'
                      ]
     for nt in number_template:
         for ut in unit_template:
@@ -59,11 +60,12 @@ def test_1():
 def test_2():
     """Iterate through variations"""
     for number, unit in number_unit_generator():
-        line = number + unit
-        expected = f"PhysicalQuantity({number},'{unit.strip()}')"
-        ret = test_transformer(line)
-        print(line, '|',  expected, '|', ret)
-        assert ret == expected
+        for sign in ['+', '-', ' + ', ' - ']:
+            line = sign + number + unit
+            expected = f"PhysicalQuantity({number},'{unit.strip()}')"
+            ret = test_transformer(line)
+            #print(line, '|',  expected, '|', ret.lstrip(sign))
+            assert ret.lstrip(sign) == expected
 
 
 def test_6():
