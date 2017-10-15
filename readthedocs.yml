@@ -1,7 +1,7 @@
 name: PhysicalQuantities
 type: sphinx
 python:
-    version: 3.6
+    version: 3
     setup_py_install: true
 formats:
     - none
