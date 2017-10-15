@@ -3,16 +3,10 @@ import sys
 
 from setuptools import setup
 
-if sys.version_info < (3,6):
-    sys.exit('Sorry, Python < 3.6 is not supported')
-
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name="PhysicalQuantities",
-    version="0.7.0",
+    version="0.7.1",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",

@@ -34,8 +34,12 @@ from .prefixes import *
 import collections
 from .default_units import *
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
+import sys
 
-__version__ = '0.7.0'
+if sys.version_info < (3, 6):
+    sys.exit('Sorry, Python < 3.6 is not supported')
+
+__version__ = '0.7.1'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
