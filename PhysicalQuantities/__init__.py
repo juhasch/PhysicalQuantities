@@ -39,7 +39,7 @@ import sys
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python < 3.6 is not supported')
 
-__version__ = '0.7.1'
+__version__ = '0.8.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
