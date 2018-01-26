@@ -1,177 +1,49 @@
 """ IPython extension for physical quantity input
 
-Extract occurences of:
-   <number> '.' <number> 'e' '-' <number> <unit>'**'<number> '/' <unit> '**' <number>
-
-<number> = \d+
-
-
-number  = r'(?<![\w])([0-9_]*\.?[0-9]*[eE]?-?[0-9]*)'
-
-
-
 """
 
-# Original author: Georg Brandl <georg@python.org>.
-#                  https://bitbucket.org/birkenfeld/ipython-physics
 
-import re
-
+import tokenize
+import io
 from IPython.core.inputtransformer import StatelessInputTransformer
+import PhysicalQuantities
 
-from PhysicalQuantities import PhysicalQuantity, dBQuantity, unit_table
-from PhysicalQuantities.dBQuantity import dB_unit_table
-
-line_match0 = None
-line_match1 = None
-line_match2 = None
-line_match3 = None
-line_match4 = None
-line_match5 = None
-
-dB_line_match = None
-dB_unit_match = None
-
-
-def init_match():
-    global line_match0, line_match1, line_match2, line_match3, line_match4, line_match5
-
-    # sort units after length for Regex matching
-    _li = sorted(unit_table, key=len)
-    _unit_list = ''
-    for unit in _li[::-1]:
-        _unit_list += unit + '|'
-    _unit_list = _unit_list[0:-1]
-
-    match0 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
-    match1 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')'
-    match2 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
-    match3 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')'
-    match4 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')(\*\*-?[1-9]+' + ')\/(' + _unit_list + ')'
-    match5 = stringmatch + '|' + number1 + r'(\s*)' + '(' + _unit_list + ')\/(' + _unit_list + ')(\*\*-?[1-9]+' + ')'
-
-    line_match0 = re.compile(match0)
-    line_match1 = re.compile(match1)
-    line_match2 = re.compile(match2)
-    line_match3 = re.compile(match3)
-    line_match4 = re.compile(match4)
-    line_match5 = re.compile(match5)
-
-
-def init_dB_match():
-    global dB_line_match, dB_unit_match
-    _li = sorted(list(dB_unit_table.keys()),key=len, reverse=True)
-
-    _dB_unit_list = '('
-    for x in _li:
-        _dB_unit_list += x + '|'
-    _dB_unit_list = _dB_unit_list.strip('|') + ')'
-
-    # regex for finding units and quoted strings
-    dB_number = r'(?<!\w)-?([\d0-9._]+[\d0-9eE-|x]*)'
-    dB_match = stringmatch + '|' + dB_number + r'(\s*)' + _dB_unit_list
-    dB_line_match = re.compile(dB_match)
-
-    # regex to match unit after it has been found using line_match
-    dB_number2 = r'(-?[\d0-9-_]+' + r'-?[\d0-9.eE-]*)'
-    dB_match2 = dB_number2 + r'(.\s|\s*)' + _dB_unit_list
-    dB_unit_match = re.compile(dB_match2)
-
-
-name = r'([_a-zA-Z]\w*)'
-number = r'-?([\d0-9.eE-]+)'
-unit = r'([a-zA-Z1°µ][a-zA-Z0-9°µ/*^-]*)'
-quantity = number + r'(?:\s+\+\/-\s+' + number + ')?' + r'\s+' + unit
-
-inline_unit_re = re.compile(r'\((%s)\)' % quantity)
-
-nice_assign_re = re.compile(r'^%s\s*=\s*(%s)$' % (name, quantity))
-quantity_re = re.compile(quantity)
-subst_re = re.compile(r'\?' + name)
-
-# regex for finding units and quoted strings
-stringmatch = r'(["\'])(?:(?=(\\?))\2.)*?\1'
-#number1 = r'(?<![\w])([0-9]+[_]*\.?[0-9]*[eE]?-?[0-9]*)'
-number1 = r'(?<![\w])([0-9_]+\.?[0-9_]*[eE]?-?[0-9]*)'
-
-
-# =========================================
-# dB
-# sort units after length for Regex matching
-# regex: number + space + dB-unit
-# valid: 0dBm, 0 dBm, 0. dBm
-# invalid: 0.dBm
-
-
-def dB_replace_inline(ml):
-    """Replace an inline unit expression by valid Python code
-    """
-    if ml.group()[0][0] in '"\'':
-        return ml.group()
-
-    def replace_unit(mo):
-        return "dBQuantity(" + mo.group(1) + ", '" + mo.group(3) + "', islog=True)"
-
-    return dB_unit_match.sub(replace_unit, ml.group())
-
-# =========================================
-
-
-def replace_inline(m):
-    """Replace an inline unit expression by valid Python code
-    """
-    #print(m)
-    #print(m.group())
-    if m:
-        if m.group(3) is None or m.group(3) == '':
-            return m.group(0)
-    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '\')'
-
-
-def replace_inline1(m):
-    """Replace an inline unit expression by valid Python code
-    """
-    if m:
-        if m.group(3) is None or m.group(3) == '':
-            return m.group(0)
-    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + m.group(6) + '\')'
-
-
-def replace_inline2(m):
-    """Replace an inline unit expression by valid Python code
-    """
-    if m:
-        if m.group(3) is None or m.group(3) == '':
-            return m.group(0)
-    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '/' + m.group(6) + '\')'
-
-def replace_inline3(m):
-    """Replace an inline unit expression by valid Python code
-    """
-    if m:
-        if m.group(3) is None or m.group(3) == '':
-            return m.group(0)
-    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + m.group(6) + '/' + m.group(7) + '\')'
-
-def replace_inline4(m):
-    """Replace an inline unit expression by valid Python code
-    """
-    if m:
-        if m.group(3) is None or m.group(3) == '':
-            return m.group(0)
-    return 'PhysicalQuantity(' + m.group(3)+',\'' + m.group(5) + '/'  + m.group(6) + m.group(7) + '\')'
+from tokenize import NUMBER, NAME, OP
 
 
 @StatelessInputTransformer.wrap
 def _transform(line):
-    line = line_match4.sub(replace_inline3, line)  # unit**n/unit
-    line = line_match5.sub(replace_inline4, line)  # unit/unit**n
-    line = line_match3.sub(replace_inline2, line)  # unit/unit
-    line = line_match2.sub(replace_inline1, line)  # unit**n
-    line = line_match1.sub(replace_inline, line)
-    line = line_match0.sub(replace_inline, line)
-    #print(line)
-    line = dB_line_match.sub(dB_replace_inline, line)
+
+    g = tokenize.tokenize(io.BytesIO(line.encode('utf-8')).readline)
+    val = []
+    num = []
+    for toknum, tokval, _, _, _ in g:
+        val.append(tokval)
+        num.append(toknum)
+
+    result = []
+    i = 0
+    while i < len(num):
+        lo = slice(i, i + 4)
+        sh = slice(i, i + 2)
+        if num[lo] == [NUMBER, NAME, OP, NAME]:
+            result.append((num[i], val[i]))
+            newtokval = '* pq.' + val[i+1]
+            result.append((num[i+1], newtokval))
+            result.append((num[i+2], val[i+2]))
+            newtokval = ' pq.' + val[i+3]
+            result.append((num[i+3], newtokval))
+            i += 4
+        elif num[sh] == [NUMBER, NAME]:
+            result.append((num[i], val[i]))
+            newtokval = '* pq.' + val[i+1]
+            result.append((num[i+1], newtokval))
+            i += 2
+        else:
+            result.append((num[i], val[i]))
+            i += 1
+
+    line = tokenize.untokenize(result).decode('utf-8')
     return line
 
 
@@ -181,17 +53,10 @@ __transformer = _transform()
 def load_ipython_extension(ip):  # pragma: no cover
     global __transformer
     ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
-
-    ip.user_ns['PhysicalQuantity'] = PhysicalQuantity
-    ip.user_ns['dBQuantity'] = dBQuantity
-
-    init_match()
-    init_dB_match()
-
+    ip.user_ns['pq'] = PhysicalQuantities.q
 
 def unload_ipython_extension(ip):  # pragma: no cover
     global __transformer
     if type(__transformer) is StatelessInputTransformer:
         ip.input_transformer_manager.logical_line_transforms.remove(__transformer)
-        ip.user_ns.pop('PhysicalQuantity')
-        ip.user_ns.pop('dBQuantity')
+        ip.user_ns.pop('pq')

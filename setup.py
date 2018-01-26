@@ -1,19 +1,19 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
     name="PhysicalQuantities",
-    version="0.7.1",
+    version="0.8.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
     license="BSD",
     keywords="Physical Quantities IPython",
     url="http://packages.python.org/PhysicalQuantities",
-    packages=['PhysicalQuantities'],
+    packages=find_packages(),
     install_requires=['numpy', 'IPython', 'wrapt'],
     long_description="""
 PhysicalQuantities is a python module that allows calculations to be aware 
