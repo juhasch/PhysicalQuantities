@@ -430,16 +430,16 @@ class PhysicalUnit:
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
     def __mul__(self, other):
-        """ Multiply two units
+        """ Multiply units with other value
 
         Parameters
         ----------
-        other: PhysicalUnit
-            Unit to multiply with
+        other:
+            Value or unit to multiply with
 
         Returns
         -------
-        PhysicalUnit
+        PhysicalUnit or PhysicalQuantity
             Multiplied unit
 
         Example
@@ -448,16 +448,19 @@ class PhysicalUnit:
         >>> q.m.unit * q.s.unit
         m*s
         """
+        from .quantity import PhysicalQuantity
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
             raise UnitError(f'Cannot multiply units {self} and {other} with non-zero offset')
         if isphysicalunit(other):
             return PhysicalUnit(self.names + other.names,
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
-        else:
-            # TODO: add test
+        elif isinstance(other, PhysicalQuantity):
+        # TODO: add test
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
-                                self.factor*other.factor, self.powers, self.offset)
+                                self.factor * other.factor, self.powers, self.offset)
+        else:
+            return PhysicalQuantity(other, self)
 
     __rmul__ = __mul__
 
