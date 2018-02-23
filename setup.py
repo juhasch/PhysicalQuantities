@@ -12,6 +12,7 @@ setup(
     description="Allow calculations using physical quantities",
     license="BSD",
     keywords="Physical Quantities IPython",
+    python_requires=">=3.6",
     url="http://packages.python.org/PhysicalQuantities",
     packages=find_packages(),
     install_requires=['numpy', 'IPython', 'wrapt'],
