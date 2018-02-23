@@ -1,9 +1,10 @@
 import sys
 import unittest
+
 import numpy as np
 
-from PhysicalQuantities.ipython import _transform
 from PhysicalQuantities import unit_table
+from PhysicalQuantities.ipython import _transform
 
 test_transformer = _transform().func
 

@@ -1,14 +1,12 @@
-""" IPython extension for physical quantity input
+""" IPython extension for physical quantity input"""
 
-"""
-
-
-import tokenize
 import io
-from IPython.core.inputtransformer import StatelessInputTransformer
-import PhysicalQuantities
+import tokenize
+from tokenize import NAME, NUMBER, OP
 
-from tokenize import NUMBER, NAME, OP
+from IPython.core.inputtransformer import StatelessInputTransformer
+
+import PhysicalQuantities
 
 
 @StatelessInputTransformer.wrap
