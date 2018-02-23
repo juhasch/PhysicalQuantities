@@ -4,25 +4,20 @@ Physical Quantities for Python and IPython
 Usage in Python:
 ================
 
-    import PhysicalQuantities as pq
-    a = pq.PhysicalQuantity(1.0, 'm')
+    from PhysicalQuantities import PhysiscalQuantity, q
+    a = PhysicalQuantity(1.0, 'm')
 or simply    
-    a = pq.Q(1.0, 'm')
+    a = 1.0 * q.mm
 
 The value of a physical quantity can by any number, list or numpy array.
 The units are derived from SI base units and can be any combination,
 including prefixes:
-    a = pq.Q(1.0, 'm**2/s**3')
+    a = PhysicalQuantity(1.0, 'm**2/s**3')
     
-Lists or arrays can also be used and indexed:
-    b = [1,2,3]
-    c = a*b
-    print c[0]    
-
 Usage in IPython:
 ===============
 
-    %load_ext PyPUnits.ipython
+    %load_ext PhysicalQuantities.ipython
 Then you can type directly:
     a = 1 mm
 without explicitly calling a function constructor
@@ -44,8 +39,7 @@ __version__ = '0.8.0'
 Q = PhysicalQuantity
 U = PhysicalUnit
 
-# TODO: reinit after a new PhysicalQuantity is added
-# Make traitlets out of it ??
+
 class _Quantity:
     def __init__(self):
         self.table = {}
@@ -129,9 +123,9 @@ def units_list():
     baseunits = []
     ut = collections.OrderedDict(sorted(unit_table.items()))
     for name in ut:
-        unit = unit_table[name]
-        if isinstance(unit, PhysicalUnit) and unit.prefixed is False:
-            units.append(unit.name)
+        _unit = unit_table[name]
+        if isinstance(_unit, PhysicalUnit) and _unit.prefixed is False:
+            units.append(_unit.name)
             a = PhysicalQuantity(1, name)
             baseunits.append(str(a.base))
     return units, baseunits

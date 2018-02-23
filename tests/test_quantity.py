@@ -590,4 +590,3 @@ def test_from_json():
     j = a.to_json
     b = PhysicalQuantity.from_json(j)
     assert a == b
-
