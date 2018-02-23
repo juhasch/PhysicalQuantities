@@ -11,7 +11,7 @@ and this project adheres (at least as of 0.3.0!) to
 Unreleased (aka. GitHub master)
 -------------------------------
 
-- Added CONTRIBUTING.md
+- Added CHANGELOG.md
    [#100](https://github.com/juhasch/PhysicalQuantities/pull/100)
    [@juhasch](https://github.com/juhasch)
 - Move from regular expression to tokenize in IPython extension 
