@@ -12,36 +12,38 @@ import PhysicalQuantities
 @StatelessInputTransformer.wrap
 def _transform(line):
 
-    g = tokenize.tokenize(io.BytesIO(line.encode('utf-8')).readline)
-    val = []
-    num = []
-    for toknum, tokval, _, _, _ in g:
-        val.append(tokval)
-        num.append(toknum)
+    string_io = io.StringIO(line)
+    g = tokenize.generate_tokens(string_io.readline)
 
+    tokenlist = []
     result = []
+    token_type = []
+
+    for t in g:
+        tokenlist.append(t)
+        token_type.append(t[0])
+
     i = 0
-    while i < len(num):
+    while i < len(tokenlist):
         lo = slice(i, i + 4)
         sh = slice(i, i + 2)
-        if num[lo] == [NUMBER, NAME, OP, NAME]:
-            result.append((num[i], val[i]))
-            newtokval = '* pq.' + val[i+1]
-            result.append((num[i+1], newtokval))
-            result.append((num[i+2], val[i+2]))
-            newtokval = ' pq.' + val[i+3]
-            result.append((num[i+3], newtokval))
+        if token_type[lo] == [NUMBER, NAME, OP, NAME]:
+            result.append(tokenlist[i])
+            newtokval = '* pq.' + tokenlist[i+1][1]
+            result.append((tokenlist[i+1][0], newtokval))
+            result.append((tokenlist[i+2][0], tokenlist[i+2][1]))
+            newtokval = ' pq.' + tokenlist[i+3][1]
+            result.append((tokenlist[i+3][0], newtokval))
             i += 4
-        elif num[sh] == [NUMBER, NAME]:
-            result.append((num[i], val[i]))
-            newtokval = '* pq.' + val[i+1]
-            result.append((num[i+1], newtokval))
+        elif token_type[sh] == [NUMBER, NAME]:
+            result.append(tokenlist[i])
+            newtokval = '* pq.' + tokenlist[i+1][1]
+            result.append((tokenlist[i+1][0], newtokval))
             i += 2
         else:
-            result.append((num[i], val[i]))
+            result.append(tokenlist[i])
             i += 1
-
-    line = tokenize.untokenize(result).decode('utf-8')
+    line = tokenize.untokenize(result)
     return line
 
 
