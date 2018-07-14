@@ -9,8 +9,17 @@ from IPython.core.inputtransformer import StatelessInputTransformer
 import PhysicalQuantities
 
 
+within_comment = False
+
 @StatelessInputTransformer.wrap
 def _transform(line):
+    global within_comment
+    if line.count('"""') %2 or line.count("'''") %2:
+        within_comment = not within_comment
+        return
+
+    if within_comment:
+        return
 
     string_io = io.StringIO(line)
     g = tokenize.generate_tokens(string_io.readline)
@@ -51,7 +60,8 @@ __transformer = _transform()
 
 
 def load_ipython_extension(ip):  # pragma: no cover
-    global __transformer
+    global __transformer, within_comment
+    within_comment = False
     ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
     ip.user_ns['pq'] = PhysicalQuantities.q
 
