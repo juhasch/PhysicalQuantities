@@ -1,10 +1,6 @@
 """ Define imperial units
 """
-from IPython import get_ipython
-
-from PhysicalQuantities.ipython import (load_ipython_extension,
-                                        unload_ipython_extension)
-
+import PhysicalQuantities
 from .unit import add_composite_unit
 
 # Length units
@@ -70,8 +66,4 @@ add_composite_unit('degF', 5/9, 'K', offset=459.67,
                    verbosename='degree Fahrenheit',
                    url='https://en.wikipedia.org/wiki/Fahrenheit')
 
-# Reload transformer in IPython
-ip = get_ipython()
-if ip is not None and 'PhysicalQuantity' in ip.user_ns:  # pragma: no cover
-    unload_ipython_extension(ip)
-    load_ipython_extension(ip)
+PhysicalQuantities.q.__init__()

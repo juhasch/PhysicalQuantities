@@ -10,7 +10,7 @@ from PhysicalQuantities.unit import (PhysicalUnit, UnitError,
 
 
 def test_addunit_1():
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
             url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
     a = PhysicalQuantity(1, 'degC')
     assert(type(a.unit) == PhysicalUnit)
@@ -18,9 +18,9 @@ def test_addunit_1():
 
 @raises(KeyError)
 def test_addunit_2():
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
             url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15,
+    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
             url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
 
 
@@ -31,7 +31,7 @@ def test_add_composite_unit():
 
 
 @raises(KeyError)
-def test_add_composite_unit():
+def test_add_composite_unit_2():
     add_composite_unit('test', 4.92892159375, 'cm**3')
     add_composite_unit('test', 4.92892159375, 'cm**3')
 
@@ -219,7 +219,7 @@ def test_pow_2():
 @raises(UnitError)
 def test_pow_3():
     """Offsets are not allowed"""
-    addunit(PhysicalUnit('degX', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15))
+    addunit(PhysicalUnit('degX', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15))
     a = PhysicalQuantity(1, 'degX')
     a.unit.offset = 1.1
     a**2

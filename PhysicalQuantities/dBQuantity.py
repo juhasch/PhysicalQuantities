@@ -60,7 +60,6 @@ class dBUnit:
             self.factor = 20 - 10 * self.physicalunit.is_power
         dB_unit_table[name] = self
 
-
     @property
     def is_power(self):
         return self.physicalunit.is_power
@@ -75,21 +74,21 @@ def _add_dB_units(name, unit,  offset=0, factor=0):
 
 
 # Predefined dB units
-_add_dB_units('dB', None)
-_add_dB_units('dBm', unit_table['mW'])
-_add_dB_units('dBW', unit_table['W'])
-_add_dB_units('dBnV', unit_table['nV'])
-_add_dB_units('dBuV', unit_table['uV'])
-_add_dB_units('dBmV', unit_table['mV'])
-_add_dB_units('dBV', unit_table['V'])
-_add_dB_units('dBnA', unit_table['nA'])
-_add_dB_units('dBuA', unit_table['uA'])
-_add_dB_units('dBmA', unit_table['mA'])
-_add_dB_units('dBA', unit_table['A'])
-_add_dB_units('dBsm', PhysicalQuantity(1,'m**2').unit)
-_add_dB_units('dBd', None, factor=10, offset=2.15)
-_add_dB_units('dBi', None, factor=10)
-_add_dB_units('dBc', None, factor=10)
+_add_dB_units('dB', unit=None)
+_add_dB_units('dBm', unit=unit_table['mW'])
+_add_dB_units('dBW', unit=unit_table['W'])
+_add_dB_units('dBnV', unit=unit_table['nV'])
+_add_dB_units('dBuV', unit=unit_table['uV'])
+_add_dB_units('dBmV', unit=unit_table['mV'])
+_add_dB_units('dBV', unit=unit_table['V'])
+_add_dB_units('dBnA', unit=unit_table['nA'])
+_add_dB_units('dBuA', unit=unit_table['uA'])
+_add_dB_units('dBmA', unit=unit_table['mA'])
+_add_dB_units('dBA', unit=unit_table['A'])
+_add_dB_units('dBsm', unit=PhysicalQuantity(1,'m**2').unit)
+_add_dB_units('dBd', unit=None, factor=10, offset=2.15)
+_add_dB_units('dBi', unit=None, factor=10)
+_add_dB_units('dBc', unit=None, factor=10)
 
 
 def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
