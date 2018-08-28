@@ -1,8 +1,7 @@
 import numpy as np
+import PhysicalQuantities.numpywrapper as nw
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
-
-import PhysicalQuantities.numpywrapper as nw
 from PhysicalQuantities.quantity import PhysicalQuantity, UnitError
 
 

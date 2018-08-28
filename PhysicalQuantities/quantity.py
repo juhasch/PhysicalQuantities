@@ -17,8 +17,10 @@ import json
 import numpy as np
 from IPython import get_ipython
 
-from .unit import (PhysicalUnit, UnitError, base_names, convertvalue, findunit,
-                   isphysicalunit, unit_table)
+from .unit import (
+    PhysicalUnit, UnitError, base_names, convertvalue, findunit,
+    isphysicalunit, unit_table,
+)
 
 __all__ = ['PhysicalQuantity']
 
@@ -36,7 +38,7 @@ class PhysicalQuantity:
 
     __array_priority__ = 1000  # make sure numpy arrays do not get iterated
 
-    def __init__(self, value, unit = None):
+    def __init__(self, value, unit=None):
         """There are two constructor calling patterns
 
         Parameters
@@ -47,7 +49,11 @@ class PhysicalQuantity:
         unit: string or PhysicalUnit class
             unit of the quantity
 
+        Examples
+        --------
+        >>> from PhysicalQuantities import PhysicalQuantity
         >>> PhysicalQuantity(1, 'V')
+        1 V
         """
         ip = get_ipython()
         if ip is not None:  # pragma: no cover
@@ -59,8 +65,7 @@ class PhysicalQuantity:
         self.unit = findunit(unit)
 
     def __dir__(self):
-        """ List attributes
-
+        """ List available attributes including conversion to other scaling prefixes
         Returns
         -------
         list
@@ -88,9 +93,10 @@ class PhysicalQuantity:
         AttributeError
             If unit is not a valid attribute
 
-        Example
-        -------
-        >>> a = 2 mm
+        Examples
+        --------
+        >>> from PhysicalQuantities import q
+        >>> a = 2 * q.mm
         >>> a._
         2
         >>> a.mm_
@@ -149,9 +155,13 @@ class PhysicalQuantity:
         dBQuantity
             dB quantity converted from PhysicalQuantity
         
-        >>> (10 V).dB
+
+        Examples
+        --------
+        >>> from PhysicalQuantities import q
+        >>> (10 q.V).dB
         20.0 dBV
-        >>> (10 W).dB
+        >>> (10 q.W).dB
         10.0 dBW
         """
         from .dBQuantity import dBQuantity, PhysicalQuantity_to_dBQuantity
@@ -753,8 +763,7 @@ class PhysicalQuantity:
         """
         if self.unit.is_angle:
             return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of cos must be an angle')
+        raise UnitError('Argument of cos must be an angle')
 
     def tan(self):
         """ Return tangens of given PhysicalQuantity with angle unit
@@ -770,8 +779,7 @@ class PhysicalQuantity:
         """
         if self.unit.is_angle:
             return np.tan(self.value * self.unit.conversion_factor_to(unit_table['rad']))
-        else:
-            raise UnitError('Argument of tan must be an angle')
+        raise UnitError('Argument of tan must be an angle')
 
     @property
     def to_dict(self):
@@ -801,40 +809,40 @@ class PhysicalQuantity:
         return json_quantity
 
     @staticmethod
-    def from_dict(quantity_dict):
+    def from_dict(quantity_dict: dict):
         """Retrieve PhysicalUnit from dict description
 
         Parameters
         ----------
-        unit_dict: dict
-            PhysicalUnit stored as dict
+        quantity_dict
+            PhysicalQuantity stored as dict
 
         Returns
         -------
-        PhysicalUnit
-            Retrieved PhysicalUnit
+        PhysicalQuantity
+            Retrieved PhysicalQuantity
 
         Notes
         -----
-        Current implementation: throw exception of unit has not already been defined
+        Current implementation: throw exception if unit has not already been defined
         """
         u = PhysicalUnit.from_dict(quantity_dict['PhysicalUnit'])
         q = PhysicalQuantity(quantity_dict['value'], u)
         return q
 
     @staticmethod
-    def from_json(json_quantity):
+    def from_json(json_quantity: str):
         """Retrieve PhysicaQuantity from JSON string description
 
         Parameters
         ----------
-        json_quantity: str
+        json_quantity
             PhysicalQuantity encoded as JSON string
 
         Returns
         -------
-        PhysicalUnit
-            New PhysicalUnit
+        PhysicalQuantity
+            New PhysicalQuantity
         """
         quantity_dict = json.loads(json_quantity)
         return PhysicalQuantity.from_dict(quantity_dict['PhysicalQuantity'])

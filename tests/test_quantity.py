@@ -4,7 +4,6 @@ import operator
 import numpy as np
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
-
 from PhysicalQuantities import isphysicalquantity, q
 from PhysicalQuantities.quantity import PhysicalQuantity
 from PhysicalQuantities.unit import UnitError

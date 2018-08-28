@@ -74,8 +74,8 @@ def convertvalue(value, src_unit, target_unit):
     any
         Value scaled to target unit
 
-    Example
-    -------
+    Examples
+    --------
     >>> from PhysicalQuantities import q
     >>> convertvalue(1, q.mm.unit, q.km.unit)
     1e-06

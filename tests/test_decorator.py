@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 from nose.tools import raises
-
 from PhysicalQuantities.decorator import *
 
 

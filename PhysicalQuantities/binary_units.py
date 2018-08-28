@@ -1,7 +1,7 @@
 """Binary units, i.e. Bits"""
 import PhysicalQuantities
-from .unit import add_composite_unit
 
+from .unit import add_composite_unit
 
 add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True, baseunit=PhysicalQuantities.q.Bit,
                    url='https://en.wikipedia.org/wiki/Byte')

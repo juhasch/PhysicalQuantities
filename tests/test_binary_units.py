@@ -1,16 +1,16 @@
-from numpy.testing import assert_almost_equal
-
-from PhysicalQuantities import PhysicalQuantity, q
+from PhysicalQuantities import PhysicalQuantity
 import PhysicalQuantities.binary_units
 
 
-def test_Bit():
+def test_bit():
     a = PhysicalQuantity(1, 'KiBit')
     assert str(a.base) == '1024 Bit'
 
-def test_Byte():
+
+def test_byte():
     a = PhysicalQuantity(1, 'KiByte')
     assert str(a.base) == '8192 Bit'
+
 
 def test_floordiv():
     a = PhysicalQuantity(1, 'KiBit')

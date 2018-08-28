@@ -23,13 +23,15 @@ Then you can type directly:
 without explicitly calling a function constructor
 
 """
+import collections
+import sys
+
 from .quantity import unit_table, PhysicalQuantity
 from .unit import addunit, isphysicalunit, PhysicalUnit
 from .prefixes import *
-import collections
 from .default_units import *
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
-import sys
+from PhysicalQuantities.quantityarray import PhysicalQuantityArray
 
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python < 3.6 is not supported')
@@ -38,6 +40,7 @@ __version__ = '0.8.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
+QA = PhysicalQuantityArray
 
 
 class _Quantity:
@@ -75,13 +78,20 @@ class _Quantity:
 q = _Quantity()
 
 
-def isphysicalquantity(x):
+def isphysicalquantity(x) -> bool:
     """ Test if parameter is a PhysicalQuantity or dBQuantity object
 
-    :param x: parameter to test
-    :return: true if x is a PhysicalQuantity
-    :rtype: bool
+    Parameters
+    ----------
+    x
+        parameter to test
 
+    Returns
+    -------
+        True if x is a PhysicalQuantity
+
+    Examples
+    --------
     >>> isphysicalquantity( PhysicalQuantity(1, 'V'))
     True
     """
