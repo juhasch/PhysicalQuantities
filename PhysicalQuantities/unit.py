@@ -166,6 +166,8 @@ class PhysicalUnit:
                 self.names[_name] = names[_name]
         self.factor = factor
         self.offset = offset
+        if len(base_names) != len(powers):
+            raise ValueError('Invalid number of powers given for existing base_names')
         self.powers = powers
         self.unece_code = unece_code
 
@@ -256,7 +258,7 @@ class PhysicalUnit:
             True if it is a power unit, i.e. W, J or anything like it
         """
         p = self.powers
-        if p == [2, 0, 0, 0, 0, 0, 0, 0, 0]:
+        if p == [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
             return True  # for m^ -> dBsm
         if p[0] == 2 and p[1] == 1 and p[3] > -1:
             return True
@@ -506,6 +508,36 @@ class PhysicalUnit:
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
 
+    def __floordiv__(self, other):
+        """ Divide two units
+
+        Parameters
+        ----------
+        other: PhysicalUnit
+            Other unit to divide
+
+        Returns
+        -------
+        PhysicalUnit
+            Divided unit
+
+        Example
+        -------
+        >>> from PhysicalQuantities import q
+        >>> q.m.unit / q.s.unit
+        m/s
+        """
+        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
+            raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
+        if isphysicalunit(other):
+            return PhysicalUnit(self.names - other.names,
+                                self.factor // other.factor,
+                                list(map(lambda a, b: a - b, self.powers, other.powers)))
+        else:
+            # TODO: add test
+            return PhysicalUnit(self.names + NumberDict({str(other): -1}),
+                                self.factor//other.factor, self.powers)
+
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
@@ -730,35 +762,42 @@ def addunit(unit):
 
 unit_table = {}
 # These are predefined base units 
-base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
+base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr', 'Bit', 'currency']
 
-addunit(PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0],
+addunit(PhysicalUnit('m', 1., [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Metre', verbosename='Metre',
         unece_code='MTR'))
-addunit(PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0],
+addunit(PhysicalUnit('kg', 1, [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Kilogram', verbosename='Kilogram',
         unece_code='KGM'))
-addunit(PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0],
+addunit(PhysicalUnit('s', 1., [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Second', verbosename='Second',
         unece_code='SEC'))
-addunit(PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0],
+addunit(PhysicalUnit('A', 1., [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Ampere', verbosename='Ampere',
         unece_code='AMP'))
-addunit(PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0],
+addunit(PhysicalUnit('K', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Kelvin', verbosename='Kelvin',
         unece_code='KEL'))
-addunit(PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0],
+addunit(PhysicalUnit('mol', 1., [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Mole_(unit)', verbosename='Mol',
         unece_code='C34'))
-addunit(PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0],
+addunit(PhysicalUnit('cd', 1., [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Candela', verbosename='Candela',
         unece_code='CDL'))
-addunit(PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0],
+addunit(PhysicalUnit('rad', 1., [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
         url='https://en.wikipedia.org/wiki/Radian', verbosename='Radian',
         unece_code='C81'))
-addunit(PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1],
-        url='https://en.wikipedia.org/wiki/Steradian', verbosename='Streradian',
+addunit(PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        url='https://en.wikipedia.org/wiki/Steradian', verbosename='Steradian',
         unece_code='D27'))
+addunit(PhysicalUnit('Bit', 1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        url='https://en.wikipedia.org/wiki/Bit', verbosename='Bit',
+        unece_code=None))
+addunit(PhysicalUnit('currency', 1., [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        url='https://en.wikipedia.org/wiki/Currency', verbosename='Currency',
+        unece_code=None))
+
 
 
 def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, baseunit=None, url=''):

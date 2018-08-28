@@ -275,7 +275,7 @@ class PhysicalQuantity:
         if not isinstance(other, PhysicalQuantity):
             return self.__class__(self.value // other, self.unit)
         value = self.value // other.value
-        unit = self.unit / other.unit
+        unit = self.unit // other.unit
         if unit.is_dimensionless:
             return value * unit.factor
         else:

@@ -71,7 +71,7 @@ add_composite_unit('torr', 'atm/760', 'torr = mm of mercury')
 
 # Temperature units
 add_composite_unit('degR', '(5./9.)*K', 'degrees Rankine')
-add_composite_unit('degC', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0], offset=273.15),
+add_composite_unit('degC', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15),
         url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
 
 # Radiation-related units
