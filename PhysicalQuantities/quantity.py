@@ -598,8 +598,8 @@ class PhysicalQuantity:
         units: str
             Name of the unit
 
-        Example
-        -------
+        Examples
+        --------
             >>> b = PhysicalQuantity(4, 'J/s')
             >>> b.to('W')
             4.0 W
@@ -682,8 +682,8 @@ class PhysicalQuantity:
         PhysicalQuantity
             real part
 
-        Example
-        -------
+        Examples
+        --------
         >>> b = PhysicalQuantity(2 + 1j, 'V')
         >>> b.real
         2.0 V
@@ -699,8 +699,8 @@ class PhysicalQuantity:
         PhysicalQuantity
             imaginary part
 
-        Example
-        -------
+        Examples
+        --------
         >>> b = PhysicalQuantity(2 + 1j, 'V')
         >>> b.imag
         1.0 V
