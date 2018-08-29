@@ -36,7 +36,7 @@ from PhysicalQuantities.quantityarray import PhysicalQuantityArray
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python < 3.6 is not supported')
 
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
