@@ -71,20 +71,7 @@ class PhysicalQuantityArray(ndarray):
             unit = units[0]
             factor = convertvalue(1, self.unit, unit)
             return self.__class__(self * factor, unit)
-        else:
-            units.sort()
-            result = []
-            unit = self.unit
-            for i in range(len(units) - 1, -1, -1):
-                value *= unit.conversion_factor_to(units[i])
-                if i is 0:
-                    rounded = value
-                else:
-                    rounded = self._round(value)
-                result.append(self.__class__(rounded, units[i]))
-                value = value - rounded
-                unit = units[i]
-            return tuple(result)
+        raise ValueError('More than one unit given to convert to')
 
     @property
     def base(self):
