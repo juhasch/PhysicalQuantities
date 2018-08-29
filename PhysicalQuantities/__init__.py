@@ -26,8 +26,8 @@ without explicitly calling a function constructor
 import collections
 import sys
 
-from .quantity import unit_table, PhysicalQuantity
-from .unit import addunit, isphysicalunit, PhysicalUnit
+from .quantity import PhysicalQuantity
+from .unit import unit_table, addunit, isphysicalunit, PhysicalUnit
 from .prefixes import *
 from .default_units import *
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
@@ -44,6 +44,23 @@ QA = PhysicalQuantityArray
 
 
 class _Quantity:
+    """Class to provide attributes for all known units include prefixes
+
+    Examples
+    --------
+    >>> from PhysicalQuantities import _Quantity
+    >>> q = _Quantity()
+    >>> q['m']
+    1 m
+    >>> q.m
+    1 m
+    >>>  type(q['m'])
+    PhysicalQuantities.quantity.PhysicalQuantity
+
+    Notes
+    -----
+    When adding more units, the class has to be reinitialized using `__init__()`for the new units to be listed.
+    """
     def __init__(self):
         self.table = {}
         for key in dB_unit_table:
@@ -110,13 +127,13 @@ def units_html_list():
     table = "<table>"
     table += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
     for name in unit_table:
-        unit = unit_table[name]
-        if isinstance(unit, PhysicalUnit):
-            if unit.prefixed is False:
+        _unit = unit_table[name]
+        if isinstance(_unit, PhysicalUnit):
+            if _unit.prefixed is False:
                 a = PhysicalQuantity(1, name)
                 baseunit = a.base._repr_latex_()
                 table += f'<tr><td>{name}</td><td>{baseunit}' + \
-                         f'</td><td><a href="{unit.url}" target="_blank">{unit.verbosename}</a></td></tr>'
+                         f'</td><td><a href="{_unit.url}" target="_blank">{_unit.verbosename}</a></td></tr>'
     table += "</table>"
     return HTML(table)
 
