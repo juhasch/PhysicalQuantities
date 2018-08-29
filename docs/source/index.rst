@@ -6,6 +6,12 @@ PhysicalQuantities Documentation
 *PhysicalQuantities* is a Python module that allows calculations to be aware of physical units. Built-in unit
 conversion ensures that calculations will result in the correct unit.
 
+The main goals are:
+ * easy use, especially conversion, scaling and interoperating with different units
+ * focus on using units for engineering tasks
+ * provide logarithmic dB calculations
+ * allow seamless Numpy array operation
+
 The module also contains an extension for IPython. This allows much simplified usage by typing in physical quantities
 as number and unit:
 
@@ -50,7 +56,6 @@ Reference
     :maxdepth: 1
 
     Quantity
-    QuantityArray
     Unit
     constants
     pq-numpywrapper
