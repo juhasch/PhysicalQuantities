@@ -4,11 +4,10 @@ import io
 import tokenize
 from tokenize import NAME, NUMBER, OP
 
+import PhysicalQuantities
 from IPython.core.inputtransformer import StatelessInputTransformer
 
-import PhysicalQuantities
-
-
+# Flag for multiline comments
 within_comment = False
 
 @StatelessInputTransformer.wrap

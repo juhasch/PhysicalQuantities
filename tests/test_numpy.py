@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
 import numpy as np
-
-from PhysicalQuantities import isphysicalquantity
 from PhysicalQuantities.quantity import PhysicalQuantity
 
 

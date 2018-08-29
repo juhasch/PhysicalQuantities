@@ -1,7 +1,3 @@
-import sys
-import unittest
-
-import numpy as np
 
 from PhysicalQuantities import unit_table
 from PhysicalQuantities.ipython import _transform
@@ -9,7 +5,6 @@ from PhysicalQuantities.ipython import _transform
 test_transformer = _transform().func
 
 units_list = list(unit_table.keys())
-
 
 
 def test_simple():

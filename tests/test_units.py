@@ -2,11 +2,11 @@ import json
 
 import numpy as np
 from nose.tools import raises
-
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
-from PhysicalQuantities.unit import (PhysicalUnit, UnitError,
-                                     add_composite_unit, addunit, convertvalue,
-                                     findunit, isphysicalunit)
+from PhysicalQuantities.unit import (
+    PhysicalUnit, UnitError, add_composite_unit, addunit, convertvalue,
+    findunit, isphysicalunit,
+)
 
 
 def test_addunit_1():

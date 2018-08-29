@@ -30,8 +30,8 @@ def findunit(unitname):
     PhysicalUnit
         Unit
 
-    Example
-    -------
+    Examples
+    --------
     >>> findunit('mm')
      <PhysicalUnit mm>
     """
@@ -74,8 +74,8 @@ def convertvalue(value, src_unit, target_unit):
     any
         Value scaled to target unit
 
-    Example
-    -------
+    Examples
+    --------
     >>> from PhysicalQuantities import q
     >>> convertvalue(1, q.mm.unit, q.km.unit)
     1e-06
@@ -444,8 +444,8 @@ class PhysicalUnit:
         PhysicalUnit or PhysicalQuantity
             Multiplied unit
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit * q.s.unit
         m*s
@@ -479,8 +479,8 @@ class PhysicalUnit:
         PhysicalUnit
             Divided unit
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit / q.s.unit
         m/s
@@ -521,8 +521,8 @@ class PhysicalUnit:
         PhysicalUnit
             Divided unit
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit / q.s.unit
         m/s
@@ -554,8 +554,8 @@ class PhysicalUnit:
         PhysicalUnit
             Unit to the power of exponent
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit ** 2
         m^2
@@ -604,8 +604,8 @@ class PhysicalUnit:
         float
             Conversion factor
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.km.unit.conversion_factor_to(q.m.unit)
         1000.0
@@ -631,8 +631,8 @@ class PhysicalUnit:
         float tuple
             Tuple (factor, offset)
 
-        Example
-        -------
+        Examples
+        --------
         >>> from PhysicalQuantities import q
         >>> q.km.unit.conversion_tuple_to(q.m.unit)
         (1000.0, 0.0)

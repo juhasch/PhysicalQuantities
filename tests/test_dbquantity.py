@@ -1,10 +1,8 @@
 import numpy as np
 from nose.tools import raises
 from numpy.testing import assert_almost_equal
-
 from PhysicalQuantities import PhysicalQuantity
-from PhysicalQuantities.dBQuantity import (PhysicalQuantity_to_dBQuantity,
-                                           dB10, dB20, dBQuantity)
+from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity, dB10, dB20, dBQuantity
 from PhysicalQuantities.unit import UnitError
 
 

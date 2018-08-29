@@ -1,9 +1,10 @@
 """ Class for dB calculations
 
-Example:
-    >>> from PhysicalQuantities.dBQuantity import dBQuantity
-    >>> dBQuantity(1, 'dBm')
-    1 dBm
+Examples
+--------
+>>> from PhysicalQuantities.dBQuantity import dBQuantity
+>>> dBQuantity(1, 'dBm')
+1 dBm
 
 
 TODO:
@@ -259,8 +260,8 @@ class dBQuantity:
         UnitError
             If no conversion between units is possible
 
-        Example
-        -------
+        Examples
+        --------
         >>> a = 2 mm
         >>> a._
         2
@@ -360,8 +361,8 @@ class dBQuantity:
         -------
             Linear value
 
-        Example
-        -------
+        Examples
+        --------
         >>> a = 0 dBm
         >>> a.lin
         1 mW
@@ -382,8 +383,8 @@ class dBQuantity:
         -------
             Linear value
 
-        Example
-        -------
+        Examples
+        --------
         >>> a = 6 dB
         >>> a.lin10
         3.98
@@ -413,8 +414,8 @@ class dBQuantity:
         -------
             Linear value
 
-        Example
-        -------
+        Examples
+        --------
         >>> a = 6 dB
         >>> a.lin20
         2.00
@@ -472,8 +473,8 @@ class dBQuantity:
         other: dBQuantity
             dBQuantity to subtract from self.
 
-        Example
-        -------
+        Examples
+        --------
         >>> 0 dBm + 1 dB
         1 dBm
         >>> 0 dBm + 1 dBW
@@ -504,9 +505,15 @@ class dBQuantity:
     def __div__(self, other):
         """ Divide a dB value by another factor
         Only valid if the dB value is not associated whith a physical quantity
-        
-        :param other: dBQuantity
-        :return: divided dBQuantity
+
+        Parameters
+        ----------
+        other: dBQuantity
+
+        Returns
+        -------
+        dBQuantity
+            divided dBQuantity
         
         >>> 3 dB / 4
         """
