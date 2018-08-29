@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="PhysicalQuantities",
-    version="0.8.0",
+    version="0.9.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
