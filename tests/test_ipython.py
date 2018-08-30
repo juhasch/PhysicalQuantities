@@ -1,8 +1,8 @@
 
 from PhysicalQuantities import unit_table
-from PhysicalQuantities.ipython import _transform
+from PhysicalQuantities.ipython import transform
 
-test_transformer = _transform().func
+test_transformer = transform().func
 
 units_list = list(unit_table.keys())
 

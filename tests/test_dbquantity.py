@@ -1,5 +1,5 @@
 import numpy as np
-from nose.tools import raises
+from pytest import raises
 from numpy.testing import assert_almost_equal
 from PhysicalQuantities import PhysicalQuantity
 from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity, dB10, dB20, dBQuantity
@@ -11,15 +11,10 @@ def test_name():
     assert a.unit.__name__ == 'dBm'
 
 
-@raises(UnitError)
 def test_init():
-    a = dBQuantity(1, 'x')
+    with raises(UnitError):
+        a = dBQuantity(1, 'x')
 
-
-@raises(UnitError)
-def test_len_1():
-    a = dBQuantity(1, 'x')
-    len(a)
 
 def test_basic_properties_1():
     """ test value attribute """
@@ -103,19 +98,19 @@ def test_gt_dB_2():
     assert g3 > g2
 
 
-@raises(UnitError)
 def test_gt_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g > 0
+    with raises(UnitError):
+        assert g > 0
 
 
-@raises(UnitError)
 def test_gt_dB_4():
     """ test eq operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 > g2
+    with raises(UnitError):
+        assert g1 > g2
 
 
 def test_lt_dB():
@@ -142,19 +137,19 @@ def test_lt_dB_2():
     assert g2 < g3
 
 
-@raises(UnitError)
 def test_lt_dB_3():
     """ test lt operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g < 0
+    with raises(UnitError):
+        assert g < 0
 
 
-@raises(UnitError)
 def test_lt_dB_4():
     """ test lt operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 < g2
+    with raises(UnitError):
+        assert g1 < g2
 
 
 def test_eq_dB():
@@ -180,19 +175,20 @@ def test_eq_dB_2():
     assert g1 == g1
     assert not g1 == g2
 
-@raises(UnitError)
+
 def test_eq_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g == 0
+    with raises(UnitError):
+        assert g == 0
 
 
-@raises(UnitError)
 def test_eq_dB_4():
     """ test eq operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 == g2
+    with raises(UnitError):
+        assert g1 == g2
 
 
 def test_ne_db():
@@ -219,19 +215,19 @@ def test_ne_db_2():
     assert not g1 != g1
 
 
-@raises(UnitError)
 def test_ne_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g != 0
+    with raises(UnitError):
+        assert g != 0
 
 
-@raises(UnitError)
 def test_ne_dB_4():
     """ test ne operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 != g2
+    with raises(UnitError):
+        assert g1 != g2
 
 
 def test_ge_dB():
@@ -258,19 +254,19 @@ def test_ge_dB_2():
     assert g2 >= g1
 
 
-@raises(UnitError)
 def test_ge_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g >= 0
+    with raises(UnitError):
+        assert g >= 0
 
 
-@raises(UnitError)
 def test_ge_dB_4():
     """ test ge operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 >= g2
+    with raises(UnitError):
+        assert g1 >= g2
 
 
 def test_le_dB_1():
@@ -291,19 +287,19 @@ def test_le_dB_2():
     
     
 
-@raises(UnitError)
 def test_le_dB_3():
     """ test le operator with different dB unit """
     g1 = dBQuantity(0, 'dBV')
     g2 = dBQuantity(0, 'dBW')
-    assert g1 <= g2
+    with raises(UnitError):
+        assert g1 <= g2
 
 
-@raises(UnitError)
 def test_le_dB_4():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    assert g <= 0
+    with raises(UnitError):
+        assert g <= 0
 
 
 def test_lin_1():
@@ -312,10 +308,10 @@ def test_lin_1():
     assert_almost_equal(b.dB.value, a._)
 
 
-@raises(UnitError)
 def test_lin_2():
     a = dBQuantity(6, 'dB')
-    a.lin
+    with raises(UnitError):
+        a.lin
 
 
 def test_lin10_1():
@@ -330,11 +326,10 @@ def test_lin10_2():
     assert_almost_equal(b.value, 3.9810717055349722)
 
 
-@raises(ValueError)
 def test_lin10_3():
     a = dBQuantity(6, 'dBV')
-    b = a.lin10
-    assert_almost_equal(b.value, 3.9810717055349722)
+    with raises(ValueError):
+        b = a.lin10
 
 
 def test_lin20():
@@ -342,17 +337,17 @@ def test_lin20():
     b = a.lin20
     assert_almost_equal(b, 1.9952623149688795)
 
+
 def test_lin20_2():
     a = dBQuantity(6, 'dBV')
     b = a.lin20
     assert_almost_equal(b.value, 1.9952623149688795)
 
 
-@raises(ValueError)
 def test_lin20_3():
     a = dBQuantity(6, 'dBm')
-    b = a.lin20
-    assert_almost_equal(b.value, 1.9952623149688795)
+    with raises(ValueError):
+        b = a.lin20
 
 
 def test_calculation_1():
@@ -433,10 +428,10 @@ def test_getitem_1():
     assert a[0].value == 1.0
 
 
-@raises(AttributeError)
 def test_getitem_2():
     a = dBQuantity(1, 'dBm')
-    assert a[0].value == 1.0
+    with raises(AttributeError):
+        assert a[0].value == 1.0
 
 
 def test_setitem_1():
@@ -445,10 +440,10 @@ def test_setitem_1():
     assert a[0] == dBQuantity(2, 'dBm')
 
 
-@raises(AttributeError)
 def test_setitem_2():
     a = dBQuantity(1, 'dBm')
-    a[0] = 1
+    with raises(AttributeError):
+        a[0] = 1
 
 
 def test_to_dB_0():
@@ -483,13 +478,12 @@ def test_floordiv():
     assert c.value == 2
 
 
-@raises(UnitError)
 def test_floordiv_exc():
     """ Division of dBx units is illegal"""
     a = dBQuantity(4, 'dB')
     b = dBQuantity(2, 'dB')
-    c = a // b
-    assert c.value == 2
+    with raises(UnitError):
+        c = a // b
 
 
 def test_rfloordiv():
@@ -531,11 +525,10 @@ def test_div_1():
     assert_almost_equal(b.value, 1)
 
 
-@raises(UnitError)
 def test_div_2():
     a = dBQuantity(4, 'dBm')
-    b = a / 4
-    assert_almost_equal(b.value, 1)
+    with raises(UnitError):
+        b = a / 4
 
 
 def test_len_db_1():
@@ -543,10 +536,10 @@ def test_len_db_1():
     assert(len(a) == 1)
 
 
-@raises(TypeError)
 def test_len_db_2():
     a = dBQuantity(4, 'dBm')
-    assert(len(a) == 1)
+    with raises(TypeError):
+        assert(len(a) == 1)
 
 
 def test_len_db_3():
@@ -565,10 +558,10 @@ def test_indexing_db_1():
     assert(a[0].value == 4)
 
 
-@raises(IndexError)
 def test_indexing_db_2():
     a = [dBQuantity(4, 'dBm')]
-    assert(a[1].value == 4)
+    with raises(IndexError):
+        assert(a[1].value == 4)
 
 
 def test_dir_db():
@@ -587,6 +580,7 @@ def test_dBd_to_dBi():
     b = a.dBi
     assert(b.value == 22.15)
 
+
 def test_dBsm_to_m2():
     a = dBQuantity(20, 'dBsm')
     b = a.lin
@@ -599,6 +593,7 @@ def test_m2_to_dBsm():
     b = a.dB
     assert(b.unit.name == 'dBsm')
     assert(b.value == 20)
+
 
 def test_repr():
     a = dBQuantity(0, 'dBm')

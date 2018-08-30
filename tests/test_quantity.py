@@ -2,7 +2,7 @@ import json
 import operator
 
 import numpy as np
-from nose.tools import raises
+from pytest import raises
 from numpy.testing import assert_almost_equal
 from PhysicalQuantities import isphysicalquantity, q
 from PhysicalQuantities.quantity import PhysicalQuantity
@@ -63,10 +63,10 @@ def test_getattr2():
     assert a._ == 3
 
 
-@raises(AttributeError)
 def test_getattr3():
     a = PhysicalQuantity(3, 'mm')
-    assert a.xyz
+    with raises(AttributeError):
+        assert a.xyz
 
 
 def test_decorators():
@@ -83,10 +83,10 @@ def test_getitem_1():
     assert a[0] == b
 
 
-@raises(AttributeError)
 def test_getitem_2():
     a = PhysicalQuantity(1, 'mm')
-    assert a[0]
+    with raises(AttributeError):
+        assert a[0]
 
 
 def test_setitem_1():
@@ -96,16 +96,16 @@ def test_setitem_1():
     assert a[0] == b
 
 
-@raises(AttributeError)
 def test_setitem_2():
     a = [1, 2, 3] * PhysicalQuantity(1, 'mm')
-    a[0] = 1
+    with raises(AttributeError):
+        a[0] = 1
 
 
-@raises(AttributeError)
 def test_setitem_3():
     a = PhysicalQuantity(1, 'mm')
-    a[1] = PhysicalQuantity(5, 'mm')
+    with raises(AttributeError):
+        a[1] = PhysicalQuantity(5, 'mm')
 
 
 def test_len():
@@ -139,11 +139,11 @@ def test_sum_1():
     assert a+b == PhysicalQuantity(3, 'mm')
 
 
-@raises(UnitError)
 def test_sum_2():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(2, 's')
-    a+b
+    with raises(UnitError):
+        a+b
 
 
 def test_sub():
@@ -204,10 +204,10 @@ def test_ne_1():
     assert not a != a
 
 
-@raises(UnitError)
 def test_ne_2():
     a = PhysicalQuantity(2, 'm')
-    assert a != 3
+    with raises(UnitError):
+        assert a != 3
 
 
 def test_ne_prefixed():
@@ -224,10 +224,10 @@ def test_lt_1():
     assert not a < a
 
 
-@raises(UnitError)
 def test_lt_2():
     a = PhysicalQuantity(2, 'm')
-    assert a < 3
+    with raises(UnitError):
+        assert a < 3
 
 
 def test_lt_prefixed():
@@ -244,10 +244,10 @@ def test_le_1():
     assert a <= a
 
 
-@raises(UnitError)
 def test_le_2():
     a = PhysicalQuantity(2, 'm')
-    assert a <= 3
+    with raises(UnitError):
+        assert a <= 3
 
 
 def test_le_prefixed():
@@ -264,10 +264,10 @@ def test_gt_1():
     assert not a > a
 
 
-@raises(UnitError)
 def test_gt_2():
     a = PhysicalQuantity(2, 'm')
-    assert a > 3
+    with raises(UnitError):
+        assert a > 3
 
 
 def test_gt_prefixed():
@@ -284,10 +284,10 @@ def test_ge_1():
     assert a >= a
 
 
-@raises(UnitError)
 def test_ge_2():
     a = PhysicalQuantity(2, 'm')
-    assert a >= 3
+    with raises(UnitError):
+        assert a >= 3
 
 
 def test_ge_prefixed():
@@ -347,10 +347,10 @@ def test_imag():
     assert b.imag == PhysicalQuantity(1, 'V')
 
 
-@raises(UnitError)
 def test_pow():
     a = PhysicalQuantity(2, 'm')
-    a.pow(a)
+    with raises(UnitError):
+        a.pow(a)
 
 
 def test_pow_builtin():
@@ -423,11 +423,11 @@ def test_rfloordiv():
     assert c.value == 2
 
 
-@raises(UnitError)
 def test_rpow():
     a = PhysicalQuantity(4, 'm')
     b = 2
-    b**a
+    with raises(UnitError):
+        b**a
 
 
 def test_pos():
@@ -489,20 +489,21 @@ def test_sin():
     a = PhysicalQuantity(0, 'deg')
     assert a.sin() == 0
 
-@raises(UnitError)
 def test_sin_unit():
     a = PhysicalQuantity(0, 'm')
-    assert a.sin() == 0
+    with raises(UnitError):
+        assert a.sin() == 0
 
 
 def test_cos():
     a = PhysicalQuantity(0, 'deg')
     assert a.cos() == 1
 
-@raises(UnitError)
+
 def test_cos_unit():
     a = PhysicalQuantity(0, 'm')
-    assert a.cos() == 1
+    with raises(UnitError):
+        assert a.cos() == 1
 
     
 def test_tan():
@@ -510,10 +511,10 @@ def test_tan():
     assert a.tan() == 0
 
 
-@raises(UnitError)
 def test_tan_unit():
     a = PhysicalQuantity(0, 'm')
-    assert a.tan() == 0
+    with raises(UnitError):
+        assert a.tan() == 0
 
 
 def test_q_1():
@@ -522,10 +523,10 @@ def test_q_1():
     assert a == PhysicalQuantity(1, 'm')
 
 
-@raises(KeyError)
 def test_q_2():
     """Test for invalid units"""
-    a = q['xxm']
+    with raises(KeyError):
+        a = q['xxm']
 
 
 def test_q_3():
@@ -537,6 +538,7 @@ def test_q_3():
 def test_ipython_key_completions_():
     l = q._ipython_key_completions_()
     assert len(l) > 1
+
 
 def test_repr():
     a = PhysicalQuantity(1, 'm')
