@@ -1,6 +1,6 @@
 import numpy as np
 import PhysicalQuantities.numpywrapper as nw
-from nose.tools import raises
+from pytest import raises
 from numpy.testing import assert_almost_equal
 from PhysicalQuantities.quantity import PhysicalQuantity, UnitError
 
@@ -53,10 +53,9 @@ def test_linspace_2():
     assert_almost_equal(a, b)
 
 
-@raises(UnitError)
 def test_linspace_3():
-    a = nw.linspace(PhysicalQuantity(1, 'mm'), PhysicalQuantity(10, 's'), 10)
-    assert(a)
+    with raises(UnitError):
+        a = nw.linspace(PhysicalQuantity(1, 'mm'), PhysicalQuantity(10, 's'), 10)
 
 
 def test_linspace_4():
@@ -85,12 +84,11 @@ def test_tophysicalquantity_1():
     assert_almost_equal(b.value, np.array([1, 2000, 3]))
 
 
-@raises(UnitError)
 def test_tophysicalquantity_2():
     # single value
     a = 1
-    b = nw.tophysicalquantity(a)
-    assert a == b
+    with raises(UnitError):
+        b = nw.tophysicalquantity(a)
 
     
 def test_tophysicalquantity_3():
@@ -115,22 +113,18 @@ def test_tophysicalquantity_5():
     assert a.unit == b.unit
 
 
-@raises(UnitError)
 def test_tophysicalquantity_6():
     # no units
-    a = [ 1, 2, 3]
-    b = nw.tophysicalquantity(a)
-    assert_almost_equal(a.value, b.value)
-    assert a.unit == b.unit
+    a = [1, 2, 3]
+    with raises(UnitError):
+        b = nw.tophysicalquantity(a)
 
 
-@raises(UnitError)
 def test_tophysicalquantity_7():
     # don't allow different units
     a = [ PhysicalQuantity(1, 'm'), PhysicalQuantity(1, 's')]
-    b = nw.tophysicalquantity(a)
-    assert_almost_equal(a.value, b.value)
-    assert a.unit == b.unit
+    with raises(UnitError):
+        b = nw.tophysicalquantity(a)
 
 
 def test_tophysicalquantity_8():

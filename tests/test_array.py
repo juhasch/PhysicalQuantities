@@ -3,7 +3,7 @@
 import numpy as np
 from PhysicalQuantities import QA
 from numpy.testing import assert_almost_equal
-from nose.tools import raises
+from pytest import raises
 
 
 def test_unit():
@@ -25,20 +25,19 @@ def test_to():
     assert_almost_equal((c+c).view(np.ndarray)*1e3, a+a)
 
 
-@raises(ValueError)
 def test_to_multiple():
     a = np.random.randn(10)
     b = QA(a, 'm/s')
-    c = b.to('km/h', 'km/s')
-    assert_almost_equal(b*3.6, c)
+    with raises(ValueError):
+        c = b.to('km/h', 'km/s')
 
 
-@raises(ValueError)
 def test_ufunc_fail():
     a = np.random.randn(10)
     b = QA(a, 'm')
     c = QA(a, 's')
-    b+c
+    with raises(ValueError):
+        b+c
 
 
 def test_dir():

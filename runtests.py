@@ -1,6 +1,6 @@
 import subprocess
 
-cmd = "nosetests --with-coverage --cover-package=PhysicalQuantities --cover-html"
+cmd = "py.test --cov=PhysicalQuantities --cov-report html tests/"
 
 p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 for line in p.stdout.readlines():

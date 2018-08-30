@@ -10,8 +10,9 @@ from IPython.core.inputtransformer import StatelessInputTransformer
 # Flag for multiline comments
 within_comment = False
 
+
 @StatelessInputTransformer.wrap
-def _transform(line):
+def transform(line=''):
     global within_comment
     if line.count('"""') %2 or line.count("'''") %2:
         within_comment = not within_comment
@@ -55,7 +56,7 @@ def _transform(line):
     return line
 
 
-__transformer = _transform()
+__transformer = transform()
 
 
 def load_ipython_extension(ip):  # pragma: no cover

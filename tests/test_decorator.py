@@ -1,4 +1,4 @@
-from nose.tools import raises
+from pytest import raises
 from PhysicalQuantities.decorator import *
 
 
@@ -7,16 +7,16 @@ def test_checkbaseunit_1():
     assert checkbaseunit(a, 'm') == True
 
 
-@raises(UnitError)
 def test_checkbaseunit_2():
     a = 1
-    assert checkbaseunit(a, 'm') == True
+    with raises(UnitError):
+        assert checkbaseunit(a, 'm') == True
 
 
-@raises(UnitError)
 def test_checkbaseunit_3():
     a = PhysicalQuantity(1, 's')
-    assert checkbaseunit(a, 'm') == True
+    with raises(UnitError):
+        assert checkbaseunit(a, 'm') == True
 
 
 def test_dropunit_1():
@@ -29,10 +29,10 @@ def test_dropunit_2():
     assert dropunit(a, 'm**2') == a.value
 
 
-@raises(UnitError)
 def test_dropunit_3():
     a = PhysicalQuantity(1, 's')
-    assert dropunit(a, 'm') == a.value
+    with raises(UnitError):
+        assert dropunit(a, 'm') == a.value
 
 
 def test_require_units():
