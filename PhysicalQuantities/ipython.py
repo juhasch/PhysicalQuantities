@@ -5,10 +5,31 @@ import tokenize
 from tokenize import NAME, NUMBER, OP
 
 import PhysicalQuantities
+from PhysicalQuantities import unit_table
 from IPython.core.inputtransformer import StatelessInputTransformer
+
 
 # Flag for multiline comments
 within_comment = False
+
+
+def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
+    """Add prefix 'pq.' if valid unit was found
+
+    Parameters
+    ----------
+    token
+        Token representing potenital unit name
+    prefix
+        Prefix to add, default is ' pq.'
+
+    Returns
+    -------
+        Token with 'pq.' prefix added
+    """
+    if token in unit_table.keys():
+        return prefix + token
+    return token
 
 
 @StatelessInputTransformer.wrap
@@ -38,15 +59,15 @@ def transform(line=''):
         sh = slice(i, i + 2)
         if token_type[lo] == [NUMBER, NAME, OP, NAME]:
             result.append(tokenlist[i])
-            newtokval = '* pq.' + tokenlist[i+1][1]
+            newtokval = add_pq_prefix(tokenlist[i+1][1], '* pq.')
             result.append((tokenlist[i+1][0], newtokval))
             result.append((tokenlist[i+2][0], tokenlist[i+2][1]))
-            newtokval = ' pq.' + tokenlist[i+3][1]
+            newtokval = add_pq_prefix(tokenlist[i+3][1])
             result.append((tokenlist[i+3][0], newtokval))
             i += 4
         elif token_type[sh] == [NUMBER, NAME]:
             result.append(tokenlist[i])
-            newtokval = '* pq.' + tokenlist[i+1][1]
+            newtokval = add_pq_prefix(tokenlist[i+1][1], '* pq.')
             result.append((tokenlist[i+1][0], newtokval))
             i += 2
         else:
