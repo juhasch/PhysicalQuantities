@@ -5,7 +5,7 @@ import tokenize
 from tokenize import NAME, NUMBER, OP
 
 import PhysicalQuantities
-from PhysicalQuantities import unit_table
+from PhysicalQuantities import q
 from IPython.core.inputtransformer import StatelessInputTransformer
 
 
@@ -27,7 +27,7 @@ def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
     -------
         Token with 'pq.' prefix added
     """
-    if token in unit_table.keys():
+    if token in q.table.keys():
         return prefix + token
     return token
 

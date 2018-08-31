@@ -40,8 +40,8 @@ def floor(q):
     PhysicalQuantity
         The floor of each element
 
-    Example
-    -------
+    Examples
+    --------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.floor(1.3 mm)
     1 mm
@@ -65,8 +65,8 @@ def ceil(q):
     PhysicalQuantity
         The ceiling of each element
 
-    Example
-    -------
+    Examples
+    --------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.ceil(1.3 mm)
     2.0 mm
@@ -90,8 +90,8 @@ def sqrt(q):
     PhysicalQuantity
         The floor of each element
 
-    Example
-    -------
+    Examples
+    --------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.sqrt(4 m**2)
     2.0 m
@@ -123,8 +123,8 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     -------
         Return equally spaced samples between start and stop
 
-    Example
-    -------
+    Examples
+    --------
     >>> import PhysicalQuantities.numpywrapper as nw
     >>> nw.linspace(0 GHz, 100 GHz, 200)
     """
@@ -167,8 +167,8 @@ def tophysicalquantity(arr, unit=None):
     PhysicalQuantity
         Array wrapped as PhysicalQuantity
 
-    Example
-    -------
+    Examples
+    --------
     >>> a = [ 1mm, 2m, 3mm]
     >>> b = toPhysicalQuantity(a)
     >>> b
@@ -242,6 +242,7 @@ def argsort(array):
         return np.argsort(array.value)
     else:
         return np.argsort(array)
+
 
 def insert(array, obj, values):
     """Insert values along the given axis before the given indices.

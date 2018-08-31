@@ -151,12 +151,12 @@ describing the unit
 
 The ``value`` attribute is basically only a container, allowing
 different types of values. Tested types are:
-    * integers
-    * floats
-    * complex numbers
-    * uncertainties
-    * numpy arrays
-    * lists
+* integers
+* floats
+* complex numbers
+* uncertainties
+* numpy arrays
+* lists
 
 .. code:: python
 
@@ -173,9 +173,9 @@ different types of values. Tested types are:
 
 The unit is stored in a ``PhysicalUnit`` class. This class has a number
 of attributes:
-    * ``factor`` - scaling factor from base units
-    * ``powers`` - list of SI base units contained in unit. All other units can be reduced to these base units.
-    * ``prefixed`` - unit is a scaled version of a base unit
+* ``factor`` - scaling factor from base units
+* ``powers`` - list of SI base units contained in unit. All other units can be reduced to these base units.
+* ``prefixed`` - unit is a scaled version of a base unit
 
 .. code:: python
 
