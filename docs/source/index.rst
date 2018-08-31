@@ -47,6 +47,7 @@ User Guide
     pq-uncertainties
     pq-imperial
     pq-decorators
+    pq-array
     pq-example
 
 Reference
