@@ -30,7 +30,6 @@ class PhysicalQuantityArray(ndarray):
         # square, power
         args = []
         op = ufunc.__name__
-        print(op)
         out_unit = self.unit
         args.append(self.view(np.ndarray))
 
