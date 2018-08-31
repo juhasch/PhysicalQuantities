@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # PhysicalQuantities documentation build configuration file, created by
 # sphinx-quickstart on Thu Sep 10 21:52:33 2015.
@@ -21,7 +19,7 @@ import PhysicalQuantities
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(1, '/Users/juhasch/git/PhysicalQuantities/')
+sys.path.insert(1, '/Users/juhasch/git/PhysicalQuantities/')
                 #os.path.abspath('..'))
 
 
@@ -38,7 +36,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'numpydoc',
-    'sphinx.ext.autosummary',
     'IPython.sphinxext.ipython_console_highlighting'
 ]
 
@@ -57,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PhysicalQuantities'
-copyright = '2017, Juergen Hasch'
+copyright = '2018, Juergen Hasch'
 author = 'Jürgen Hasch'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -118,7 +115,26 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+    'canonical_url': '',
+    'analytics_id': '',
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': False,
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
+
+
+
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -292,3 +308,5 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+numpydoc_show_class_members = False

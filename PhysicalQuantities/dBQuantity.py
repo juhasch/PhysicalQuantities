@@ -39,16 +39,16 @@ class dBUnit:
         Offset, used e.g. for dBd vs. dBi
 
     """
-    def __init__(self, name, physicalunit, offset=0, factor=0, z0=PhysicalQuantity(50, 'Ohm')):
+    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float=0, factor=0, z0=PhysicalQuantity(50, 'Ohm')):
         """
 
         Parameters
         ----------
-        name: str
+        name
             Name of dB unit
         physicalunit: PhysicalUnit
             Physical representation of the dB value
-        offset: float
+        offset
             Offset, used e.g. for dBd vs. dBi
 
         """
@@ -262,13 +262,12 @@ class dBQuantity:
 
         Examples
         --------
-        >>> a = 2 mm
+        >>> from PhysicalQuantities import q
+        >>> a = 2 * q.dBm
+        >>> a
+        2 dBm
         >>> a._
         2
-        >>> a.mm_
-        2
-        >>> a.m_
-        0.002
         """
         dropunit = (attr[-1] == '_')
         unitname = attr.strip('_')
@@ -338,8 +337,9 @@ class dBQuantity:
         """ Set quantities if underlying object is array or list
 
             >>> from PhysicalQuantities import q
-            >>> obj = np.linspace(0,10,10) * 1 q.dBm
+            >>> obj = np.linspace(0,10,10) * q.dBm
             >>> obj[0] = 0 q.dBm
+
         """
         if not isinstance(value, dBQuantity):
             raise AttributeError('Not a dBQuantity')
@@ -528,9 +528,15 @@ class dBQuantity:
     def __floordiv__(self, other):
         """ Divide a dB value by another factor
         Only valid if the dB value is not associated whith a physical quantity
-        
-        :param other: dBQuantity
-        :return: divided dBQuantity
+
+        Parameters
+        ----------
+        other: dBQuantity
+
+        Returns
+        -------
+        dBQuantity
+            divided dBQuantity
         
         >>> 3 dB / 4
         """
@@ -543,9 +549,16 @@ class dBQuantity:
     def __rfloordiv__(self, other):
         """ Divide a dB value by another factor
         Only valid if the dB value is not associated whith a physical quantity
-        
-        :param other: dBQuantity
-        :return: divided dBQuantity
+
+        Parameters
+        ----------
+        other: dBQuantity
+            Divisor
+
+        Returns
+        -------
+        dBQuantity
+            divided dBQuantity
         
         >>> 3 dB / 4
         """

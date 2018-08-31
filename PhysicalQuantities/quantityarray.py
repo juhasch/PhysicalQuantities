@@ -25,18 +25,58 @@ class PhysicalQuantityArray(ndarray):
         self.unit = getattr(obj, 'unit', None)
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        # add, substract
+        # divide
+        # square, power
         args = []
-        in_no = []
-        for i, input_ in enumerate(inputs):
-            if isinstance(input_, PhysicalQuantityArray):
-                in_no.append(i)
-                args.append(input_.view(np.ndarray))
-                if input_.unit != self.unit:
+        op = ufunc.__name__
+        print(op)
+        out_unit = self.unit
+        args.append(self.view(np.ndarray))
+
+        if op in ['add', 'subtract']:
+            par1, par2 = inputs
+            if isinstance(par2, PhysicalQuantityArray):
+                if par2.unit != self.unit:
                     raise ValueError('Incompatible units.')
+                args.append(par2.view(np.ndarray))
             else:
-                args.append(input_)
+                args.append(par2)
+        elif op in ['multiply']:
+            par1, par2 = inputs
+            if isinstance(par2, PhysicalQuantityArray):
+                args.append(par2.view(np.ndarray))
+                out_unit *= par2.unit
+            else:
+                args.append(par2)
+        elif op in ['true_divide']:
+            par1, par2 = inputs
+            if isinstance(par2, PhysicalQuantityArray):
+                args.append(par2.view(np.ndarray))
+                out_unit /= par2.unit
+            else:
+                args.append(par2)
+        elif op in ['square']:
+            out_unit = out_unit ** 2
+        elif op in ['square', 'power']:
+            par1, par2 = inputs
+            if isinstance(par2, PhysicalQuantityArray):
+                raise ValueError('Incompatible units.')
+            else:
+                args.append(par2)
+                out_unit = out_unit ** par2
+        else:
+            args = []
+            for par2 in inputs:
+                if isinstance(par2, PhysicalQuantityArray):
+                    if par2.unit != self.unit:
+                        raise ValueError('Incompatible units.')
+                    args.append(par2.view(np.ndarray))
+                else:
+                    args.append(par2)
+
         results = super().__array_ufunc__(ufunc, method, *args, **kwargs)
-        return results
+        return self.__class__(results, out_unit)
 
     def __dir__(self):
         ulist = super().__dir__()

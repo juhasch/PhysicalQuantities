@@ -65,11 +65,11 @@ class PhysicalQuantity:
         self.unit = findunit(unit)
 
     def __dir__(self):
-        """ List available attributes including conversion to other scaling prefixes
+        """List available attributes including conversion to other scaling prefixes
+
         Returns
         -------
-        list
-            list of units for tab completion
+        list of units for tab completion
         """
         ulist = super().__dir__()
         u = unit_table.values()
@@ -569,8 +569,8 @@ class PhysicalQuantity:
     def autoscale(self):
         """ Autoscale to a reasonable unit, if possible
 
-        Example
-        -------
+        Examples
+        --------
         >>> b = PhysicalQuantity(4e-9, 'F')
         >>> b.autoscale
         4 nF

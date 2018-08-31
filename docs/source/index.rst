@@ -56,6 +56,7 @@ Reference
     :maxdepth: 1
 
     Quantity
+    QuantityArray
     Unit
     constants
     pq-numpywrapper
