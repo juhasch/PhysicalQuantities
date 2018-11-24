@@ -32,8 +32,7 @@ def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
     return token
 
 
-@StatelessInputTransformer.wrap
-def transform(line=''):
+def transform_line(line=''):
     global within_comment
     if line.count('"""') %2 or line.count("'''") %2:
         within_comment = not within_comment
@@ -77,17 +76,21 @@ def transform(line=''):
     return line
 
 
-__transformer = transform()
+def transform(lines):
+    result = []
+    for line in lines:
+        result.append(transform_line(line))
+    return result
 
 
 def load_ipython_extension(ip):  # pragma: no cover
-    global __transformer, within_comment
+    global within_comment
     within_comment = False
-    ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
+    ip.input_transformers_cleanup.append(transform)
     ip.user_ns['pq'] = PhysicalQuantities.q
 
+
 def unload_ipython_extension(ip):  # pragma: no cover
-    global __transformer
     if type(__transformer) is StatelessInputTransformer:
-        ip.input_transformer_manager.logical_line_transforms.remove(__transformer)
+        ip.input_transformers_cleanup.remove(transform)
         ip.user_ns.pop('pq')
