@@ -146,6 +146,9 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError('Object of type %s has no len()' % type(self.value))
 
+#    def _ipython_key_completions_(self):
+#        return self.unit_table.keys()
+
     @property
     def dB(self):
         """ Convert to dB scaled unit, if possible. Guess if it is a power unit to select 10*log10 or 20*log10
