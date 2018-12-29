@@ -1,8 +1,13 @@
 
+from IPython import __version__
 from PhysicalQuantities import unit_table
-from PhysicalQuantities.ipython import transform
 
-test_transformer = transform().func
+if __version__ < '7.2.0':
+    from PhysicalQuantities.ipython import transform_legacy
+    test_transformer = transform_legacy().func
+else:
+    from PhysicalQuantities.ipython import transform_line
+    test_transformer = transform_line
 
 units_list = list(unit_table.keys())
 
@@ -18,7 +23,7 @@ def test_1():
     """ Simple unit """
     line = '1V'
     ret = test_transformer(line).strip()
-    assert ret == "1* pq.V"
+    assert ret == "(1 *pq.V)"
 
 
 def test_6():
@@ -31,18 +36,18 @@ def test_6():
 def test_7():
     line = '1V-2V'
     ret = test_transformer(line).strip()
-    assert ret == "1* pq.V -2 * pq.V"
+    assert ret == "(1 *pq.V) -(2 *pq.V)"
 
 
 def test_8():
     """Divide unit quantities"""
     line = '1V/2m'
     ret = test_transformer(line).strip()
-    assert ret == "1* pq.V /2 * pq.m"
+    assert ret == "(1 *pq.V) /(2 *pq.m)"
 
 
 def test_9():
     """Combined dimension"""
     line = '1m/s'
     ret = test_transformer(line).strip()
-    assert ret == "1* pq.m / pq.s"
+    assert ret == "(1 *pq.m) / pq.s"

@@ -12,6 +12,26 @@ from IPython import __version__
 # Flag for multiline comments
 within_comment = False
 
+
+def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
+    """Add prefix 'pq.' if valid unit was found
+
+    Parameters
+    ----------
+    token
+        Token representing potenitial unit name
+    prefix
+        Prefix to add, default is ' pq.'
+
+    Returns
+    -------
+        Token with 'pq.' prefix added
+    """
+    if token in q.table.keys():
+        return prefix + token
+    return token
+
+
 # Retain legacy input transformer
 if __version__ < '7.2.0':
     global __transformer
@@ -42,17 +62,17 @@ if __version__ < '7.2.0':
             lo = slice(i, i + 4)
             sh = slice(i, i + 2)
             if token_type[lo] == [NUMBER, NAME, OP, NAME]:
-                result.append(tokenlist[i])
-                newtokval = add_pq_prefix(tokenlist[i + 1][1], '* pq.')
-                result.append((tokenlist[i + 1][0], newtokval))
+                result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
+                newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
+                result.append((tokenlist[i + 1][0], newtokval + ')'))
                 result.append((tokenlist[i + 2][0], tokenlist[i + 2][1]))
                 newtokval = add_pq_prefix(tokenlist[i + 3][1])
                 result.append((tokenlist[i + 3][0], newtokval))
                 i += 4
             elif token_type[sh] == [NUMBER, NAME]:
-                result.append(tokenlist[i])
-                newtokval = add_pq_prefix(tokenlist[i + 1][1], '* pq.')
-                result.append((tokenlist[i + 1][0], newtokval))
+                result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
+                newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
+                result.append((tokenlist[i + 1][0], newtokval + ')'))
                 i += 2
             else:
                 result.append(tokenlist[i])
@@ -61,25 +81,6 @@ if __version__ < '7.2.0':
         return line
 
     __transformer = transform_legacy()
-
-
-def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
-    """Add prefix 'pq.' if valid unit was found
-
-    Parameters
-    ----------
-    token
-        Token representing potenitial unit name
-    prefix
-        Prefix to add, default is ' pq.'
-
-    Returns
-    -------
-        Token with 'pq.' prefix added
-    """
-    if token in q.table.keys():
-        return prefix + token
-    return token
 
 
 def transform_line(line=''):
