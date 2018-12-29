@@ -79,7 +79,9 @@ def transform_line(line=''):
 def transform(lines):
     result = []
     for line in lines:
-        result.append(transform_line(line))
+        transformed_line = transform_line(line)
+        if transformed_line:
+            result.append(transformed_line)
     return result
 
 
