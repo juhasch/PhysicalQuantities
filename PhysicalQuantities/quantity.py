@@ -580,7 +580,7 @@ class PhysicalQuantity:
         """
         if len(self.unit.names) is 1:
             b = self.base
-            n = np.log10(b.value)
+            n = np.log10(abs(b.value))
             # we want to be between 0..999 
             _scale = np.floor(n)
             # now search for unit
