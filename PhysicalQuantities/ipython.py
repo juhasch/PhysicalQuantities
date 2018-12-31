@@ -2,7 +2,7 @@
 
 import io
 import tokenize
-from tokenize import NAME, NUMBER, OP
+from tokenize import NAME, NUMBER, OP, TokenError
 
 import PhysicalQuantities
 from PhysicalQuantities import q
@@ -38,6 +38,7 @@ if __version__ < '7.2.0':
 
     @StatelessInputTransformer.wrap
     def transform_legacy(line=''):
+        print(line)
         global within_comment
         if line.count('"""') % 2 or line.count("'''") % 2:
             within_comment = not within_comment
@@ -53,11 +54,13 @@ if __version__ < '7.2.0':
         result = []
         token_type = []
 
-        for t in g:
-            tokenlist.append(t)
-            token_type.append(t[0])
+        try:
+            for t in g:
+                tokenlist.append(t)
+                token_type.append(t[0])
+        except TokenError:
+            pass
 
-        i = 0
         while i < len(tokenlist):
             lo = slice(i, i + 4)
             sh = slice(i, i + 2)
@@ -93,9 +96,12 @@ def transform_line(line=''):
     result = []
     token_type = []
 
-    for t in g:
-        tokenlist.append(t)
-        token_type.append(t[0])
+    try:
+        for t in g:
+            tokenlist.append(t)
+            token_type.append(t[0])
+    except TokenError:
+        pass
 
     i = 0
     while i < len(tokenlist):
