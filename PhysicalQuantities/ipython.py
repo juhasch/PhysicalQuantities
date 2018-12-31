@@ -2,7 +2,7 @@
 
 import io
 import tokenize
-from tokenize import NAME, NUMBER, OP, TokenError
+from tokenize import NAME, NUMBER, OP, COMMENT, TokenError
 
 import PhysicalQuantities
 from PhysicalQuantities import q
@@ -60,6 +60,7 @@ if __version__ < '7.2.0':
         except TokenError:
             pass
 
+        i = 0
         while i < len(tokenlist):
             lo = slice(i, i + 4)
             sh = slice(i, i + 2)
@@ -79,7 +80,8 @@ if __version__ < '7.2.0':
             else:
                 result.append(tokenlist[i])
                 i += 1
-        line = tokenize.untokenize(result)
+        if token_type[0] != COMMENT:
+            line = tokenize.untokenize(result)
         return line
 
     __transformer = transform_legacy()
