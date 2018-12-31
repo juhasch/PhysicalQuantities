@@ -38,7 +38,6 @@ if __version__ < '7.2.0':
 
     @StatelessInputTransformer.wrap
     def transform_legacy(line=''):
-        print(line)
         global within_comment
         if line.count('"""') % 2 or line.count("'''") % 2:
             within_comment = not within_comment
