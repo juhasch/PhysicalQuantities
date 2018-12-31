@@ -244,7 +244,7 @@ class PhysicalUnit:
             name = '\\frac{' + num + '}{' + denom + '}'
         else:
             name = num
-        name = name.replace('u', u'µ').replace('\\text{deg}', '\\,^{\\circ}').replace(' pi', ' \\pi ')
+        name = name.replace('\\text{deg}', '\\,^{\\circ}').replace(' pi', ' \\pi ')
         return name
 
     @property
