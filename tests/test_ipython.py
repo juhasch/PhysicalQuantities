@@ -2,7 +2,7 @@
 from IPython import __version__
 from PhysicalQuantities import unit_table
 
-if __version__ < '7.2.0':
+if __version__ < '7.0.0':
     from PhysicalQuantities.ipython import transform_legacy
     test_transformer = transform_legacy().func
 else:
@@ -51,3 +51,10 @@ def test_9():
     line = '1m/s'
     ret = test_transformer(line).strip()
     assert ret == "(1 *pq.m) / pq.s"
+
+
+def test_10():
+    """Test exponentials"""
+    line = '10m**2'
+    ret = test_transformer(line).strip()
+    assert ret == 'PhysicalQuantity(10 ,"m**2")'
