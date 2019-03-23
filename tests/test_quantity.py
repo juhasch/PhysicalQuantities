@@ -389,6 +389,16 @@ def test_autoscale():
     assert str(a.km) == str(b)
 
 
+def test_autoscale_1():
+    """ Unit autoscaling with negative values """
+    a = PhysicalQuantity(-1e-3, 'm')
+    b = a.autoscale
+    assert str(a.mm) == str(b)
+    a = PhysicalQuantity(-1e3, 'm')
+    b = a.autoscale
+    assert str(a.km) == str(b)
+
+
 def test_format():
     a = PhysicalQuantity(1.123123, 'm')
     assert str(a) == '1.123123 m'
