@@ -19,7 +19,7 @@ def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
     Parameters
     ----------
     token
-        Token representing potenitial unit name
+        Token representing potential unit name
     prefix
         Prefix to add, default is ' pq.'
 
@@ -33,7 +33,7 @@ def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
 
 
 # Retain legacy input transformer
-if __version__ < '7.2.0':
+if __version__ < '7.0.0':
     global __transformer
 
     @StatelessInputTransformer.wrap
@@ -73,10 +73,18 @@ if __version__ < '7.2.0':
                 result.append((tokenlist[i + 3][0], newtokval))
                 i += 4
             elif token_type[sh] == [NUMBER, NAME]:
-                result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
-                newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
-                result.append((tokenlist[i + 1][0], newtokval + ')'))
-                i += 2
+                if tokenlist[i + 2].string in ['**']:
+                    # apply exponent only unit not number
+                    result.append((tokenlist[i][0], 'PhysicalQuantity(' + tokenlist[i + 0][1]))
+                    newtokval = add_pq_prefix(tokenlist[i + 1][1], ',"')
+                    result.append(
+                        (tokenlist[i + 1][0], newtokval + tokenlist[i + 2].string + tokenlist[i + 3].string + '")'))
+                    i += 4
+                else:
+                    result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
+                    newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
+                    result.append((tokenlist[i + 1][0], newtokval + ')'))
+                    i += 2
             else:
                 result.append(tokenlist[i])
                 i += 1
@@ -117,10 +125,17 @@ def transform_line(line=''):
             result.append((tokenlist[i+3][0], newtokval))
             i += 4
         elif token_type[sh] == [NUMBER, NAME]:
-            result.append((tokenlist[i][0], '('+tokenlist[i+0][1]))
-            newtokval = add_pq_prefix(tokenlist[i+1][1], '*pq.')
-            result.append((tokenlist[i+1][0], newtokval + ')'))
-            i += 2
+            if tokenlist[i+2].string in ['**']:
+                # apply exponent only unit not number
+                result.append((tokenlist[i][0], 'PhysicalQuantity(' + tokenlist[i + 0][1]))
+                newtokval = add_pq_prefix(tokenlist[i + 1][1], ',"')
+                result.append((tokenlist[i + 1][0], newtokval + tokenlist[i+2].string + tokenlist[i+3].string + '")'))
+                i += 4
+            else:
+                result.append((tokenlist[i][0], '('+tokenlist[i+0][1]))
+                newtokval = add_pq_prefix(tokenlist[i+1][1], '*pq.')
+                result.append((tokenlist[i+1][0], newtokval + ')'))
+                i += 2
         else:
             result.append(tokenlist[i])
             i += 1
@@ -146,7 +161,7 @@ def transform(lines):
 def load_ipython_extension(ip):  # pragma: no cover
     global within_comment
     within_comment = False
-    if __version__ < '7.2.0':
+    if __version__ < '7.0.0':
         global __transformer
         ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)
     else:
@@ -155,7 +170,7 @@ def load_ipython_extension(ip):  # pragma: no cover
 
 
 def unload_ipython_extension(ip):  # pragma: no cover
-    if __version__ < '7.2.0':
+    if __version__ < '7.0.0':
         global __transformer
         if type(__transformer) is StatelessInputTransformer:
             ip.input_transformer_manager.logical_line_transforms.remove(__transformer)
