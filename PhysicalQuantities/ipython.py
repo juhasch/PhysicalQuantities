@@ -144,14 +144,17 @@ def transform_line(line=''):
 
 
 def transform(lines):
+    print('lines:', lines)
     result = []
+    within_comment = False
     for line in lines:
-        global within_comment
+
         if line.count('"""') % 2 or line.count("'''") % 2:
             within_comment = not within_comment
 
         if within_comment:
-            return
+            return lines
+
         transformed_line = transform_line(line)
         if transformed_line:
             result.append(transformed_line)
