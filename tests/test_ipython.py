@@ -58,3 +58,11 @@ def test_10():
     line = '10m**2'
     ret = test_transformer(line).strip()
     assert ret == 'PhysicalQuantity(10 ,"m**2")'
+
+
+def test_multiline_comment():
+    """Make sure multiline comments are handled properly"""
+    lines = '"""\n2m"""'
+    ret = test_transformer(lines).strip()
+    assert ret == lines
+
