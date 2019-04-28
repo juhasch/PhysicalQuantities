@@ -144,7 +144,6 @@ def transform_line(line=''):
 
 
 def transform(lines):
-    print('lines:', lines)
     result = []
     within_comment = False
     for line in lines:
