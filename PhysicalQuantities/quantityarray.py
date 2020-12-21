@@ -21,7 +21,8 @@ class PhysicalQuantityArray(ndarray):
 
     def __array_finalize__(self, obj):
         # see InfoArray.__array_finalize__ for comments
-        if obj is None: return
+        if obj is None:
+            return
         self.unit = getattr(obj, 'unit', None)
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
@@ -87,7 +88,7 @@ class PhysicalQuantityArray(ndarray):
         return ulist
 
     def __getattr__(self, attr):
-        dropunit = (attr[-1] is '_')
+        dropunit = (attr[-1] == '_')
         attr = attr.strip('_')
         if attr == '' and dropunit is True:
             return self.view(ndarray)
@@ -106,7 +107,7 @@ class PhysicalQuantityArray(ndarray):
 
     def to(self, *units):
         units = list(map(findunit, units))
-        if len(units) is 1:
+        if len(units) == 1:
             unit = units[0]
             factor = convertvalue(1, self.unit, unit)
             return self.__class__(self * factor, unit)
@@ -127,7 +128,7 @@ class PhysicalQuantityArray(ndarray):
                 num += '*' + unit
                 if power > 1:
                     num += '**' + str(power)
-        if len(num) is 0:
+        if len(num) == 0:
             num = '1'
         else:
             num = num[1:]
