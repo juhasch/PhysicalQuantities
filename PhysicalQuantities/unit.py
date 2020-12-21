@@ -225,22 +225,22 @@ class PhysicalUnit:
         for unit in self.names.keys():
             power = self.names[unit]
             if power < 0:
-                if denom is '':
+                if denom == '':
                     denom = '\\text{' + unit + '}'
                 else:
                     denom = denom + '\\cdot \\text{' + unit + '}'
                 if power < -1:
                     denom = denom + '^' + str(-power)
             elif power > 0:
-                if num is '':
+                if num == '':
                     num = '\\text{' + unit + '}'
                 else:
                     num = num + '\\cdot \\text{' + unit + '}'
                 if power > 1:
                     num = num + '^{' + str(power) + '}'
-        if num is '':
+        if num == '':
             num = '1'
-        if denom is not '':
+        if denom != '':
             name = '\\frac{' + num + '}{' + denom + '}'
         else:
             name = num

@@ -104,7 +104,7 @@ class PhysicalQuantity:
         >>> a.m_
         0.002
         """
-        dropunit = (attr[-1] is '_')
+        dropunit = (attr[-1] == '_')
         attr = attr.strip('_')
         if attr == '' and dropunit is True:
             return self.value
@@ -190,7 +190,7 @@ class PhysicalQuantity:
         string
             string representation of PhysicalQuantity            
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
+        if self.ptformatter is not None and self.format == '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, str(self.unit))
@@ -214,7 +214,7 @@ class PhysicalQuantity:
     def _repr_markdown_(self):
         """ Return markdown representation for IPython notebook
         """
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value, float):  # pragma: no cover
+        if self.ptformatter is not None and self.format == '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())
@@ -249,7 +249,7 @@ class PhysicalQuantity:
             sum of the two quantities
         """
         if not isinstance(other, PhysicalQuantity):
-            raise UnitError('Incompatible types %s' % type(other))
+            raise UnitError(f'Incompatible types {type(self)} and {type(other)}')
         new_value = sign1 * self.value + \
             sign2 * other.value * other.unit.conversion_factor_to(self.unit)
         return self.__class__(new_value, self.unit)
@@ -397,7 +397,6 @@ class PhysicalQuantity:
         if isinstance(self.value, np.ndarray):
             return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
-
     def __nonzero__(self):
         """ Test if quantity is not zero
 
@@ -578,7 +577,7 @@ class PhysicalQuantity:
         >>> b.autoscale
         4 nF
         """
-        if len(self.unit.names) is 1:
+        if len(self.unit.names) == 1:
             b = self.base
             n = np.log10(abs(b.value))
             # we want to be between 0..999 
@@ -592,7 +591,7 @@ class PhysicalQuantity:
                         if (f > -3) and (f < 1):
                             return self.to(i)
         return self
-    
+
     def to(self, *units):
         """ Express the quantity in different units.
 
@@ -619,7 +618,7 @@ class PhysicalQuantity:
             hour/minute/second.
         """
         units = list(map(findunit, units))
-        if len(units) is 1:
+        if len(units) == 1:
             unit = units[0]
             value = convertvalue(self.value, self.unit, unit)
             return self.__class__(value, unit)
@@ -630,7 +629,7 @@ class PhysicalQuantity:
             unit = self.unit
             for i in range(len(units)-1, -1, -1):
                 value *= unit.conversion_factor_to(units[i])
-                if i is 0:
+                if i == 0:
                     rounded = value
                 else:
                     rounded = self._round(value)
@@ -669,7 +668,7 @@ class PhysicalQuantity:
                 num += '*' + unit
                 if power > 1:
                     num += '**' + str(power)
-        if len(num) is 0:
+        if len(num) == 0:
             num = '1'
         else:
             num = num[1:]

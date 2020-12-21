@@ -59,10 +59,13 @@ class _Quantity:
 
     Notes
     -----
-    When adding more units, the class has to be reinitialized using `__init__()`for the new units to be listed.
+    When adding more units, the class has to be reinitialized using `update()`for the new units to be listed.
     """
     def __init__(self):
         self.table = {}
+        self.update()
+
+    def update(self):
         for key in dB_unit_table:
             self.table[key] = dBQuantity(1, key)
         for key in unit_table:
