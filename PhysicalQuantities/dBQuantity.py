@@ -450,10 +450,10 @@ class dBQuantity:
         4.01 dBm
         """
         
-        if (self.unit.name is 'dB') or (other.unit.name is 'dB'):
+        if (self.unit.name == 'dB') or (other.unit.name == 'dB'):
             # easy unitless adding
             value = self.value + other.value
-            unit = other.unit.name if self.unit.name is 'dB' else self.unit.name
+            unit = other.unit.name if self.unit.name == 'dB' else self.unit.name
             return self.__class__(value, unit, islog=True)
         elif dB_unit_table[self.unit.name] is dB_unit_table[other.unit.name]:
             # same unit adding
@@ -480,7 +480,7 @@ class dBQuantity:
         >>> 0 dBm + 1 dBW
         xx dBm
         """
-        if self.unit.name is 'dB' or other.unit.name is 'dB':
+        if self.unit.name == 'dB' or other.unit.name == 'dB':
             # easy unitless adding
             value = self.value - other.value
             return self.__class__(value, self.unit.name, islog=True)
@@ -495,7 +495,7 @@ class dBQuantity:
     __rsub__ = __sub__
     
     def __mul__(self, other):
-        if  not hasattr(other,'unit'):
+        if  not hasattr(other, 'unit'):
             # dB values will be multiplied with a factor to enable "a = 2 * q.dBm"
             value = self.value * other
             return self.__class__(value, self.unit.name, islog=True)
@@ -517,7 +517,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit.name is 'dB' and not hasattr(other, 'unit'):
+        if self.unit.name == 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = self.value / other
             return self.__class__(value, self.unit.name, islog=True)
@@ -540,7 +540,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit.name is 'dB' and not hasattr(other, 'unit'):
+        if self.unit.name == 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = self.value // other
             return self.__class__(value, self.unit.name, islog=True)
@@ -562,7 +562,7 @@ class dBQuantity:
         
         >>> 3 dB / 4
         """
-        if self.unit.name is 'dB' and not hasattr(other, 'unit'):
+        if self.unit.name == 'dB' and not hasattr(other, 'unit'):
             # dB without physical dimension can be divided by a factor
             value = other // self.value
             return self.__class__(value, self.unit.name, islog=True)
@@ -580,7 +580,7 @@ class dBQuantity:
         return pow(10, val)
     
     def __str__(self):
-        if self.ptformatter is not None and self.format is '' and isinstance(self.value,float):
+        if self.ptformatter is not None and self.format == '' and isinstance(self.value,float):
             # %precision magic only works for floats
             format = self.ptformatter.float_format
             return "%s %s" % (format % self.value, str(self.unit.name))

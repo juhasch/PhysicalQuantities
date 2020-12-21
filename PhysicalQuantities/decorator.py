@@ -109,7 +109,7 @@ def optional_units(*units, **kunits):
             newkwargs[key] = dropunit(kwargs.get(key), kunits.get(key))
         return_value = wrapped(*newargs, **newkwargs)
         return_unit = kunits.get('return_unit','')
-        if return_unit is not '':
+        if return_unit != '':
             return_value = PhysicalQuantity(return_value, return_unit)
         return return_value
     return wrapper
