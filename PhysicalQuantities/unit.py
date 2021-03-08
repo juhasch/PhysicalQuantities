@@ -5,7 +5,7 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 
 import copy
 import json
-from functools import reduce, cache
+from functools import reduce, lru_cache
 
 import numpy as np
 
@@ -17,7 +17,7 @@ class UnitError(ValueError):
 
 
 # Helper functions
-@cache
+@lru_cache(maxsize=None)
 def findunit(unitname):
     """ Return PhysicalUnit class if given parameter is a valid unit
 
