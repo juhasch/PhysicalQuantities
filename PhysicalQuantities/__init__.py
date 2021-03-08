@@ -33,10 +33,10 @@ from .default_units import *
 from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
 from PhysicalQuantities.quantityarray import PhysicalQuantityArray
 
-if sys.version_info < (3, 6):
-    sys.exit('Sorry, Python < 3.6 is not supported')
+if sys.version_info < (3, 8):
+    sys.exit('Sorry, Python < 3.8 is not supported')
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit

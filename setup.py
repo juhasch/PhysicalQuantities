@@ -2,13 +2,13 @@ from setuptools import find_packages, setup
 
 setup(
     name="PhysicalQuantities",
-    version="1.0.0",
+    version="1.1.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
     license="BSD",
     keywords="Physical Quantities IPython",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     url="https://github.com/juhasch/PhysicalQuantities",
     packages=find_packages(),
     install_requires=['numpy', 'IPython', 'wrapt'],
