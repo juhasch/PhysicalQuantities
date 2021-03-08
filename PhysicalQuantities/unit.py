@@ -5,7 +5,7 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 
 import copy
 import json
-from functools import reduce
+from functools import reduce, cache
 
 import numpy as np
 
@@ -17,6 +17,7 @@ class UnitError(ValueError):
 
 
 # Helper functions
+@cache
 def findunit(unitname):
     """ Return PhysicalUnit class if given parameter is a valid unit
 
@@ -38,8 +39,8 @@ def findunit(unitname):
     if isinstance(unitname, str):
         if unitname == '':
             raise UnitError('Empty unit name is not valid')
-        name = str(unitname).strip().replace('^', '**')
-        if name[0:2] == '1/':
+        name = unitname.strip().replace('^', '**')
+        if name.startswith('1/'):
             name = '(' + name[2:] + ')**-1'
         try:
             unit = eval(name, unit_table)
@@ -591,6 +592,10 @@ class PhysicalUnit:
                     raise UnitError('Illegal exponent %f' % exponent)
         raise UnitError('Only integer and inverse integer exponents allowed')
 
+    def __hash__(self):
+        """Custom hash function"""
+        return hash((self.factor, self.offset, str(self.powers)))
+
     def conversion_factor_to(self, other):
         """Return conversion factor to another unit
 
@@ -797,7 +802,6 @@ addunit(PhysicalUnit('Bit', 1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
 addunit(PhysicalUnit('currency', 1., [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         url='https://en.wikipedia.org/wiki/Currency', verbosename='Currency',
         unece_code=None))
-
 
 
 def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, baseunit=None, url=''):
