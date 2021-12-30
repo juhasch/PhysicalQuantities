@@ -6,7 +6,7 @@ import numpy as np
 
 from .quantity import *
 
-c0 = PhysicalQuantity(299792458., 'm/s')
+c0 = PhysicalQuantity(value=299792458., unit='m/s')
 mu0 = PhysicalQuantity(4*np.pi*1e-7, 'N/A**2')
 eps0 = PhysicalQuantity(8.854188e-12, 'F/m')
 Grav = PhysicalQuantity(6.67384e-11, 'm**3/kg/s**2')

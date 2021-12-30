@@ -231,7 +231,7 @@ def test_units_html_list():
 
 
 def test_units_list():
-    a,b = units_list()
+    a = units_list()
     assert(len(a) > 10)
 
 

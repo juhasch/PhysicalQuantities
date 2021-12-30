@@ -158,11 +158,10 @@ class PhysicalUnit:
         self.baseunit = self
         self.verbosename = verbosename
         self.url = url
+        self.names = NumberDict()
         if isinstance(names, str):
-            self.names = NumberDict()
             self.names[names] = 1
         else:
-            self.names = NumberDict()
             for _name in names:
                 self.names[_name] = names[_name]
         self.factor = factor
@@ -493,9 +492,8 @@ class PhysicalUnit:
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
-            # TODO: add test
-            return PhysicalUnit(self.names + NumberDict({str(other): -1}),
-                                self.factor/other.factor, self.powers)
+            print(self.names , NumberDict({str(other): -1}))
+            return PhysicalUnit(self.names + NumberDict({str(other): -1}), self.factor/other, self.powers)
 
     def __rdiv__(self, other):
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):

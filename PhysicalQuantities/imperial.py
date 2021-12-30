@@ -1,5 +1,4 @@
-""" Define imperial units
-"""
+""" Define imperial units """
 import PhysicalQuantities
 
 from .unit import add_composite_unit

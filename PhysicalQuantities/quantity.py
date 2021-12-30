@@ -19,7 +19,7 @@ from IPython import get_ipython
 
 from .unit import (
     PhysicalUnit, UnitError, base_names, convertvalue, findunit,
-    isphysicalunit, unit_table,
+    isphysicalunit, unit_table
 )
 
 __all__ = ['PhysicalQuantity']
@@ -79,13 +79,13 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         return ulist
     
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str):
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit (possibly after rescaling) and return value only.
 
         Parameters
         ----------
-        attr : string
+        attr
             attribute name
             
         Raises

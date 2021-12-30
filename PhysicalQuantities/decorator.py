@@ -5,7 +5,7 @@ from .quantity import *
 from .unit import *
 
 
-def checkbaseunit(arg, unit):
+def checkbaseunit(arg: PhysicalQuantity, unit: str) -> bool:
     """ Check if an argument is of a certain unit
 
     Parameters
@@ -17,7 +17,6 @@ def checkbaseunit(arg, unit):
 
     Returns
     -------
-    bool
         True if argument has requested unit
     """
     if not isinstance(arg, PhysicalQuantity):
@@ -29,14 +28,14 @@ def checkbaseunit(arg, unit):
         raise UnitError('%s is not of unit %s' % (arg, unit))
 
 
-def dropunit(arg, unit):
+def dropunit(arg: PhysicalQuantity, unit: str):
     """ Drop unit of a given argument
 
     Parameters
     ----------
-    arg: PhysicalQuantity
+    arg
         Argument with unit to be checked
-    unit: str
+    unit
         Reference unit
 
     Returns
@@ -69,7 +68,7 @@ def require_units(*units, **kunits):
     >>> def power(u, i):
     >>>     return (u*i).W
 
-    >>> @require_units(u='V', u='A')
+    >>> @require_units(u='V', i='A')
     >>> def power(u, i):
     >>>     return (u*i).W
 
@@ -94,7 +93,7 @@ def optional_units(*units, **kunits):
     >>> def powero(u, i):
     >>>     return u*i
 
-    >>> @optional_units(u='V', u='A', return_unit='W')
+    >>> @optional_units(u='V', i='A', return_unit='W')
     >>> def power(u,i):
     >>>     return (u*i).W
 

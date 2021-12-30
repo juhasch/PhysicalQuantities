@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-from .quantity import unit_table
-from .unit import add_composite_unit
+from .unit import add_composite_unit, unit_table
 
 # add scaling prefixes
 _full_prefixes = [
@@ -11,7 +9,7 @@ _full_prefixes = [
     ('y', 1.e-24),
 ]
 
-# educed set of scaling prefixes for engineering purposes:
+# reduced set of scaling prefixes for engineering purposes:
 _engineering_prefixes = [
     ('T', 1.e12),
     ('G', 1.e9), ('M', 1.e6), ('k', 1.e3),
@@ -20,14 +18,14 @@ _engineering_prefixes = [
 ]
 
 
-def addprefixed(unitname, prefixrange='full'):
+def addprefixed(unitname: str, prefixrange:str = 'full'):
     """ Add prefixes to already defined unit
 
     Parameters
     ----------
-    unitname: str
+    unitname
         Name of unit to be prefixed, e.k. 'm' -> 'mm','cm','dm','km'
-    prefixrange: str
+    prefixrange
         Range: 'engineering' -> 1e-18 to 1e12 or 'full' -> 1e-24 to 1e24
 
     """
@@ -39,5 +37,5 @@ def addprefixed(unitname, prefixrange='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            add_composite_unit(prefixedname, prefix[1], unitname, prefixed=True, baseunit=unit, verbosename=unit.verbosename,
-                    url=unit.url)
+            add_composite_unit(prefixedname, prefix[1], unitname, prefixed=True, baseunit=unit,
+                               verbosename=unit.verbosename, url=unit.url)

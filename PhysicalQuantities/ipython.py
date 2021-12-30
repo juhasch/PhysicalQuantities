@@ -13,7 +13,7 @@ from IPython import __version__
 within_comment = False
 
 
-def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
+def add_pq_prefix(token: str, prefix: str = ' pq.') -> str:
     """Add prefix 'pq.' if valid unit was found
 
     Parameters
@@ -30,69 +30,6 @@ def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
     if token in q.table.keys():
         return prefix + token
     return token
-
-
-# Retain legacy input transformer
-if __version__ < '7.0.0':
-    global __transformer
-
-    @StatelessInputTransformer.wrap
-    def transform_legacy(line=''):
-        global within_comment
-        if line.count('"""') % 2 or line.count("'''") % 2:
-            within_comment = not within_comment
-            return
-
-        if within_comment:
-            return
-
-        string_io = io.StringIO(line)
-        g = tokenize.generate_tokens(string_io.readline)
-
-        tokenlist = []
-        result = []
-        token_type = []
-
-        try:
-            for t in g:
-                tokenlist.append(t)
-                token_type.append(t[0])
-        except TokenError:
-            pass
-
-        i = 0
-        while i < len(tokenlist):
-            lo = slice(i, i + 4)
-            sh = slice(i, i + 2)
-            if token_type[lo] == [NUMBER, NAME, OP, NAME]:
-                result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
-                newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
-                result.append((tokenlist[i + 1][0], newtokval + ')'))
-                result.append((tokenlist[i + 2][0], tokenlist[i + 2][1]))
-                newtokval = add_pq_prefix(tokenlist[i + 3][1])
-                result.append((tokenlist[i + 3][0], newtokval))
-                i += 4
-            elif token_type[sh] == [NUMBER, NAME]:
-                if tokenlist[i + 2].string in ['**']:
-                    # apply exponent only unit not number
-                    result.append((tokenlist[i][0], 'PhysicalQuantity(' + tokenlist[i + 0][1]))
-                    newtokval = add_pq_prefix(tokenlist[i + 1][1], ',"')
-                    result.append(
-                        (tokenlist[i + 1][0], newtokval + tokenlist[i + 2].string + tokenlist[i + 3].string + '")'))
-                    i += 4
-                else:
-                    result.append((tokenlist[i][0], '(' + tokenlist[i + 0][1]))
-                    newtokval = add_pq_prefix(tokenlist[i + 1][1], '*pq.')
-                    result.append((tokenlist[i + 1][0], newtokval + ')'))
-                    i += 2
-            else:
-                result.append(tokenlist[i])
-                i += 1
-        if token_type[0] != COMMENT:
-            line = tokenize.untokenize(result)
-        return line
-
-    __transformer = transform_legacy()
 
 
 def transform_line(line=''):
@@ -144,6 +81,7 @@ def transform_line(line=''):
 
 
 def transform(lines):
+    global within_comment
     result = []
     within_comment = False
     for line in lines:
