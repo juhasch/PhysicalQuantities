@@ -11,10 +11,10 @@ jobs:
       - checkout
       - run:
           name: Install requirements
-          command: pip install -r api/requirements.txt
+          command: pip install -r requirements.txt
       - run:
           name: Run tests and collect coverage
-          command: pytest --cov api/
+          command: pytest --cov
       - codecov/upload
 
 workflows:
