@@ -1,7 +1,7 @@
 import json
 
 import numpy as np
-from nose.tools import raises
+from pytest import raises
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
 from PhysicalQuantities.unit import (
     PhysicalUnit, UnitError, add_composite_unit, addunit, convertvalue,
@@ -16,12 +16,13 @@ def test_addunit_1():
     assert(type(a.unit) == PhysicalUnit)
 
 
-@raises(KeyError)
 def test_addunit_2():
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
-            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
-            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
+    with raises(KeyError):
+        addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
+                url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
+    with raises(KeyError):
+        addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
+                url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
 
 
 def test_add_composite_unit():
@@ -30,10 +31,11 @@ def test_add_composite_unit():
     assert(type(a.unit) == PhysicalUnit)
 
 
-@raises(KeyError)
 def test_add_composite_unit_2():
-    add_composite_unit('test', 4.92892159375, 'cm**3')
-    add_composite_unit('test', 4.92892159375, 'cm**3')
+    with raises(KeyError):
+        add_composite_unit('test', 4.92892159375, 'cm**3')
+    with raises(KeyError):
+        add_composite_unit('test', 4.92892159375, 'cm**3')
 
 
 def test_findunit_1():
@@ -42,26 +44,27 @@ def test_findunit_1():
     assert(a == b)
 
 
-@raises(UnitError)
+
 def test_findunit_2():
-    findunit(0)
+    with raises(UnitError):
+        findunit(0)
 
 
-@raises(UnitError)
 def test_findunit_3():
-    findunit('xyz')
+    with raises(UnitError):
+        findunit('xyz')
 
 
-@raises(UnitError)
 def test_findunit_4():
-    findunit('')
+    with raises(UnitError):
+        findunit('')
 
 
-@raises(UnitError)
 def test_convertvalue():
     a = PhysicalQuantity(1, 'm').unit
     b = PhysicalQuantity(1, 'mm').unit
-    convertvalue([1], a, b)
+    with raises(UnitError):
+        convertvalue([1], a, b)
 
 
 def test_unit_division_1():
@@ -70,13 +73,13 @@ def test_unit_division_1():
     assert type(a/b) == float
 
 
-@raises(UnitError)
 def test_unit_division_2():
     add_composite_unit('offsm', 1, 'm')
     a = PhysicalQuantity(1, 'offsm')
     b = PhysicalQuantity(1, 'm')
     a.unit.offset = 1
-    a/b
+    with raises(UnitError):
+        a/b
 
 
 def test_unit_multiplication_1():
@@ -85,13 +88,13 @@ def test_unit_multiplication_1():
     assert str((a*b).base.unit) == "m^2"
 
 
-@raises(UnitError)
 def test_unit_multiplication_2():
     add_composite_unit('offsma', 1, 'm')
     a = PhysicalQuantity(1, 'offsma')
     b = PhysicalQuantity(1, 'm')
     a.unit.offset = 1
-    a*b
+    with raises(UnitError):
+        a*b
 
 
 def test_unit_inversion():
@@ -120,12 +123,12 @@ def test_conversion_tuple_to():
     assert a.unit.conversion_tuple_to(b.unit) == (1000.0, 0.0)
 
 
-@raises(UnitError)
 def test_conversion_tuple_to_2():
     # raises UnitError
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(1, 's')
-    assert a.unit.conversion_tuple_to(b.unit) == (1000.0, 0.0)
+    with raises(UnitError):
+        assert a.unit.conversion_tuple_to(b.unit) == (1000.0, 0.0)
 
 
 def test_isphysicalunit():
@@ -146,12 +149,12 @@ def test_latex_repr():
     assert(b == r'\text{m}')
 
 
-@raises(UnitError)
 def test_gt_1():
     """Only same units can be compared"""
     a = PhysicalQuantity(1, 'm').unit
     b = PhysicalQuantity(1, 's').unit
-    assert (a > b)
+    with raises(UnitError):
+        assert (a > b)
 
 
 def test_gt_2():
@@ -160,12 +163,12 @@ def test_gt_2():
     assert (a > b)
 
 
-@raises(UnitError)
 def test_ge_1():
     """Only same units can be compared"""
     a = PhysicalQuantity(1, 'm').unit
     b = PhysicalQuantity(1, 's').unit
-    assert (a >= b)
+    with raises(UnitError):
+        assert (a >= b)
 
 
 def test_ge_2():
@@ -174,12 +177,12 @@ def test_ge_2():
     assert (a >= b)
 
 
-@raises(UnitError)
 def test_lt_1():
     """Only same units can be compared"""
     a = PhysicalQuantity(1, 'm').unit
     b = PhysicalQuantity(1, 's').unit
-    assert (a < b)
+    with raises(UnitError):
+        assert (a < b)
 
 
 def test_lt_2():
@@ -188,12 +191,12 @@ def test_lt_2():
     assert (a < b)
 
 
-@raises(UnitError)
 def test_le_1():
     """Only same units can be compared"""
     a = PhysicalQuantity(1, 'm').unit
     b = PhysicalQuantity(1, 's').unit
-    assert (a <= b)
+    with raises(UnitError):
+        assert (a <= b)
 
 
 def test_le_2():
@@ -209,20 +212,20 @@ def test_pow_1():
     assert(a**0.5 == b)
 
 
-@raises(UnitError)
 def test_pow_2():
     """Only integer exponents"""
     a = PhysicalQuantity(1, 'm').unit
-    a**2.0
+    with raises(UnitError):
+        a**2.0
 
 
-@raises(UnitError)
 def test_pow_3():
     """Offsets are not allowed"""
     addunit(PhysicalUnit('degX', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15))
     a = PhysicalQuantity(1, 'degX')
     a.unit.offset = 1.1
-    a**2
+    with raises(UnitError):
+        a**2
 
 
 def test_units_html_list():
