@@ -51,28 +51,28 @@ def test_getattr():
     a = np.random.randn(10)
     b = QA(a, 'm')
     c = b.m
-    assert_almost_equal(b, c)
+    assert_almost_equal(b._, c._)
 
 
 def test_getattr_dropunit():
     a = np.random.randn(10)
     b = QA(a, 'm')
     c = b.m_
-    assert_almost_equal(b, c)
+    assert_almost_equal(b._, c)
 
 
 def test_base():
     a = np.random.randn(10)
     b = QA(a, 'm')
     c = b.base
-    assert_almost_equal(b, c)
+    assert_almost_equal(b._, c._)
 
 
 def test_base_2():
     a = np.random.randn(10)
     b = QA(a, 'm/s')
     c = b.base
-    assert_almost_equal(b, c)
+    assert_almost_equal(b._, c._)
 
 
 def test_repr():
@@ -85,7 +85,7 @@ def test_add_same_units():
     a = np.random.randn(10)
     b = QA(a, 'm')
     c = b+b
-    assert_almost_equal((b+b).view(np.ndarray), a+a)
+    assert_almost_equal(c, a+a)
     assert c.unit == b.unit
 
 
@@ -100,7 +100,7 @@ def test_add_different_units():
 def test_subtract_same_units():
     a = QA(np.random.randn(10), 'm')
     b = QA(np.random.randn(10), 'm')
-    assert_almost_equal((a-b).view(np.ndarray), a+b)
+    assert_almost_equal((a-b)._, a._-b._)
     assert a.unit == b.unit
 
 
@@ -116,18 +116,18 @@ def test_multiply_different_units():
     b = QA(np.random.randn(10), 's')
     c = a*b
     assert str(c.unit) == 'm*s'
-    assert_almost_equal(c, a.view(np.ndarray)*b.view(np.ndarray))
+    assert_almost_equal(c, a*b)
 
 
 def test_square():
     a = QA(np.random.randn(10), 'm')
     b = a**2
-    assert_almost_equal(b, a.view(np.ndarray)**2)
+    assert_almost_equal(b, a**2)
     assert str(b.unit) == 'm^2'
 
 
 def test_power():
     a = QA(np.random.randn(10), 'm')
     b = a**3
-    assert_almost_equal(b, a.view(np.ndarray)**3)
+    assert_almost_equal(b, a**3)
     assert str(b.unit) == 'm^3'

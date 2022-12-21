@@ -65,6 +65,11 @@ class PhysicalQuantityArray(ndarray):
             else:
                 args.append(par2)
                 out_unit = out_unit ** par2
+        elif op in ['bitwise_or', 'bitwise_and', 'bitwise_xir']:
+            args = []
+            for par in inputs:
+                args.append(par.view(np.ndarray))
+            kwargs=dict(out=self.view(np.ndarray))
         else:
             args = []
             for par2 in inputs:
