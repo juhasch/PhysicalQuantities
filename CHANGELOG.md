@@ -17,5 +17,10 @@ and this project adheres (at least as of 0.3.0!) to
    [#98](https://github.com/juhasch/PhysicalQuantities/pull/98)
    [@juhasch](https://github.com/juhasch)
 
+1.1.1
+-----
+
+- Cleanup
+
 Unreleased (aka. GitHub master)
 -------------------------------
