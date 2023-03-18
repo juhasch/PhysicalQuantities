@@ -36,9 +36,11 @@ class PhysicalQuantity:
         applicable as well.
     """
 
-    __array_priority__ = 1000  # make sure numpy arrays do not get iterated
+    __array_priority__: int = 1000  # make sure numpy arrays do not get iterated
+    format: str = ''                # display format for number to string conversion
+    annotation: str = None          # optional annotation of Quantity
 
-    def __init__(self, value, unit=None):
+    def __init__(self, value: float | complex, unit=None, annotation: str = None):
         """There are two constructor calling patterns
 
         Parameters
@@ -60,8 +62,8 @@ class PhysicalQuantity:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
-        self.format = ''  # display format for number to string conversion
         self.value = value
+        self.annotation = annotation
         self.unit = findunit(unit)
 
     def __dir__(self):
@@ -167,7 +169,7 @@ class PhysicalQuantity:
         >>> (10 q.W).dB
         10.0 dBW
         """
-        from .dBQuantity import dBQuantity, PhysicalQuantity_to_dBQuantity
+        from .dBQuantity import PhysicalQuantity_to_dBQuantity
         return PhysicalQuantity_to_dBQuantity(self)
 
     def rint(self):

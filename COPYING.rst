@@ -5,7 +5,7 @@
 PyhsicalQuantities is licensed under the terms of the Modified BSD License (also
 known as New or Revised or 3-Clause BSD), as follows:
 
-- Copyright (c) 2013-2014, Juergen Hasch
+- Copyright (c) 2013-2023, Juergen Hasch
 
 All rights reserved.
 

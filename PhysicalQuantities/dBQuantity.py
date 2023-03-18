@@ -18,7 +18,8 @@ import copy
 import numpy as np
 from IPython import get_ipython
 
-from .quantity import PhysicalQuantity, PhysicalUnit, UnitError, unit_table
+from .quantity import PhysicalQuantity
+from .unit import PhysicalUnit, UnitError, unit_table
 
 __all__ = ['dB10', 'dB20', 'PhysicalQuantity_to_dBQuantity', 'dBQuantity', 'dB_unit_table']
 
@@ -39,7 +40,8 @@ class dBUnit:
         Offset, used e.g. for dBd vs. dBi
 
     """
-    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float=0, factor=0, z0=PhysicalQuantity(50, 'Ohm')):
+    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float = 0, factor: float = 0,
+                 z0=PhysicalQuantity(50, 'Ohm')):
         """
 
         Parameters
@@ -70,7 +72,7 @@ class dBUnit:
         return self.name
 
 
-def _add_dB_units(name, unit,  offset=0, factor=0):
+def _add_dB_units(name, unit,  offset: float = 0, factor: float = 0):
     dB_unit_table[name] = dBUnit(name, unit, offset, factor)
 
 
@@ -86,7 +88,7 @@ _add_dB_units('dBnA', unit=unit_table['nA'])
 _add_dB_units('dBuA', unit=unit_table['uA'])
 _add_dB_units('dBmA', unit=unit_table['mA'])
 _add_dB_units('dBA', unit=unit_table['A'])
-_add_dB_units('dBsm', unit=PhysicalQuantity(1,'m**2').unit)
+_add_dB_units('dBsm', unit=PhysicalQuantity(1, 'm**2').unit)
 _add_dB_units('dBd', unit=None, factor=10, offset=2.15)
 _add_dB_units('dBi', unit=None, factor=10)
 _add_dB_units('dBc', unit=None, factor=10)
@@ -114,16 +116,17 @@ def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
 
         if dBunitname is not None and dB_unit_table[dBunitname] is not None:
             if dB_unit_table[dBunitname].physicalunit.baseunit.name == x.unit.baseunit.name:
-                    dbbase = dBunitname
-                    value = x.to(dB_unit_table[dBunitname].physicalunit.name).value
-                    _unit = dB_unit_table[dBunitname].physicalunit  # FIXME
+                dbbase = dBunitname
+                value = x.to(dB_unit_table[dBunitname].physicalunit.name).value
+                _unit = dB_unit_table[dBunitname].physicalunit  # FIXME
         else:
             for key in dB_unit_table:
                 if dB_unit_table[key].physicalunit is not None and dB_unit_table[key].physicalunit.name == x.unit.name:
                     dbbase = key
                     value = x.value
                     break
-                elif dB_unit_table[key].physicalunit is not None and dB_unit_table[key].physicalunit.baseunit.name == x.unit.baseunit.name:
+                elif dB_unit_table[key].physicalunit is not None and dB_unit_table[key].physicalunit.baseunit.name == \
+                        x.unit.baseunit.name:
                     dbbase = key
                     value = x.base.value
         _unit = x.unit
@@ -213,7 +216,7 @@ class dBQuantity:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
-        self.format = '' # display format for number to string conversion
+        self.format = ''  # display format for number to string conversion
 
         if islog is True:
             self.value = value
@@ -287,7 +290,8 @@ class dBQuantity:
         else:
             # convert to same base unit, only scaling
             if self.unit.physicalunit is not None:
-                scaling = self.unit.factor * np.log10( self.unit.physicalunit.factor / dB_unit_table[unitname].physicalunit.factor)
+                scaling = self.unit.factor * np.log10(self.unit.physicalunit.factor /
+                                                      dB_unit_table[unitname].physicalunit.factor)
             else:
                 scaling = self.unit.offset
             value = self.value + scaling
@@ -315,7 +319,8 @@ class dBQuantity:
         """
         if unitname in dB_unit_table.keys():
             # convert to same base unit, only scaling
-            scaling = self.unit.factor * np.log10( self.unit.physicalunit.factor / dB_unit_table[unitname].physicalunit.factor)
+            scaling = self.unit.factor * np.log10(self.unit.physicalunit.factor /
+                                                  dB_unit_table[unitname].physicalunit.factor)
             value = self.value + scaling
             return self.__class__(value, unitname, islog=True)
 
@@ -495,7 +500,7 @@ class dBQuantity:
     __rsub__ = __sub__
     
     def __mul__(self, other):
-        if  not hasattr(other, 'unit'):
+        if not hasattr(other, 'unit'):
             # dB values will be multiplied with a factor to enable "a = 2 * q.dBm"
             value = self.value * other
             return self.__class__(value, self.unit.name, islog=True)
@@ -580,10 +585,10 @@ class dBQuantity:
         return pow(10, val)
     
     def __str__(self):
-        if self.ptformatter is not None and self.format == '' and isinstance(self.value,float):
+        if self.ptformatter is not None and self.format == '' and isinstance(self.value, float):
             # %precision magic only works for floats
-            format = self.ptformatter.float_format
-            return "%s %s" % (format % self.value, str(self.unit.name))
+            fmt = self.ptformatter.float_format
+            return "%s %s" % (fmt % self.value, str(self.unit.name))
         return '{0:{format}} {1}'.format(self.value, str(self.unit.name), format=self.format)
 
     def __repr__(self):
