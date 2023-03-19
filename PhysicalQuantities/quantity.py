@@ -2,9 +2,6 @@
 
 """
 
-# TODO:
-# - deepcopy does not work
-
 
 try:
     from sympy import printing
@@ -399,6 +396,7 @@ class PhysicalQuantity:
         if isinstance(self.value, np.ndarray):
             return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
+
     def __nonzero__(self):
         """ Test if quantity is not zero
 
@@ -563,11 +561,14 @@ class PhysicalQuantity:
         else:
             return np.ceil(x)
 
-    def copy(self):
+    def __deepcopy__(self, memo: dict):
         """ Return a copy of the PhysicalQuantity including the value.
             Needs deepcopy to copy the value
         """
-        return copy.deepcopy(self)
+        new_value = copy.deepcopy(self.value)
+        new_instance = self.__class__(new_value, self.unit)
+        memo[id(self)] = new_instance
+        return new_instance
 
     @property
     def autoscale(self):

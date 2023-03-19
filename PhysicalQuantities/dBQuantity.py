@@ -324,11 +324,14 @@ class dBQuantity:
             value = self.value + scaling
             return self.__class__(value, unitname, islog=True)
 
-    def copy(self):
-        """Return a copy of the dBQuantity including the value.
-        Needs deepcopy to copy the value
+    def __deepcopy__(self, memo: dict):
+        """ Return a copy of the PhysicalQuantity including the value.
+            Needs deepcopy to copy the value
         """
-        return copy.deepcopy(self)
+        new_value = copy.deepcopy(self.value)
+        new_instance = self.__class__(new_value, self.unit.name, islog=True)
+        memo[id(self)] = new_instance
+        return new_instance
 
     def __getitem__(self, key):
         """ Allow indexing if quantities if underlying object is array or list

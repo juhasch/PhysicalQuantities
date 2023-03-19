@@ -1,6 +1,9 @@
+import copy
+
 import numpy as np
-from pytest import raises
 from numpy.testing import assert_almost_equal
+from pytest import raises
+
 from PhysicalQuantities import PhysicalQuantity
 from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity, dB10, dB20, dBQuantity
 from PhysicalQuantities.unit import UnitError
@@ -610,7 +613,21 @@ def test_repr():
     a = dBQuantity(0, 'dBm')
     assert a.__repr__() == '0 dBm'
 
+
 def test_db10():
     a = PhysicalQuantity(1, 'mW')
     b = dB10(a)
     assert b.value == -30
+
+
+def test_db10():
+    a = PhysicalQuantity(1, 'mV')
+    b = dB20(a)
+    assert b.value == -60
+
+
+def test_deepcopy():
+    a = dBQuantity(1, 'dBm')
+    b = copy.deepcopy(a)
+    assert a == b
+    assert a is not b

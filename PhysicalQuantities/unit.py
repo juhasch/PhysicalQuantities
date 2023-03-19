@@ -817,6 +817,7 @@ def findunit(unitname: str | PhysicalUnit):
         raise UnitError(f'{str(unit)} is not a unit')
     return unit
 
+
 def convertvalue(value, src_unit, target_unit):
     """ Convert between units, if possible
 

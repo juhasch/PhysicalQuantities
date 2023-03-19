@@ -1,3 +1,4 @@
+import copy
 import json
 import operator
 
@@ -113,7 +114,7 @@ def test_len():
     assert len(a) == 3
 
 
-def test_str():
+def test_str_2():
     b = PhysicalQuantity(5, 'mm')
     assert str(b) == '5 mm'
 
@@ -601,3 +602,10 @@ def test_from_json():
     j = a.to_json
     b = PhysicalQuantity.from_json(j)
     assert a == b
+
+
+def test_deepcopy():
+    a = PhysicalQuantity(1, 'm')
+    b = copy.deepcopy(a)
+    assert a == b
+    assert a is not b
