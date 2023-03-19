@@ -514,6 +514,17 @@ def test_PhysicalQuantity_to_dBQuantity():
     assert_almost_equal(b.value, 126.02059991327963)
 
 
+def test_PhysicalQuantity_to_dBQuantity_1():
+    with raises(UnitError):
+        a = PhysicalQuantity(2, 'm')
+        b = PhysicalQuantity_to_dBQuantity(a)
+
+
+def test_PhysicalQuantity_to_dBQuantity_2():
+    with raises(UnitError):
+        b = PhysicalQuantity_to_dBQuantity(1, 'dBuV')
+
+
 def test_dB():
     a = dBQuantity(0, 'dBm')
     assert(str(a.dB) == '0 dB')
@@ -598,3 +609,8 @@ def test_m2_to_dBsm():
 def test_repr():
     a = dBQuantity(0, 'dBm')
     assert a.__repr__() == '0 dBm'
+
+def test_db10():
+    a = PhysicalQuantity(1, 'mW')
+    b = dB10(a)
+    assert b.value == -30
