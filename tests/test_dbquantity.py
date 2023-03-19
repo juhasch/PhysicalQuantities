@@ -3,7 +3,7 @@ import copy
 import numpy as np
 from numpy.testing import assert_almost_equal
 from pytest import raises
-
+from IPython.core.formatters import PlainTextFormatter
 from PhysicalQuantities import PhysicalQuantity
 from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity, dB10, dB20, dBQuantity
 from PhysicalQuantities.unit import UnitError
@@ -619,10 +619,19 @@ def test_db10():
     b = dB10(a)
     assert b.value == -30
 
+def test_db10_val():
+    b = dB10(1e-3)
+    assert b.value == -30
 
-def test_db10():
+
+def test_db20():
     a = PhysicalQuantity(1, 'mV')
     b = dB20(a)
+    assert b.value == -60
+
+
+def test_db20_val():
+    b = dB20(1e-3)
     assert b.value == -60
 
 
@@ -631,3 +640,29 @@ def test_deepcopy():
     b = copy.deepcopy(a)
     assert a == b
     assert a is not b
+
+
+def test_neg():
+    a = dBQuantity(1, 'dBm')
+    b = dBQuantity(-1, 'dBm')
+    assert a == -b
+
+
+def test_ip_str():
+    """IPython formatter"""
+    a = dBQuantity(1, 'dBm')
+    a.ptformatter = PlainTextFormatter()
+    assert str(a) == '1 dBm'
+
+
+def test_add_unequal():
+    a = dBQuantity(1, 'dBm')
+    b = dBQuantity(1, 'dBV')
+    with raises(UnitError):
+        a + b
+
+
+def test_list():
+    b = dBQuantity(1, 'dBV')
+    with raises(AttributeError):
+        b[0]
