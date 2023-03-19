@@ -378,8 +378,10 @@ class PhysicalUnit:
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         elif isinstance(other, PhysicalQuantity):
+            other = other.unit
+            newpowers = [a + b for a, b in zip(other.powers, self.powers)]
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
-                                self.factor * other.factor, self.powers, self.offset)
+                                self.factor * other.factor, newpowers, self.offset)
         else:
             return PhysicalQuantity(other, self)
 
@@ -404,14 +406,19 @@ class PhysicalUnit:
         >>> q.m.unit / q.s.unit
         m/s
         """
+        from .quantity import PhysicalQuantity
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
             raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
         if isphysicalunit(other):
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
+        elif isinstance(other, PhysicalQuantity):
+            other = other.unit
+            newpowers = [a - b for a, b in zip(other.powers, self.powers)]
+            return PhysicalUnit(self.names + NumberDict({str(other): 1}),
+                                self.factor / other.factor, newpowers)
         else:
-            # TODO: add test
             return PhysicalUnit(self.names + NumberDict({str(other): -1}),
                                 self.factor/other.factor, self.powers)
 

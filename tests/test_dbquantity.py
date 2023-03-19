@@ -399,7 +399,14 @@ def test_sub_db_1():
 def test_sub_db_2():
     g1 = dBQuantity(1, 'dBm')
     g2 = dBQuantity(0, 'dBm')
-    assert_almost_equal((g1 - g2).value,-5.8682532438011537)
+    assert_almost_equal((g1 - g2).value, -5.8682532438011537)
+
+
+def test_sub_db_3():
+    g1 = dBQuantity(1, 'dBm')
+    g2 = dBQuantity(0, 'dBV')
+    with raises(UnitError):
+        g1 - g2
 
 
 def test_dB10():
@@ -619,6 +626,7 @@ def test_db10():
     b = dB10(a)
     assert b.value == -30
 
+
 def test_db10_val():
     b = dB10(1e-3)
     assert b.value == -30
@@ -650,9 +658,10 @@ def test_neg():
 
 def test_ip_str():
     """IPython formatter"""
-    a = dBQuantity(1, 'dBm')
+    a = dBQuantity(1.0, 'dBm')
     a.ptformatter = PlainTextFormatter()
-    assert str(a) == '1 dBm'
+    a.format = ''
+    assert str(a) == '1.0 dBm'
 
 
 def test_add_unequal():
@@ -662,7 +671,13 @@ def test_add_unequal():
         a + b
 
 
-def test_list():
+def test_getitem():
     b = dBQuantity(1, 'dBV')
     with raises(AttributeError):
-        b[0]
+        assert b[0] == 0
+
+
+def test_setitem():
+    b = dBQuantity(1, 'dBV')
+    with raises(AttributeError):
+        b[0] = 0
