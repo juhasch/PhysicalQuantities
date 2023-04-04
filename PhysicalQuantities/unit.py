@@ -2,7 +2,6 @@
 
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
-
 import copy
 import json
 from functools import reduce, lru_cache
@@ -757,29 +756,37 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
     Raises
     ------
     KeyError
-        If unit already exists
-
+        If unit already exists or if units string is invalid
+    ValueError
+        If factor or offset is not numeric
     """
     if name in unit_table:
         raise KeyError(f'Unit {name} already defined')
-    baseunit = eval(units, unit_table)
-    for cruft in ['__builtins__', '__args__']:
-        try:
-            del unit_table[cruft]
-        except KeyError:
-            pass
+    # Parse composed units string
+    try:
+        baseunit = eval(units, unit_table)
+    except (SyntaxError, ValueError):
+        raise KeyError(f'Invalid units string: {units}')
+
+    # Validate factor and offset values
+    for value in (factor, offset):
+        if not isinstance(value, (int, float)):
+            raise ValueError('Factor and offset values should be numeric')
+
+    # Remove unwanted keys from unit_table
+    for key in ['__builtins__', '__args__']:
+        unit_table.pop(key, None)
+
     newunit = copy.deepcopy(baseunit)
     newunit.set_name(name)
     newunit.verbosename = verbosename
-    if prefixed is True:
-        newunit.baseunit = baseunit
-    else:
-        newunit.baseunit = newunit
+    newunit.baseunit = baseunit if prefixed else newunit
     newunit.prefixed = prefixed
     newunit.url = url
-    newunit.factor = newunit.factor * factor
-    newunit.offset = newunit.offset + offset
+    newunit.factor *= factor
+    newunit.offset += offset
     unit_table[name] = newunit
+
     return name
 
 
@@ -797,6 +804,11 @@ def findunit(unitname: str | PhysicalUnit):
     -------
     PhysicalUnit
         Unit
+
+    Raises
+    ------
+    UnitError
+        If the input is invalid.
 
     Examples
     --------

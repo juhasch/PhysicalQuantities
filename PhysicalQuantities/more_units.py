@@ -70,9 +70,7 @@ add_composite_unit('torr', 1/760., 'atm', verbosename='torr = mm of mercury')
 
 # Temperature units
 add_composite_unit('degR', 5./9., 'K', verbosename='degrees Rankine')
-add_composite_unit('degC', PhysicalUnit('K',   1.,    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15),
-        url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
-
+add_composite_unit('degC', 1, offset=273.15, url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius')
 # Radiation-related units
 addprefixed(add_composite_unit('Ci', 3.7e10, 'Bq', verbosename='Curie'), prefixrange='engineering')
 addprefixed(add_composite_unit('rem', 0.01, 'Sv', verbosename='Rem'), prefixrange='engineering')

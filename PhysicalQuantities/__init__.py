@@ -30,8 +30,8 @@ from .quantity import PhysicalQuantity
 from .unit import unit_table, addunit, isphysicalunit, PhysicalUnit
 from .prefixes import *
 from .default_units import *
-from PhysicalQuantities.dBQuantity import dBQuantity, dB_unit_table
-from PhysicalQuantities.quantityarray import PhysicalQuantityArray
+from .dBQuantity import dBQuantity, dB_unit_table
+from .quantityarray import PhysicalQuantityArray
 
 if sys.version_info < (3, 8):
     sys.exit('Sorry, Python < 3.8 is not supported')
@@ -48,8 +48,7 @@ class _Quantity:
 
     Examples
     --------
-    >>> from PhysicalQuantities import _Quantity
-    >>> q = _Quantity()
+    >>> from PhysicalQuantities import q
     >>> q['m']
     1 m
     >>> q.m
@@ -66,6 +65,7 @@ class _Quantity:
         self.update()
 
     def update(self):
+        """ Update the table of known units"""
         for key in dB_unit_table:
             self.table[key] = dBQuantity(1, key)
         for key in unit_table:
@@ -76,19 +76,19 @@ class _Quantity:
 
     def __getitem__(self, key):
         try:
-            if type(key) is str:
+            if isinstance(key, str):
                 _Q = self.table[key]
             else:
                 _Q = self.table[key.name]
-        except KeyError:
-            raise KeyError(f'Unit {key} not found')
+        except KeyError as exc:
+            raise KeyError(f'Unit {key} not found') from exc
         return _Q
 
     def __getattr__(self, attr):
         try:
             _Q = self.table[attr]
-        except KeyError:
-            raise KeyError(f'Unit {attr} not found')
+        except KeyError as exc:
+            raise KeyError(f'Unit {attr} not found') from exc
         return _Q
     
     def _ipython_key_completions_(self):
@@ -98,7 +98,7 @@ class _Quantity:
 q = _Quantity()
 
 
-def isphysicalquantity(x) -> bool:
+def isphysicalquantity(x: PhysicalQuantity | dBQuantity) -> bool:
     """ Test if parameter is a PhysicalQuantity or dBQuantity object
 
     Parameters
@@ -115,7 +115,7 @@ def isphysicalquantity(x) -> bool:
     >>> isphysicalquantity( PhysicalQuantity(1, 'V'))
     True
     """
-    return isinstance(x, PhysicalQuantity) or isinstance(x, dBQuantity)
+    return isinstance(x, (PhysicalQuantity, dBQuantity))
 
 
 def units_html_list():

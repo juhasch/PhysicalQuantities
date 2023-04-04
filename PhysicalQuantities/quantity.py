@@ -6,7 +6,8 @@
 try:
     from sympy import printing
 except ImportError:  # pragma: no cover
-    pass
+    def printing():
+        pass
 
 import copy
 import json
@@ -70,7 +71,7 @@ class PhysicalQuantity:
         -------
         list of units for tab completion
         """
-        ulist = super().__dir__()
+        ulist = list(super().__dir__())
         u = unit_table.values()
         for _u in u:
             if isphysicalunit(_u):
@@ -145,11 +146,11 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError('Object of type %s has no len()' % type(self.value))
 
-#    def _ipython_key_completions_(self):
-#        return self.unit_table.keys()
+    def _ipython_key_completions_(self):
+        return self.unit_table.keys()
 
     @property
-    def dB(self):
+    def dB(self):  # noqa
         """ Convert to dB scaled unit, if possible. Guess if it is a power unit to select 10*log10 or 20*log10
 
         Returns
@@ -810,7 +811,7 @@ class PhysicalQuantity:
             JSON string describing PhysicalQuantity
 
         """
-        json_quantity = json.dumps({ 'PhysicalQuantity' : self.to_dict})
+        json_quantity = json.dumps({'PhysicalQuantity': self.to_dict})
         return json_quantity
 
     @staticmethod

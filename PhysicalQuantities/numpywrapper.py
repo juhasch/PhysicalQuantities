@@ -8,12 +8,12 @@ from .unit import UnitError
 __all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 
 
-def max(q):
+def max(qu: np.array):
     """Return the maximum of an array or maximum along an axis.
 
     Parameters
     ----------
-    q : array_like
+    qu :
         Input data
 
     Returns
@@ -21,18 +21,18 @@ def max(q):
     array_like
         Maximum of an array or maximum along an axis
     """
-    if isphysicalquantity(q):
-        return q.__class__(np.max(q.value), q.unit)
+    if isphysicalquantity(qu):
+        return qu.__class__(np.max(qu.value), qu.unit)
     else:
-        return np.max(q)
+        return np.max(qu)
 
     
-def floor(q):
+def floor(qu: np.array):
     """ Return the floor of the input, element-wise.
 
     Parameters
     ----------
-    q : array_like
+    qu:
         Input data
 
     Returns
@@ -46,18 +46,18 @@ def floor(q):
     >>> nw.floor(1.3 mm)
     1 mm
     """
-    if isphysicalquantity(q):
-        return q.__class__(np.floor(q.value), q.unit)
+    if isphysicalquantity(qu):
+        return qu.__class__(np.floor(qu.value), qu.unit)
     else:
-        return np.floor(q)
+        return np.floor(qu)
 
 
-def ceil(q):
+def ceil(qu: np.array):
     """ Return the ceiling of the input, element-wise.
 
     Parameters
     ----------
-    q : array_like
+    qu:
         Input data
 
     Returns
@@ -71,18 +71,18 @@ def ceil(q):
     >>> nw.ceil(1.3 mm)
     2.0 mm
     """
-    if isphysicalquantity(q):
-        return q.__class__(np.ceil(q.value), q.unit)
+    if isphysicalquantity(qu):
+        return qu.__class__(np.ceil(qu.value), qu.unit)
     else:
-        return np.ceil(q)
+        return np.ceil(qu)
 
 
-def sqrt(q):
+def sqrt(qu: np.array):
     """ Return the square root of the input, element-wise.
 
     Parameters
     ----------
-    q : array_like
+    qu:
         Input data
 
     Returns
@@ -96,11 +96,11 @@ def sqrt(q):
     >>> nw.sqrt(4 m**2)
     2.0 m
     """
-    if isphysicalquantity(q):
-        value = np.sqrt(q.value)
-        return q.__class__(value, q.unit**0.5)
+    if isphysicalquantity(qu):
+        value = np.sqrt(qu.value)
+        return qu.__class__(value, qu.unit ** 0.5)
     else:
-        return np.sqrt(q)
+        return np.sqrt(qu)
 
 
 def linspace(start, stop, num=50,  endpoint=True, retstep=False):
@@ -160,7 +160,9 @@ def tophysicalquantity(arr, unit=None):
 
     Parameters
     -----------
-    arr: array_like
+    arr: list or numpy array
+
+    unit: unit name or unit object
 
     Returns
     -------
