@@ -7,7 +7,6 @@ add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True, baseunit
                    url='https://en.wikipedia.org/wiki/Byte')
 PhysicalQuantities.q.__init__()
 
-
 _units = {'Ki': 2 ** 10,
           'Mi': 2 ** 20,
           'Gi': 2 ** 30,
@@ -22,12 +21,11 @@ for key in _units.keys():
     name = key + 'Bit'
     scale = _units[key]
     add_composite_unit(name, scale, 'Bit', verbosename=name, prefixed=True, baseunit=PhysicalQuantities.q.Bit,
-                    url='https://en.wikipedia.org/wiki/Bit')
+                       url='https://en.wikipedia.org/wiki/Bit')
 
     name = key + 'Byte'
     scale = _units[key]
     add_composite_unit(name, scale, 'Byte', verbosename=name, prefixed=True, baseunit=PhysicalQuantities.q.Byte,
-                    url='https://en.wikipedia.org/wiki/Byte')
-
+                       url='https://en.wikipedia.org/wiki/Byte')
 
 PhysicalQuantities.q.__init__()

@@ -22,8 +22,7 @@ from .unit import (
     isphysicalunit, unit_table,
 )
 
-__all__ = ['PhysicalQuantity']
-
+__all__ = ['PhysicalQuantity', 'PhysicalUnit', 'UnitError', 'unit_table']
 
 class PhysicalQuantity:
     """ Physical quantity with units.

@@ -39,7 +39,8 @@ class dBUnit:
         Offset, used e.g. for dBd vs. dBi
 
     """
-    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float=0, factor=0, z0=PhysicalQuantity(50, 'Ohm')):
+    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float = 0, factor: float = 0,
+                 z0=PhysicalQuantity(50, 'Ohm')):
         """
 
         Parameters
@@ -49,7 +50,7 @@ class dBUnit:
         physicalunit: PhysicalUnit
             Physical representation of the dB value
         offset
-            Offset, used e.g. for dBd vs. dBi
+            Specify offset used e.g. for dBd vs. dBi
 
         """
         self.name = name
@@ -70,7 +71,7 @@ class dBUnit:
         return self.name
 
 
-def _add_dB_units(name, unit,  offset=0, factor=0):
+def _add_dB_units(name, unit,  offset: float = 0, factor: float = 0):
     dB_unit_table[name] = dBUnit(name, unit, offset, factor)
 
 
@@ -224,7 +225,7 @@ class dBQuantity:
         """ return list for tab completion
             Include conversions to linear and their dB units
         """
-        x = super().__dir__()
+        x = list(super().__dir__())
         # This is required, as strange things happen with IPython...
         for cruft in ['__builtins__', '__args__']:
             try:
