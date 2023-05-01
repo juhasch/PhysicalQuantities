@@ -37,5 +37,5 @@ jobs:
       if: always()  # Ensure the action is executed even if the tests fail
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10']  # Test on multiple Python versions
+        python-version: ['3.10', '3.11']  # Test on multiple Python versions
       fail-fast: false  # Continue testing other versions even if one fails
