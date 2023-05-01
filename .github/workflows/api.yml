@@ -24,7 +24,7 @@ jobs:
     - name: Install requirements
       run: pip install -r requirements.txt
     - name: Install Package
-      run: pip install -e .
+      run: pip install -e . --no-deps
     - name: Run tests and collect coverage
       run: pytest --cov .
       env:
