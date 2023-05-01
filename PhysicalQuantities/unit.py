@@ -792,7 +792,7 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
 
 # Helper functions
 @lru_cache(maxsize=None)
-def findunit(unitname: str | PhysicalUnit):
+def findunit(unitname):
     """ Return PhysicalUnit class if given parameter is a valid unit
 
     Parameters
