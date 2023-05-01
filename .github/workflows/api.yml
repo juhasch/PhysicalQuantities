@@ -16,8 +16,8 @@ jobs:
         python-version: '3.10'
     - name: Install requirements
       run: pip install -r requirements.txt
-    - name: Install Package  # Necessary ?
-      run: pip install -e .
+#    - name: Install Package  # Necessary ?
+#      run: pip install -e .
     - name: Run tests and collect coverage
       run: pytest --cov .
     - name: Upload coverage reports to Codecov with GitHub Action
