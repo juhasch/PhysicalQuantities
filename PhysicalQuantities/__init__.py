@@ -98,12 +98,12 @@ class _Quantity:
 q = _Quantity()
 
 
-def isphysicalquantity(x: PhysicalQuantity | dBQuantity) -> bool:
+def isphysicalquantity(x) -> bool:
     """ Test if parameter is a PhysicalQuantity or dBQuantity object
 
     Parameters
     ----------
-    x
+    x:  PhysicalQuantity or dBQuantity
         parameter to test
 
     Returns
