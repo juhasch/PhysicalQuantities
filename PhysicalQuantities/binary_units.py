@@ -21,11 +21,12 @@ _units = {'Ki': 2 ** 10,
 for key in _units.keys():
     name = key + 'Bit'
     scale = _units[key]
-    add_composite_unit(name, scale, 'Bit', verbosename=name, prefixed=True, baseunit=PhysicalQuantities.q.Bit,
+    add_composite_unit(name, scale, 'Bit', verbosename=name, prefixed=True,
+                       url='https://en.wikipedia.org/wiki/Bit')
 
     name = key + 'Byte'
     scale = _units[key]
-    add_composite_unit(name, scale, 'Byte', verbosename=name, prefixed=True, baseunit=PhysicalQuantities.q.Byte,
-
+    add_composite_unit(name, scale, 'Byte', verbosename=name, prefixed=True,
+                       url='https://en.wikipedia.org/wiki/Byte')
 
 PhysicalQuantities.q.__init__()
