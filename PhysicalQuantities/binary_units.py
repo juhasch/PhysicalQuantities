@@ -3,8 +3,7 @@ import PhysicalQuantities
 
 from .unit import add_composite_unit
 
-add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True,
-                   url='https://en.wikipedia.org/wiki/Byte')
+add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True, url='https://en.wikipedia.org/wiki/Byte')
 PhysicalQuantities.q.__init__()
 
 
@@ -28,6 +27,5 @@ for key in _units.keys():
     scale = _units[key]
     add_composite_unit(name, scale, 'Byte', verbosename=name, prefixed=True,
                        url='https://en.wikipedia.org/wiki/Byte')
-
 
 PhysicalQuantities.q.__init__()

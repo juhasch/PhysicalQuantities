@@ -13,7 +13,7 @@ from PhysicalQuantities import q
 WITHIN_COMMENT = False
 
 
-def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
+def add_pq_prefix(token: str, prefix: str = ' pq.') -> str:
     """Add prefix 'pq.' if valid unit was found
 
     Parameters

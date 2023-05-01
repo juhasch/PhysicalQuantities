@@ -51,7 +51,7 @@ class dBUnit:
         physicalunit: PhysicalUnit
             Physical representation of the dB value
         offset
-            Offset, used e.g. for dBd vs. dBi
+            Specify offset used e.g. for dBd vs. dBi
 
         """
         self.name = name
@@ -227,7 +227,7 @@ class dBQuantity:
         """ return list for tab completion
             Include conversions to linear and their dB units
         """
-        x = super().__dir__()
+        x = list(super().__dir__())
         # This is required, as strange things happen with IPython...
         for cruft in ['__builtins__', '__args__']:
             try:

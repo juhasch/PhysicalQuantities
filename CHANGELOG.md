@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres (at least as of 0.3.0!) to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 1.1.0
 -----
 
@@ -17,10 +18,8 @@ and this project adheres (at least as of 0.3.0!) to
    [#98](https://github.com/juhasch/PhysicalQuantities/pull/98)
    [@juhasch](https://github.com/juhasch)
 
-1.1.1
------
-
-- Cleanup
 
 Unreleased (aka. GitHub master)
 -------------------------------
+- Cleanup
+- Add currencies and retrieve exchange rates from `forex-python` 

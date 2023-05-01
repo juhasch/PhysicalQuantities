@@ -12,9 +12,9 @@
     :target: https://travis-ci.org/juhasch/PhysicalQuantities
 
 
-=====================================================
- PhysicalQuantites - Calculation in Python with Units
-=====================================================
+======================================================
+ PhysicalQuantities - Calculation in Python with Units
+======================================================
 
 Overview
 ========
