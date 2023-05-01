@@ -13,7 +13,7 @@ from IPython import __version__
 within_comment = False
 
 
-def add_pq_prefix(token: str, prefix: str=' pq.') -> str:
+def add_pq_prefix(token: str, prefix: str = ' pq.') -> str:
     """Add prefix 'pq.' if valid unit was found
 
     Parameters
