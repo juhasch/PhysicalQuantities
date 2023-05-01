@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PhysicalQuantities'
-copyright = '2018, Juergen Hasch'
+#copyright = '2018, Juergen Hasch'
 author = 'Jürgen Hasch'
 
 # The version info for the project you're documenting, acts as replacement for
