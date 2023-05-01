@@ -4,13 +4,13 @@ import io
 import tokenize
 from tokenize import NAME, NUMBER, OP, COMMENT, TokenError
 
-import PhysicalQuantities
-from PhysicalQuantities import q
 from IPython.core.inputtransformer import StatelessInputTransformer
 from IPython import __version__
+import PhysicalQuantities
+from PhysicalQuantities import q
 
 # Flag for multiline comments
-within_comment = False
+WITHIN_COMMENT = False
 
 
 def add_pq_prefix(token: str, prefix: str = ' pq.') -> str:
@@ -37,13 +37,13 @@ if __version__ < '7.0.0':
     global __transformer
 
     @StatelessInputTransformer.wrap
-    def transform_legacy(line=''):
-        global within_comment
+    def transform_legacy(line: str=''):
+        global WITHIN_COMMENT
         if line.count('"""') % 2 or line.count("'''") % 2:
-            within_comment = not within_comment
+            WITHIN_COMMENT = not WITHIN_COMMENT
             return
 
-        if within_comment:
+        if WITHIN_COMMENT:
             return
 
         string_io = io.StringIO(line)
@@ -143,15 +143,22 @@ def transform_line(line=''):
     return line
 
 
-def transform(lines):
+def transform(lines: str):
+    """
+    Parameters
+    ----------
+    lines
+        Lines where units should be replaced with valid Python code
+    """
+    global WITHIN_COMMENT
     result = []
-    within_comment = False
+    WITHIN_COMMENT = False
     for line in lines:
 
         if line.count('"""') % 2 or line.count("'''") % 2:
-            within_comment = not within_comment
+            WITHIN_COMMENT = not WITHIN_COMMENT
 
-        if within_comment:
+        if WITHIN_COMMENT:
             return lines
 
         transformed_line = transform_line(line)
@@ -161,8 +168,8 @@ def transform(lines):
 
 
 def load_ipython_extension(ip):  # pragma: no cover
-    global within_comment
-    within_comment = False
+    global WITHIN_COMMENT
+    WITHIN_COMMENT = False
     if __version__ < '7.0.0':
         global __transformer
         ip.input_transformer_manager.logical_line_transforms.insert(0, __transformer)

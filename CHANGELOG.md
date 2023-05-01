@@ -12,10 +12,4 @@ Unreleased (aka. GitHub master)
 -------------------------------
 
 - Added CHANGELOG.md
-  [#100](https://github.com/juhasch/PhysicalQuantities/pull/100)
-  [@juhasch](https://github.com/juhasch)
-- Move from regular expression to tokenize in IPython extension
-  [#98](https://github.com/juhasch/PhysicalQuantities/pull/98)
-  [@juhasch](https://github.com/juhasch)
 
-- Add currency conversion rates using `forex_python` package

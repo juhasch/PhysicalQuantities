@@ -2,7 +2,6 @@
 
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
-
 import copy
 import json
 from functools import reduce, lru_cache
@@ -14,88 +13,6 @@ from .NDict import *
 
 class UnitError(ValueError):
     pass
-
-
-# Helper functions
-@lru_cache(maxsize=None)
-def findunit(unitname):
-    """ Return PhysicalUnit class if given parameter is a valid unit
-
-    Parameters
-    ----------
-    unitname: str or PhysicalUnit
-        Unit to check if valid
-
-    Returns
-    -------
-    PhysicalUnit
-        Unit
-
-    Examples
-    --------
-    >>> findunit('mm')
-     <PhysicalUnit mm>
-    """
-    if isinstance(unitname, str):
-        if unitname == '':
-            raise UnitError('Empty unit name is not valid')
-        name = unitname.strip().replace('^', '**')
-        if name.startswith('1/'):
-            name = '(' + name[2:] + ')**-1'
-        try:
-            unit = eval(name, unit_table)
-        except NameError:
-            raise UnitError('Invalid or unknown unit %s' % name)
-        for cruft in ['__builtins__', '__args__']:
-            try:
-                del unit_table[cruft]
-            except KeyError:
-                pass
-    else:
-        unit = unitname
-    if not isphysicalunit(unit):
-        raise UnitError(f'{str(unit)} is not a unit')
-    return unit
-
-
-def convertvalue(value, src_unit, target_unit):
-    """ Convert between units, if possible
-
-    Parameters
-    ----------
-    value:
-        Value in source units
-    src_unit: PhysicalUnit
-        Source unit
-    target_unit: PhysicalUnit
-        Target unit
-
-    Returns
-    -------
-    any
-        Value scaled to target unit
-
-    Examples
-    --------
-    >>> from PhysicalQuantities import q
-    >>> convertvalue(1, q.mm.unit, q.km.unit)
-    1e-06
-    """
-    (factor, offset) = src_unit.conversion_tuple_to(target_unit)
-    if isinstance(value, list):
-        raise UnitError('Cannot convert units for a list')
-    return (value + offset) * factor
-
-
-def isphysicalunit(x):
-    """ Return true if valid PhysicalUnit class
-
-    Parameters
-    ----------
-    x: PhysicalUnit
-        Unit
-    """
-    return isinstance(x, PhysicalUnit)
 
 
 class PhysicalUnit:
@@ -126,11 +43,12 @@ class PhysicalUnit:
         The verbose name of the unit (e.g. Coulomb)
     unece_code: str
         Official unit code
-        (see http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
+        (see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
 
     """
 
-    def __init__(self, names, factor, powers, offset=0, url=None, verbosename=None, unece_code=None):
+    def __init__(self, names, factor: float, powers: list, offset: float = 0, url: str = None, verbosename: str = None,
+                 unece_code: str = None):
         """ Initialize object
 
         Parameters
@@ -138,20 +56,20 @@ class PhysicalUnit:
         names: NumberDict|str
             A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
             for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
-        factor: float
+        factor:
             A scaling factor from base units
-        powers: list
+        powers:
             The integer powers for each of the nine base units:
             ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
-        offset: float
+        offset:
             An additive offset to the unit (used only for temperatures)
-        url: str
+        url:
             URL describing the unit
-        verbosename: str
+        verbosename:
             The verbose name of the unit (e.g. Coulomb)
-        unece_code: str
+        unece_code:
             Official unit code
-            (see http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
+            (see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
 
         """
         self.prefixed = False
@@ -459,9 +377,10 @@ class PhysicalUnit:
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         elif isinstance(other, PhysicalQuantity):
-        # TODO: add test
+            other = other.unit
+            newpowers = [a + b for a, b in zip(other.powers, self.powers)]
             return PhysicalUnit(self.names + NumberDict({str(other): 1}),
-                                self.factor * other.factor, self.powers, self.offset)
+                                self.factor * other.factor, newpowers, self.offset)
         else:
             return PhysicalQuantity(other, self)
 
@@ -486,14 +405,19 @@ class PhysicalUnit:
         >>> q.m.unit / q.s.unit
         m/s
         """
+        from .quantity import PhysicalQuantity
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
             raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
         if isphysicalunit(other):
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
+        elif isinstance(other, PhysicalQuantity):
+            other = other.unit
+            newpowers = [a - b for a, b in zip(other.powers, self.powers)]
+            return PhysicalUnit(self.names + NumberDict({str(other): 1}),
+                                self.factor / other.factor, newpowers)
         else:
-            # TODO: add test
             return PhysicalUnit(self.names + NumberDict({str(other): -1}),
                                 self.factor/other.factor, self.powers)
 
@@ -686,7 +610,7 @@ class PhysicalUnit:
         b = self.baseunit
         p = b.powers
         base_dict = {}
-        for i,exponent in enumerate(p):
+        for i, exponent in enumerate(p):
             base_dict[base_names[i]] = exponent
         unit_dict['base_exponents'] = base_dict
         return unit_dict
@@ -798,13 +722,13 @@ addunit(PhysicalUnit('sr', 1., [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
         unece_code='D27'))
 addunit(PhysicalUnit('Bit', 1, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         url='https://en.wikipedia.org/wiki/Bit', verbosename='Bit',
-        unece_code=None))
+        unece_code=''))
 addunit(PhysicalUnit('currency', 1., [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         url='https://en.wikipedia.org/wiki/Currency', verbosename='Currency',
-        unece_code=None))
+        unece_code=''))
 
 
-def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, baseunit=None, url=''):
+def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, url=''):
     """ Add new unit to the unit_table
 
     Parameters
@@ -821,8 +745,6 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
         A more verbose name for the unit
     prefixed: bool
         This is a prefixed unit
-    baseunit : PhysicalUnit
-        Base unit
     url: str
         A URL linking to more information about the unit
 
@@ -834,27 +756,122 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
     Raises
     ------
     KeyError
-        If unit already exists
-
+        If unit already exists or if units string is invalid
+    ValueError
+        If factor or offset is not numeric
     """
     if name in unit_table:
         raise KeyError(f'Unit {name} already defined')
-    baseunit = eval(units, unit_table)
-    for cruft in ['__builtins__', '__args__']:
-        try:
-            del unit_table[cruft]
-        except KeyError:
-            pass
+    # Parse composed units string
+    try:
+        baseunit = eval(units, unit_table)
+    except (SyntaxError, ValueError):
+        raise KeyError(f'Invalid units string: {units}')
+
+    # Validate factor and offset values
+    for value in (factor, offset):
+        if not isinstance(value, (int, float)):
+            raise ValueError('Factor and offset values should be numeric')
+
+    # Remove unwanted keys from unit_table
+    for key in ['__builtins__', '__args__']:
+        unit_table.pop(key, None)
+
     newunit = copy.deepcopy(baseunit)
     newunit.set_name(name)
     newunit.verbosename = verbosename
-    if prefixed is True:
-        newunit.baseunit = baseunit
-    else:
-        newunit.baseunit = newunit
+    newunit.baseunit = baseunit if prefixed else newunit
     newunit.prefixed = prefixed
     newunit.url = url
-    newunit.factor = newunit.factor * factor
-    newunit.offset = newunit.offset + offset
+    newunit.factor *= factor
+    newunit.offset += offset
     unit_table[name] = newunit
+
     return name
+
+
+# Helper functions
+@lru_cache(maxsize=None)
+def findunit(unitname: str | PhysicalUnit):
+    """ Return PhysicalUnit class if given parameter is a valid unit
+
+    Parameters
+    ----------
+    unitname: str or PhysicalUnit
+        Unit to check if valid
+
+    Returns
+    -------
+    PhysicalUnit
+        Unit
+
+    Raises
+    ------
+    UnitError
+        If the input is invalid.
+
+    Examples
+    --------
+    >>> findunit('mm')
+     <PhysicalUnit mm>
+    """
+    if isinstance(unitname, str):
+        if unitname == '':
+            raise UnitError('Empty unit name is not valid')
+        name = unitname.strip().replace('^', '**')
+        if name.startswith('1/'):
+            name = '(' + name[2:] + ')**-1'
+        try:
+            unit = eval(name, unit_table)
+        except NameError:
+            raise UnitError('Invalid or unknown unit %s' % name)
+        for cruft in ['__builtins__', '__args__']:
+            try:
+                del unit_table[cruft]
+            except KeyError:
+                pass
+    else:
+        unit = unitname
+    if not isphysicalunit(unit):
+        raise UnitError(f'{str(unit)} is not a unit')
+    return unit
+
+
+def convertvalue(value, src_unit, target_unit):
+    """ Convert between units, if possible
+
+    Parameters
+    ----------
+    value:
+        Value in source units
+    src_unit: PhysicalUnit
+        Source unit
+    target_unit: PhysicalUnit
+        Target unit
+
+    Returns
+    -------
+    any
+        Value scaled to target unit
+
+    Examples
+    --------
+    >>> from PhysicalQuantities import q
+    >>> convertvalue(1, q.mm.unit, q.km.unit)
+    1e-06
+    """
+    (factor, offset) = src_unit.conversion_tuple_to(target_unit)
+    if isinstance(value, list):
+        raise UnitError('Cannot convert units for a list')
+    return (value + offset) * factor
+
+
+def isphysicalunit(x):
+    """ Return true if valid PhysicalUnit class
+
+    Parameters
+    ----------
+    x: PhysicalUnit
+        Unit
+    """
+    return isinstance(x, PhysicalUnit)

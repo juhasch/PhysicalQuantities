@@ -2,14 +2,12 @@
 
 """
 
-# TODO:
-# - deepcopy does not work
-
 
 try:
     from sympy import printing
 except ImportError:  # pragma: no cover
-    pass
+    def printing():
+        pass
 
 import copy
 import json
@@ -35,9 +33,11 @@ class PhysicalQuantity:
         applicable as well.
     """
 
-    __array_priority__ = 1000  # make sure numpy arrays do not get iterated
+    __array_priority__: int = 1000  # make sure numpy arrays do not get iterated
+    format: str = ''                # display format for number to string conversion
+    annotation: str = None          # optional annotation of Quantity
 
-    def __init__(self, value, unit=None):
+    def __init__(self, value: float | complex, unit=None, annotation: str = None):
         """There are two constructor calling patterns
 
         Parameters
@@ -59,8 +59,8 @@ class PhysicalQuantity:
             self.ptformatter = ip.display_formatter.formatters['text/plain']
         else:
             self.ptformatter = None
-        self.format = ''  # display format for number to string conversion
         self.value = value
+        self.annotation = annotation
         self.unit = findunit(unit)
 
     def __dir__(self):
@@ -70,7 +70,7 @@ class PhysicalQuantity:
         -------
         list of units for tab completion
         """
-        ulist = super().__dir__()
+        ulist = list(super().__dir__())
         u = unit_table.values()
         for _u in u:
             if isphysicalunit(_u):
@@ -145,11 +145,11 @@ class PhysicalQuantity:
             return len(self.value)
         raise TypeError('Object of type %s has no len()' % type(self.value))
 
-#    def _ipython_key_completions_(self):
-#        return self.unit_table.keys()
+    def _ipython_key_completions_(self):
+        return self.unit_table.keys()
 
     @property
-    def dB(self):
+    def dB(self):  # noqa
         """ Convert to dB scaled unit, if possible. Guess if it is a power unit to select 10*log10 or 20*log10
 
         Returns
@@ -166,7 +166,7 @@ class PhysicalQuantity:
         >>> (10 q.W).dB
         10.0 dBW
         """
-        from .dBQuantity import dBQuantity, PhysicalQuantity_to_dBQuantity
+        from .dBQuantity import PhysicalQuantity_to_dBQuantity
         return PhysicalQuantity_to_dBQuantity(self)
 
     def rint(self):
@@ -396,6 +396,7 @@ class PhysicalQuantity:
         if isinstance(self.value, np.ndarray):
             return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
+
     def __nonzero__(self):
         """ Test if quantity is not zero
 
@@ -560,11 +561,14 @@ class PhysicalQuantity:
         else:
             return np.ceil(x)
 
-    def copy(self):
+    def __deepcopy__(self, memo: dict):
         """ Return a copy of the PhysicalQuantity including the value.
             Needs deepcopy to copy the value
         """
-        return copy.deepcopy(self)
+        new_value = copy.deepcopy(self.value)
+        new_instance = self.__class__(new_value, self.unit)
+        memo[id(self)] = new_instance
+        return new_instance
 
     @property
     def autoscale(self):
@@ -806,7 +810,7 @@ class PhysicalQuantity:
             JSON string describing PhysicalQuantity
 
         """
-        json_quantity = json.dumps({ 'PhysicalQuantity' : self.to_dict})
+        json_quantity = json.dumps({'PhysicalQuantity': self.to_dict})
         return json_quantity
 
     @staticmethod

@@ -97,6 +97,19 @@ def test_unit_multiplication_2():
         a*b
 
 
+def test_unit_multiplication_3():
+    a = PhysicalQuantity(1, 'm')
+    b = PhysicalQuantity(1, 'K')
+    assert str(a.unit*b) == "m*K"
+
+
+def test_unit_multiplication_4():
+    a = PhysicalQuantity(1, 'm')
+    b = a.unit * 2
+    assert type(b) is PhysicalQuantity
+    assert str(b) == '2 m'
+
+
 def test_unit_inversion():
     a = PhysicalQuantity(1, 'm')
     b = 1/a
@@ -234,7 +247,7 @@ def test_units_html_list():
 
 
 def test_units_list():
-    a,b = units_list()
+    a, b = units_list()
     assert(len(a) > 10)
 
 
