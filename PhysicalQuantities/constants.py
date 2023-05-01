@@ -6,9 +6,9 @@ import numpy as np
 
 from .quantity import *
 
-c0 = PhysicalQuantity(299792458., 'm/s')
-mu0 = PhysicalQuantity(4*np.pi*1e-7, 'N/A**2')
-eps0 = PhysicalQuantity(8.854188e-12, 'F/m')
+c0 = PhysicalQuantity(299792458., 'm/s', 'Speed of light')
+mu0 = PhysicalQuantity(4*np.pi*1e-7, 'N/A**2', 'Permeability of vacuum')
+eps0 = PhysicalQuantity(8.854188e-12, 'F/m', 'Permittivity of vacuum')
 Grav = PhysicalQuantity(6.67384e-11, 'm**3/kg/s**2')
 hpl = PhysicalQuantity(6.62606957e-34, 'J*s')
 hbar = PhysicalQuantity(6.62606957e-34/(2*pi), 'J*s')
@@ -17,7 +17,7 @@ me = PhysicalQuantity(9.10938291e-31, 'kg')
 mp = PhysicalQuantity(1.672621777e-27, 'kg')
 mn = PhysicalQuantity(1.674927351e-27, 'kg')
 NA = PhysicalQuantity(6.02214129e23, '1/mol')
-kb = PhysicalQuantity(1.3806488e-23, 'J/K')
+kb = PhysicalQuantity(1.3806488e-23, 'J/K', 'Boltzman constant')
 g0 = PhysicalQuantity(9.80665, 'm/s**2')
 R = PhysicalQuantity(8.3144621, 'J/mol/K')
 Ry = PhysicalQuantity(10973731.568539, '1/m')

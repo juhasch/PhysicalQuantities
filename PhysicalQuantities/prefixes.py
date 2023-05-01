@@ -11,7 +11,7 @@ _full_prefixes = [
     ('y', 1.e-24),
 ]
 
-# educed set of scaling prefixes for engineering purposes:
+# reduced set of scaling prefixes for engineering purposes:
 _engineering_prefixes = [
     ('T', 1.e12),
     ('G', 1.e9), ('M', 1.e6), ('k', 1.e3),
@@ -39,5 +39,5 @@ def addprefixed(unitname, prefixrange='full'):
     for prefix in _prefixes:
         prefixedname = prefix[0] + unitname
         if prefixedname not in unit_table:
-            add_composite_unit(prefixedname, prefix[1], unitname, prefixed=True, baseunit=unit, verbosename=unit.verbosename,
+            add_composite_unit(prefixedname, prefix[1], unitname, prefixed=True, verbosename=unit.verbosename,
                     url=unit.url)

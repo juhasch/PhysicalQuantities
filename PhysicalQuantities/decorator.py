@@ -69,7 +69,7 @@ def require_units(*units, **kunits):
     >>> def power(u, i):
     >>>     return (u*i).W
 
-    >>> @require_units(u='V', u='A')
+    >>> @require_units(u='V', i='A')
     >>> def power(u, i):
     >>>     return (u*i).W
 
@@ -94,7 +94,7 @@ def optional_units(*units, **kunits):
     >>> def powero(u, i):
     >>>     return u*i
 
-    >>> @optional_units(u='V', u='A', return_unit='W')
+    >>> @optional_units(u='V', i='A', return_unit='W')
     >>> def power(u,i):
     >>>     return (u*i).W
 

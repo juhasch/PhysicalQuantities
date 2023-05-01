@@ -1,6 +1,9 @@
+import copy
+
 import numpy as np
-from pytest import raises
 from numpy.testing import assert_almost_equal
+from pytest import raises
+from IPython.core.formatters import PlainTextFormatter
 from PhysicalQuantities import PhysicalQuantity
 from PhysicalQuantities.dBQuantity import PhysicalQuantity_to_dBQuantity, dB10, dB20, dBQuantity
 from PhysicalQuantities.unit import UnitError
@@ -396,7 +399,14 @@ def test_sub_db_1():
 def test_sub_db_2():
     g1 = dBQuantity(1, 'dBm')
     g2 = dBQuantity(0, 'dBm')
-    assert_almost_equal((g1 - g2).value,-5.8682532438011537)
+    assert_almost_equal((g1 - g2).value, -5.8682532438011537)
+
+
+def test_sub_db_3():
+    g1 = dBQuantity(1, 'dBm')
+    g2 = dBQuantity(0, 'dBV')
+    with raises(UnitError):
+        g1 - g2
 
 
 def test_dB10():
@@ -514,6 +524,17 @@ def test_PhysicalQuantity_to_dBQuantity():
     assert_almost_equal(b.value, 126.02059991327963)
 
 
+def test_PhysicalQuantity_to_dBQuantity_1():
+    with raises(UnitError):
+        a = PhysicalQuantity(2, 'm')
+        b = PhysicalQuantity_to_dBQuantity(a)
+
+
+def test_PhysicalQuantity_to_dBQuantity_2():
+    with raises(UnitError):
+        b = PhysicalQuantity_to_dBQuantity(1, 'dBuV')
+
+
 def test_dB():
     a = dBQuantity(0, 'dBm')
     assert(str(a.dB) == '0 dB')
@@ -598,3 +619,65 @@ def test_m2_to_dBsm():
 def test_repr():
     a = dBQuantity(0, 'dBm')
     assert a.__repr__() == '0 dBm'
+
+
+def test_db10():
+    a = PhysicalQuantity(1, 'mW')
+    b = dB10(a)
+    assert b.value == -30
+
+
+def test_db10_val():
+    b = dB10(1e-3)
+    assert b.value == -30
+
+
+def test_db20():
+    a = PhysicalQuantity(1, 'mV')
+    b = dB20(a)
+    assert b.value == -60
+
+
+def test_db20_val():
+    b = dB20(1e-3)
+    assert b.value == -60
+
+
+def test_deepcopy():
+    a = dBQuantity(1, 'dBm')
+    b = copy.deepcopy(a)
+    assert a == b
+    assert a is not b
+
+
+def test_neg():
+    a = dBQuantity(1, 'dBm')
+    b = dBQuantity(-1, 'dBm')
+    assert a == -b
+
+
+def test_ip_str():
+    """IPython formatter"""
+    a = dBQuantity(1.0, 'dBm')
+    a.ptformatter = PlainTextFormatter()
+    a.format = ''
+    assert str(a) == '1.0 dBm'
+
+
+def test_add_unequal():
+    a = dBQuantity(1, 'dBm')
+    b = dBQuantity(1, 'dBV')
+    with raises(UnitError):
+        a + b
+
+
+def test_getitem():
+    b = dBQuantity(1, 'dBV')
+    with raises(AttributeError):
+        assert b[0] == 0
+
+
+def test_setitem():
+    b = dBQuantity(1, 'dBV')
+    with raises(AttributeError):
+        b[0] = 0

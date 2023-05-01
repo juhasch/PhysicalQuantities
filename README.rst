@@ -116,4 +116,3 @@ Note
 ----
 This module is originally based on the IPython extension by Georg Brandl at
 https://bitbucket.org/birkenfeld/ipython-physics.
-
