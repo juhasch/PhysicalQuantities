@@ -10,16 +10,30 @@ jobs:
       run:
         working-directory: .
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2  # Use latest version of checkout action
     - uses: actions/setup-python@v2
       with:
         python-version: '3.10'
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Install requirements
       run: pip install -r requirements.txt
-#    - name: Install Package  # Necessary ?
-#      run: pip install -e .
     - name: Run tests and collect coverage
       run: pytest --cov .
+      env:
+        COVERAGE_FILE: coverage.$PYTHON_VERSION.xml
+      shell: bash
     - name: Upload coverage reports to Codecov with GitHub Action
       uses: codecov/codecov-action@v3
-
+      with:
+        files: coverage.*.xml  # Upload coverage reports for all Python versions
+      if: always()  # Ensure the action is executed even if the tests fail
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']  # Test on multiple Python versions
+      fail-fast: false  # Continue testing other versions even if one fails
