@@ -23,6 +23,8 @@ jobs:
           ${{ runner.os }}-pip-
     - name: Install requirements
       run: pip install -r requirements.txt
+    - name: Install Package
+      run: pip install -e .
     - name: Run tests and collect coverage
       run: pytest --cov .
       env:
