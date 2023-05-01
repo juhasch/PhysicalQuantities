@@ -35,7 +35,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'numpydoc',
+    'sphinx_rtd_theme',
     'IPython.sphinxext.ipython_console_highlighting'
 ]
 
@@ -131,9 +131,6 @@ html_theme_options = {
     'includehidden': True,
     'titles_only': False
 }
-
-
-
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -308,5 +305,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
-numpydoc_show_class_members = False
