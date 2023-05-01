@@ -37,7 +37,7 @@ class PhysicalQuantity:
     format: str = ''                # display format for number to string conversion
     annotation: str = None          # optional annotation of Quantity
 
-    def __init__(self, value: float | complex, unit=None, annotation: str = None):
+    def __init__(self, value: float, unit=None, annotation: str = None):
         """There are two constructor calling patterns
 
         Parameters
