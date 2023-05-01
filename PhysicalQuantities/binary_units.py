@@ -3,8 +3,7 @@ import PhysicalQuantities
 
 from .unit import add_composite_unit
 
-add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True, baseunit=PhysicalQuantities.q.Bit,
-                   url='https://en.wikipedia.org/wiki/Byte')
+add_composite_unit('Byte', 8, 'Bit', verbosename='Byte', prefixed=True, url='https://en.wikipedia.org/wiki/Byte')
 PhysicalQuantities.q.__init__()
 
 
