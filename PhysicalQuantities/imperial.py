@@ -67,4 +67,4 @@ add_composite_unit('degF', 5/9, 'K', offset=459.67,
                    verbosename='degree Fahrenheit',
                    url='https://en.wikipedia.org/wiki/Fahrenheit')
 
-PhysicalQuantities.q.__init__()
+PhysicalQuantities.q.update()

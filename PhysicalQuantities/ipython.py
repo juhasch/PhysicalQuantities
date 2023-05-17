@@ -3,9 +3,11 @@
 import io
 import tokenize
 from tokenize import NAME, NUMBER, OP, COMMENT, TokenError
+from typing import Tuple
 
-from IPython.core.inputtransformer import StatelessInputTransformer
 from IPython import __version__
+from IPython.core.inputtransformer import StatelessInputTransformer
+
 import PhysicalQuantities
 from PhysicalQuantities import q
 
@@ -37,7 +39,7 @@ if __version__ < '7.0.0':
     global __transformer
 
     @StatelessInputTransformer.wrap
-    def transform_legacy(line: str=''):
+    def transform_legacy(line: str = ''):
         global WITHIN_COMMENT
         if line.count('"""') % 2 or line.count("'''") % 2:
             WITHIN_COMMENT = not WITHIN_COMMENT
@@ -50,7 +52,7 @@ if __version__ < '7.0.0':
         g = tokenize.generate_tokens(string_io.readline)
 
         tokenlist = []
-        result = []
+        result: list = []
         token_type = []
 
         try:

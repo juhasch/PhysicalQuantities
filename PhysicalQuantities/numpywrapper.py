@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 from . import isphysicalquantity, q
 from .quantity import *
 from .unit import UnitError
 
-__all__ = ['floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
+__all__ = ['max', 'floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 
 
-def max(qu: np.array):
+def max(qu: np.ndarray | PhysicalQuantity):
     """Return the maximum of an array or maximum along an axis.
 
     Parameters
@@ -22,12 +21,12 @@ def max(qu: np.array):
         Maximum of an array or maximum along an axis
     """
     if isphysicalquantity(qu):
-        return qu.__class__(np.max(qu.value), qu.unit)
+        return qu.__class__(np.max(qu.value), qu.unit)  # type: ignore
     else:
         return np.max(qu)
 
     
-def floor(qu: np.array):
+def floor(qu: np.ndarray | PhysicalQuantity):
     """ Return the floor of the input, element-wise.
 
     Parameters
@@ -47,12 +46,12 @@ def floor(qu: np.array):
     1 mm
     """
     if isphysicalquantity(qu):
-        return qu.__class__(np.floor(qu.value), qu.unit)
+        return qu.__class__(np.floor(qu.value), qu.unit)  # type: ignore
     else:
         return np.floor(qu)
 
 
-def ceil(qu: np.array):
+def ceil(qu: np.ndarray | PhysicalQuantity):
     """ Return the ceiling of the input, element-wise.
 
     Parameters
@@ -72,12 +71,12 @@ def ceil(qu: np.array):
     2.0 mm
     """
     if isphysicalquantity(qu):
-        return qu.__class__(np.ceil(qu.value), qu.unit)
+        return qu.__class__(np.ceil(qu.value), qu.unit)  # type: ignore
     else:
         return np.ceil(qu)
 
 
-def sqrt(qu: np.array):
+def sqrt(qu: np.ndarray | PhysicalQuantity):
     """ Return the square root of the input, element-wise.
 
     Parameters
@@ -97,8 +96,8 @@ def sqrt(qu: np.array):
     2.0 m
     """
     if isphysicalquantity(qu):
-        value = np.sqrt(qu.value)
-        return qu.__class__(value, qu.unit ** 0.5)
+        value = np.sqrt(qu.value)  # type: ignore
+        return qu.__class__(value, qu.unit ** 0.5)  # type: ignore
     else:
         return np.sqrt(qu)
 
@@ -155,7 +154,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return PhysicalQuantity(array, unit)
 
 
-def tophysicalquantity(arr, unit=None):
+def tophysicalquantity(arr: np.ndarray | PhysicalQuantity, unit=None):
     """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
 
     Parameters
@@ -177,18 +176,19 @@ def tophysicalquantity(arr, unit=None):
     [ 1 2000 3] mm
     """
     if isphysicalquantity(arr):
-        if type(arr.value) is np.ndarray:
+        pqarr: PhysicalQuantity = arr  # type: ignore
+        if type(pqarr.value) is np.ndarray:
             # we are already a PQ array
-            return arr
-        if type(arr.value) is list:
+            return pqarr
+        if type(pqarr.value) is list:
             # convert list to array
-            newarr = np.array(arr.value)
-            return newarr * q[arr.unit]
-        if type(arr.value) is not (list or np.array):
+            newarr = np.array(pqarr.value)
+            return newarr * q[pqarr.unit]
+        if not isinstance(pqarr.value, (list, np.ndarray)):
             # do nothing for single PQ values
             return arr
     else:
-        if type(arr) is not (list or np.array):
+        if not isinstance(arr, (list, np.ndarray)):
             if unit is not None:
                 # convert single values to PQ if unit is specified
                 return arr * q[unit]
@@ -212,7 +212,7 @@ def tophysicalquantity(arr, unit=None):
                 raise UnitError('Element %d is not same unit as others' % i)
         else:
             newarr[i] = _a
-    return PhysicalQuantity(newarr, unit)
+    return PhysicalQuantity(newarr, unit)  # type: ignore
 
 
 def argsort(array):

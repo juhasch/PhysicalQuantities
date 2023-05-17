@@ -5,6 +5,7 @@ Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfe
 import copy
 import json
 from functools import reduce, lru_cache
+from typing import Dict
 
 import numpy as np
 
@@ -47,8 +48,8 @@ class PhysicalUnit:
 
     """
 
-    def __init__(self, names, factor: float, powers: list, offset: float = 0, url: str = None, verbosename: str = None,
-                 unece_code: str = None):
+    def __init__(self, names, factor: float, powers: list, offset: float = 0, url: str = '', verbosename: str = '',
+                 unece_code: str = ''):
         """ Initialize object
 
         Parameters
@@ -645,7 +646,7 @@ class PhysicalUnit:
 
         Notes
         -----
-        Current implementation: throw exception of unit has not already been defined
+        Current implementation: throw exception if unit has not already been defined
         """
         u = findunit(unit_dict['name'])
         if u.to_dict != unit_dict:
@@ -689,7 +690,7 @@ def addunit(unit):
     unit_table[unit.name] = unit
 
 
-unit_table = {}
+unit_table: Dict[str, PhysicalUnit] = {}
 # These are predefined base units 
 base_names = ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr', 'Bit', 'currency']
 

@@ -44,4 +44,5 @@ if CurrencyRates is not None:
                        url='https://en.wikipedia.org/wiki/GPB')
 
 
-PhysicalQuantities.q.__init__()
+PhysicalQuantities.q.update()
+
