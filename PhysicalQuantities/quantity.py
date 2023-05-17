@@ -6,7 +6,7 @@
 try:
     from sympy import printing
 except ImportError:  # pragma: no cover
-    def printing():
+    def printing():  # type: ignore
         pass
 
 import copy
@@ -35,9 +35,9 @@ class PhysicalQuantity:
 
     __array_priority__: int = 1000  # make sure numpy arrays do not get iterated
     format: str = ''                # display format for number to string conversion
-    annotation: str = None          # optional annotation of Quantity
+    annotation: str = ''            # optional annotation of Quantity
 
-    def __init__(self, value: float, unit=None, annotation: str = None):
+    def __init__(self, value: float, unit: str | PhysicalUnit, annotation: str = ''):
         """There are two constructor calling patterns
 
         Parameters

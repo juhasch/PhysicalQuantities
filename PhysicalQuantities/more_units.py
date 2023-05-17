@@ -79,4 +79,4 @@ add_composite_unit('kcali', 1000, 'cali', verbosename='international kilocalorie
 
 #addprefixed(add_composite_unit('pc', 3.08568025e16, 'm'), prefixrange='engineering')
 
-PhysicalQuantities.q.__init__()
+PhysicalQuantities.q.update()
