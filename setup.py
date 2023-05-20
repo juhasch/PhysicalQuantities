@@ -1,5 +1,5 @@
 from setuptools import find_packages, setup
-from mypyc.build import mypycify
+#from mypyc.build import mypycify
 
 requirements = [
     'numpy',
