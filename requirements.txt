@@ -5,5 +5,3 @@ wrapt
 pytest
 coverage
 pytest-cov
-mypy
-mypy-extensions

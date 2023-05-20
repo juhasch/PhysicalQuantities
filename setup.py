@@ -5,9 +5,7 @@ requirements = [
     'numpy',
     'IPython',
     'wrapt',
-    'mypy',
     'pytest',
-    'mypy-extensions',
     ]
 
 
@@ -22,9 +20,9 @@ setup(
     python_requires=">=3.11",
     url="https://github.com/juhasch/PhysicalQuantities",
     packages=find_packages(),
-    ext_modules=mypycify([
-        'PhysicalQuantities/fractdict.py'
-    ]),
+#    ext_modules=mypycify([
+#        'PhysicalQuantities/fractdict.py'
+#    ]),
     install_requires=requirements,
     long_description_content_type='text/markdown',
     long_description="""
