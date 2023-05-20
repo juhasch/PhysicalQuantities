@@ -17,7 +17,7 @@ setup(
     description="Allow calculations using physical quantities",
     license="BSD",
     keywords="Physical Quantities IPython",
-    python_requires=">=3.11",
+    python_requires=">=3.10",
     url="https://github.com/juhasch/PhysicalQuantities",
     packages=find_packages(),
 #    ext_modules=mypycify([
