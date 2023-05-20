@@ -5,6 +5,7 @@ requirements = [
     'numpy',
     'IPython',
     'wrapt',
+    'mypy'
     ]
 
 
