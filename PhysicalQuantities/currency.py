@@ -6,14 +6,13 @@ BEWARE:
 
 """
 import PhysicalQuantities
-
 from .unit import add_composite_unit
 
 try:
     from forex_python.converter import CurrencyRates
     from forex_python.bitcoin import BtcConverter
 except ImportError:
-    CurrencyRates = None
+    pass
 
 
 def get_currency_rate(reference: str, target: str):

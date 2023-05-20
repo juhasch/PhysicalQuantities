@@ -1,7 +1,7 @@
 """ PhysicalQuantity class definition
 
 """
-
+from __future__ import annotations
 
 try:
     from sympy import printing
@@ -22,6 +22,7 @@ from .unit import (
 
 __all__ = ['PhysicalQuantity', 'PhysicalUnit', 'UnitError', 'unit_table']
 
+
 class PhysicalQuantity:
     """ Physical quantity with units.
 
@@ -37,7 +38,7 @@ class PhysicalQuantity:
     format: str = ''                # display format for number to string conversion
     annotation: str = ''            # optional annotation of Quantity
 
-    def __init__(self, value: float, unit: str | PhysicalUnit, annotation: str = ''):
+    def __init__(self, value: int | float | complex, unit: str | PhysicalUnit, annotation: str = ''):
         """There are two constructor calling patterns
 
         Parameters
@@ -63,7 +64,7 @@ class PhysicalQuantity:
         self.annotation = annotation
         self.unit = findunit(unit)
 
-    def __dir__(self):
+    def __dir__(self) -> list[str]:
         """List available attributes including conversion to other scaling prefixes
 
         Returns
@@ -78,7 +79,7 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         return ulist
     
-    def __getattr__(self, attr):
+    def __getattr__(self, attr) -> float | PhysicalQuantity:
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit (possibly after rescaling) and return value only.
 
@@ -133,7 +134,7 @@ class PhysicalQuantity:
         if not isinstance(value, PhysicalQuantity):
             raise AttributeError('Not a Physical Quantity')
         if isinstance(self.value, np.ndarray) or isinstance(self.value, list):
-            self.value[key] = value.to(self.unit).value
+            self.value[key] = value.to(str(self.unit)).value
             return self.__class__(self.value[key], self.unit)
         raise AttributeError('Not a PhysicalQuantity array or list', list)
         
@@ -561,7 +562,7 @@ class PhysicalQuantity:
         else:
             return np.ceil(x)
 
-    def __deepcopy__(self, memo: dict):
+    def __deepcopy__(self, memo: dict) -> PhysicalQuantity:
         """ Return a copy of the PhysicalQuantity including the value.
             Needs deepcopy to copy the value
         """
@@ -571,7 +572,7 @@ class PhysicalQuantity:
         return new_instance
 
     @property
-    def autoscale(self):
+    def autoscale(self) -> PhysicalQuantity:
         """ Autoscale to a reasonable unit, if possible
 
         Examples
@@ -616,7 +617,7 @@ class PhysicalQuantity:
         -----
             If one unit is specified, a new PhysicalQuantity object is returned that expresses the quantity in
             that unit. If several units are specified, the return value is a tuple of PhysicalObject instances with
-            one element per unit such that the sum of all quantities in the tuple equals the the original quantity and
+            one element per unit such that the sum of all quantities in the tuple equals the original quantity and
             all the values except for the last one are integers. This is used to convert to irregular unit systems like
             hour/minute/second.
         """
@@ -642,7 +643,7 @@ class PhysicalQuantity:
             return tuple(result)
 
     @property
-    def base(self):
+    def base(self) -> PhysicalQuantity:
         """ Returns the same quantity converted to SI base units
 
         Returns
@@ -679,7 +680,7 @@ class PhysicalQuantity:
 
     # make it easier using complex numbers
     @property
-    def real(self):
+    def real(self) -> PhysicalQuantity:
         """ Return real part of a complex PhysicalQuantity
 
         Returns
@@ -696,7 +697,7 @@ class PhysicalQuantity:
         return self.__class__(self.value.real, self.unit)
 
     @property
-    def imag(self):
+    def imag(self) -> PhysicalQuantity:
         """ Return imaginary part of a complex PhysicalQuantity
 
         Returns
@@ -712,7 +713,7 @@ class PhysicalQuantity:
         """
         return self.__class__(self.value.imag, self.unit)
 
-    def sqrt(self):
+    def sqrt(self) -> PhysicalQuantity:
         """ Return the positive square-root
 
         Returns
@@ -722,7 +723,7 @@ class PhysicalQuantity:
         """
         return self.__pow__(0.5)
 
-    def pow(self, exponent):
+    def pow(self, exponent: float) -> PhysicalQuantity:
         """ Return PhysicalQuantity raised to power of exponent
 
         Parameters
@@ -737,7 +738,7 @@ class PhysicalQuantity:
         """
         return self.__pow__(exponent)
 
-    def sin(self):
+    def sin(self) -> float:
         """ Return sine of given PhysicalQuantity with angle unit
 
         Returns
@@ -754,7 +755,7 @@ class PhysicalQuantity:
         else:
             raise UnitError('Argument of sin must be an angle')
 
-    def cos(self):
+    def cos(self) -> float:
         """ Return cosine of given PhysicalQuantity with angle unit
 
         Returns
@@ -770,7 +771,7 @@ class PhysicalQuantity:
             return np.cos(self.value * self.unit.conversion_factor_to(unit_table['rad']))
         raise UnitError('Argument of cos must be an angle')
 
-    def tan(self):
+    def tan(self) -> float:
         """ Return tangens of given PhysicalQuantity with angle unit
 
         Returns
@@ -787,7 +788,7 @@ class PhysicalQuantity:
         raise UnitError('Argument of tan must be an angle')
 
     @property
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export as dict
 
         Returns
@@ -801,7 +802,7 @@ class PhysicalQuantity:
         return q_dict
 
     @property
-    def to_json(self):
+    def to_json(self) -> str:
         """Export as JSON
 
         Returns
@@ -814,7 +815,7 @@ class PhysicalQuantity:
         return json_quantity
 
     @staticmethod
-    def from_dict(quantity_dict: dict):
+    def from_dict(quantity_dict: dict) -> PhysicalQuantity:
         """Retrieve PhysicalUnit from dict description
 
         Parameters
@@ -836,7 +837,7 @@ class PhysicalQuantity:
         return q
 
     @staticmethod
-    def from_json(json_quantity: str):
+    def from_json(json_quantity: str) -> PhysicalQuantity:
         """Retrieve PhysicaQuantity from JSON string description
 
         Parameters

@@ -95,7 +95,7 @@ class _Quantity:
         return list(self.table.keys())
 
 
-q = _Quantity()
+q: _Quantity = _Quantity()
 
 
 def isphysicalquantity(x) -> bool:

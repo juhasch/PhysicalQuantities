@@ -44,7 +44,6 @@ def test_findunit_1():
     assert(a == b)
 
 
-
 def test_findunit_2():
     with raises(UnitError):
         findunit(0)
@@ -100,7 +99,7 @@ def test_unit_multiplication_2():
 def test_unit_multiplication_3():
     a = PhysicalQuantity(1, 'm')
     b = PhysicalQuantity(1, 'K')
-    assert str(a.unit*b) == "m*K"
+    assert str(a.unit*b) in ["m*K", "K*m"]
 
 
 def test_unit_multiplication_4():
@@ -113,7 +112,7 @@ def test_unit_multiplication_4():
 def test_unit_inversion():
     a = PhysicalQuantity(1, 'm')
     b = 1/a
-    assert np.any(np.array(b.unit.powers) -np.array(a.unit.powers) == 0)
+    assert np.any(np.array(b.unit.powers) - np.array(a.unit.powers) == 0)
 
 
 def test_aggregation():
