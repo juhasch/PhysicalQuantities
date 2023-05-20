@@ -1,7 +1,8 @@
 numpy
-IPython >= 2.0
+IPython
 sympy
 wrapt
 pytest
 coverage
 pytest-cov
+mypy
