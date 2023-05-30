@@ -15,6 +15,9 @@ except ImportError:
     def CurrencyRates():
         return None
 
+    def BtcConverter():
+        return None
+
 
 def get_currency_rate(reference: str, target: str):
     """
@@ -45,4 +48,3 @@ if CurrencyRates() is not None:
 
 
 PhysicalQuantities.q.update()
-
