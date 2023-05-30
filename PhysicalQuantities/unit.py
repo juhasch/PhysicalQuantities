@@ -493,7 +493,6 @@ class PhysicalUnit:
             raise UnitError('Cannot exponentiate units %s and %s with non-zero offset' % (self, exponent))
         if isinstance(exponent, int):
             y = lambda x, _p=exponent: x * _p
-            print(type(y))
             p = list(map(y, self.powers))
             f = pow(self.factor, exponent)
             names = FractionalDict((k, self.names[k] * Fraction(exponent, 1)) for k in self.names)

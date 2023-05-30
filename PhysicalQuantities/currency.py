@@ -12,7 +12,8 @@ try:
     from forex_python.converter import CurrencyRates
     from forex_python.bitcoin import BtcConverter
 except ImportError:
-    pass
+    def CurrencyRates():
+        return None
 
 
 def get_currency_rate(reference: str, target: str):
@@ -32,7 +33,7 @@ def get_currency_rate(reference: str, target: str):
 add_composite_unit('EUR', 1.0000000001, 'currency', verbosename='Euro',
                    url='https://en.wikipedia.org/wiki/Euro')
 
-if CurrencyRates is not None:
+if CurrencyRates() is not None:
     add_composite_unit('USD', get_currency_rate('USD', 'EUR'), 'currency', verbosename='US Dollar',
                        url='https://en.wikipedia.org/wiki/USD')
 
