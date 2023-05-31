@@ -32,3 +32,6 @@ and this project adheres (at least as of 0.3.0!) to
 
 Unreleased (aka. GitHub master)
 -------------------------------
+
+- Introduce fractdict to handle fractions in units.
+  It can be compiled using mypyc.
