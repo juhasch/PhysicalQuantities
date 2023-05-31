@@ -24,7 +24,6 @@ without explicitly calling a function constructor
 
 """
 import collections
-import sys
 
 from .quantity import PhysicalQuantity
 from .unit import unit_table, addunit, isphysicalunit, PhysicalUnit
@@ -32,9 +31,6 @@ from .prefixes import *
 from .default_units import *
 from .dBQuantity import dBQuantity, dB_unit_table
 from .quantityarray import PhysicalQuantityArray
-
-if sys.version_info < (3, 8):
-    sys.exit('Sorry, Python < 3.8 is not supported')
 
 __version__: str = '1.1.1'
 

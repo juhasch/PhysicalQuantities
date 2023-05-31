@@ -2,9 +2,10 @@
 from __future__ import annotations
 import numpy as np
 from numpy import ndarray
+from typing import Any
 
 from .unit import (
-    PhysicalUnit, UnitError, base_names, convertvalue, findunit,
+    UnitError, base_names, convertvalue, findunit,
     isphysicalunit, unit_table,
 )
 
@@ -12,16 +13,11 @@ from .unit import (
 class PhysicalQuantityArray(ndarray):
 
     def __new__(cls, input_array, unit=None):
-        # Input array is an already formed ndarray instance
-        # We first cast to be our class type
         obj = np.asarray(input_array).view(cls)
-        # add the new attribute to the created instance
         obj.unit = findunit(unit)
-        # Finally, we must return the newly created object:
         return obj
 
-    def __array_finalize__(self, obj):
-        # see InfoArray.__array_finalize__ for comments
+    def __array_finalize__(self, obj: Any):
         if obj is None:
             return
         self.unit = getattr(obj, 'unit', None)
@@ -39,7 +35,7 @@ class PhysicalQuantityArray(ndarray):
             par1, par2 = inputs
             if isinstance(par2, PhysicalQuantityArray):
                 if par2.unit != self.unit:
-                    raise ValueError('Incompatible units.')
+                    raise UnitError('Incompatible units.')
                 args.append(par2.view(np.ndarray))
             else:
                 args.append(par2)
@@ -62,7 +58,7 @@ class PhysicalQuantityArray(ndarray):
         elif op in ['square', 'power']:
             par1, par2 = inputs
             if isinstance(par2, PhysicalQuantityArray):
-                raise ValueError('Incompatible units.')
+                raise UnitError('Incompatible units.')
             else:
                 args.append(par2)
                 out_unit = out_unit ** par2
@@ -70,7 +66,7 @@ class PhysicalQuantityArray(ndarray):
             args = []
             for par in inputs:
                 args.append(par.view(np.ndarray))
-            kwargs=dict(out=self.view(np.ndarray))
+            kwargs = dict(out=self.view(np.ndarray))
         else:
             args = []
             for par2 in inputs:

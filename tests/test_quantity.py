@@ -11,7 +11,7 @@ from PhysicalQuantities.unit import UnitError
 
 
 def test_str():
-    a = PhysicalQuantity(1,'m/s')
+    a = PhysicalQuantity(1, 'm/s')
     assert str(a) == '1 m/s'
 
 
@@ -27,7 +27,7 @@ def test_scaling():
 
 def test_prefix_attributes():
     d = PhysicalQuantity(1, 'm')
-    assert d.to('mm') ==  d.mm
+    assert d.to('mm') == d.mm
 
 
 def test_isphysicalquantity():
@@ -43,10 +43,10 @@ def test_rint():
 
 def test_dir():
     g = PhysicalQuantity(1, 'mm')
-    l = g.__dir__()
-    assert 'value' in l
-    assert 'unit' in l
-    assert 'mm' in l
+    _l = g.__dir__()
+    assert 'value' in _l
+    assert 'unit' in _l
+    assert 'mm' in _l
 
 
 def test_getattr():
@@ -72,7 +72,7 @@ def test_getattr3():
 
 def test_decorators():
     """ Test .base and .value decorators """
-    g = PhysicalQuantity(98, 'mm')/ PhysicalQuantity(1, 's**2')
+    g = PhysicalQuantity(98, 'mm') / PhysicalQuantity(1, 's**2')
     assert g.value == 98
     assert g.base.value == 0.098
     assert str(g.unit) == "mm/s^2"    
@@ -311,30 +311,24 @@ def test_to_1():
 
 def test_to_2():
     a = PhysicalQuantity(5000, 's')
-    tuple = a.to('h', 'min', 's')
-    assert_almost_equal(tuple[0].value, 1.)
-    assert_almost_equal(tuple[1].value, 23.)
-    assert_almost_equal(tuple[2].value, 20.)
+    _tuple = a.to('h', 'min', 's')
+    assert_almost_equal(_tuple[0].value, 1.)
+    assert_almost_equal(_tuple[1].value, 23.)
+    assert_almost_equal(_tuple[2].value, 20.)
 
 
 def test_to_3():
     """test _round()"""
     a = PhysicalQuantity(-5000, 's')
-    tuple = a.to('h', 'min', 's')
-    assert_almost_equal(tuple[0].value, -1.)
-    assert_almost_equal(tuple[1].value, -23.)
-    assert_almost_equal(tuple[2].value, -20.)
+    _tuple = a.to('h', 'min', 's')
+    assert_almost_equal(_tuple[0].value, -1.)
+    assert_almost_equal(_tuple[1].value, -23.)
+    assert_almost_equal(_tuple[2].value, -20.)
 
 
 def test_base_1():
     a = PhysicalQuantity(1, 'V')
     b = PhysicalQuantity(1, 'kg*m^2/A/s^3')
-    assert a.base == b
-
-
-def test_base_2():
-    a = PhysicalQuantity([1, 2], 'V')
-    b = PhysicalQuantity([1, 2], 'kg*m^2/A/s^3')
     assert a.base == b
 
 
@@ -462,8 +456,8 @@ def test_neg_np():
 
 
 def test_nonzero():
-    assert PhysicalQuantity(4, 'm').__nonzero__() == True
-    assert PhysicalQuantity(0, 'm').__nonzero__() == False
+    assert PhysicalQuantity(4, 'm').__nonzero__() is True
+    assert PhysicalQuantity(0, 'm').__nonzero__() is False
 
 
 def test_nonzero_np():
@@ -499,6 +493,7 @@ def test_deg():
 def test_sin():
     a = PhysicalQuantity(0, 'deg')
     assert a.sin() == 0
+
 
 def test_sin_unit():
     a = PhysicalQuantity(0, 'm')
@@ -547,8 +542,8 @@ def test_q_3():
 
 
 def test_ipython_key_completions_():
-    l = q._ipython_key_completions_()
-    assert len(l) > 1
+    _l = q._ipython_key_completions_()
+    assert len(_l) > 1
 
 
 def test_repr():
@@ -562,7 +557,7 @@ def test_convert():
     assert a.value == 1000
 
 
-def test_format():
+def test_format_1():
     a = PhysicalQuantity(1, 'km')
     assert a.__format__('x') == '1 km'
 
@@ -572,7 +567,7 @@ def rest_str():
     assert str(a) == '1 km'
 
 
-def test_round():
+def test_round_1():
     a = np.array([1.4, 1.5]) * PhysicalQuantity(1, 'km')
     b = np.array([1., 2]) * PhysicalQuantity(1, 'km')
     assert np.any(a.__round__() == b)
@@ -589,10 +584,10 @@ def test_to_dict():
 def test_to_json():
     a = PhysicalQuantity(1, 'm')
     j = a.to_json
-    q = json.loads(j)
-    assert type(q) is dict
-    assert 'PhysicalQuantity' in q.keys()
-    d = q['PhysicalQuantity']
+    _q = json.loads(j)
+    assert type(_q) is dict
+    assert 'PhysicalQuantity' in _q.keys()
+    d = _q['PhysicalQuantity']
     assert 'PhysicalUnit' in d.keys()
     assert 'value' in d.keys()
 

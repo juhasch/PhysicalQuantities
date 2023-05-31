@@ -776,7 +776,7 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
     # Validate factor and offset values
     for value in (factor, offset):
         if not isinstance(value, (int, float)):
-            raise ValueError('Factor and offset values should be numeric')
+            raise ValueError('Factor and offset values have to be numeric')
 
     # Remove unwanted keys from unit_table
     for key in ['__builtins__', '__args__']:
