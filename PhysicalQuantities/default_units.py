@@ -9,9 +9,9 @@ from .unit import add_composite_unit
 add_composite_unit('g', 0.001, 'kg', verbosename='Gramm', url='https://en.wikipedia.org/wiki/Kilogram')
 
 add_composite_unit('deg', pi/180, 'rad', verbosename='Degrees', url='http://en.wikipedia.org/wiki/Degree_%28angle%29')
-add_composite_unit('arcmin', pi/180/60,'rad', verbosename='minutes of arc')
+add_composite_unit('arcmin', pi/180/60, 'rad', verbosename='minutes of arc')
 add_composite_unit('arcsec', pi/180/3600, 'rad', verbosename='seconds of arc')
-add_composite_unit('min', 60,'s', verbosename='Minute', url='https://en.wikipedia.org/wiki/Minute')
+add_composite_unit('min', 60, 's', verbosename='Minute', url='https://en.wikipedia.org/wiki/Minute')
 add_composite_unit('h', 60*60, 's', verbosename='Hour', url='https://en.wikipedia.org/wiki/Hour')
 
 # Add additional units (base SI units are predefined)

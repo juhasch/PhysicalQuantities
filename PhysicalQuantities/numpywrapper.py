@@ -155,7 +155,8 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
 
 
 def tophysicalquantity(arr: np.ndarray | PhysicalQuantity, unit=None):
-    """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing array or list
+    """ Convert numpy array or list containing PhysicalQuantity elements to PhysicalQuantity object containing
+     array or list
 
     Parameters
     -----------
@@ -197,13 +198,13 @@ def tophysicalquantity(arr: np.ndarray | PhysicalQuantity, unit=None):
 
     for i, _a in enumerate(arr):
         if not isphysicalquantity(_a) and unit is None:
-            raise UnitError('Element %d is not a physical quantity: %s' % (i,_a))
+            raise UnitError('Element %d is not a physical quantity: %s' % (i, _a))
 
     if unit is None:
         unit = arr[0].unit
     valuetype = type(arr[0].value)
 
-    newarr = np.zeros_like(arr, dtype=valuetype )
+    newarr = np.zeros_like(arr, dtype=valuetype)
     for i, _a in enumerate(arr):
         if isphysicalquantity(_a):
             try:
@@ -217,7 +218,8 @@ def tophysicalquantity(arr: np.ndarray | PhysicalQuantity, unit=None):
 
 def argsort(array):
     """Returns the indices that would sort an array.
-    Perform an indirect sort along the given axis using the algorithm specified by the kind keyword. It returns an array of indices of the same shape as a that index data along the given axis in sorted order.
+    Perform an indirect sort along the given axis using the algorithm specified by the kind keyword. It returns an
+    array of indices of the same shape as a that index data along the given axis in sorted order.
 
     Parameters:	
     -----------
@@ -231,12 +233,14 @@ def argsort(array):
         Sorting algorithm.
     
     order : str or list of str, optional
-        When a is an array with fields defined, this argument specifies which fields to compare first, second, etc. A single field can be specified as a string, and not all fields need be specified, but unspecified fields will still be used, in the order in which they come up in the dtype, to break ties.
+        When 'a' is an array with fields defined, this argument specifies which fields to compare first, second, etc.
+        A single field can be specified as a string, and not all fields need be specified, but unspecified fields will
+        still be used, in the order in which they come up in the dtype, to break ties.
     
     Returns:
     --------
     index_array : ndarray, int
-        Array of indices that sort a along the specified axis. In other words, a[index_array] yields a sorted a.
+        Array of indices that sort along the specified axis. In other words, a[index_array] yields a sorted a.
 
     """
     
@@ -257,7 +261,8 @@ def insert(array, obj, values):
         Object that defines the index or indices before which values is inserted.
     
     values : array_like
-        Values to insert into arr. If the type of values is different from that of arr, values is converted to the type of arr.
+        Values to insert into arr. If the type of values is different from that of arr, values is converted to
+        the type of arr.
     
     axis : int, optional
         Axis along which to insert values. If axis is None then arr is flattened first.
@@ -266,7 +271,8 @@ def insert(array, obj, values):
     --------
     out : ndarray
     
-    A copy of arr with values inserted. Note that insert does not occur in-place: a new array is returned. If axis is None, out is a flattened array.
+    A copy of arr with values inserted. Note that insert does not occur in-place: a new array is returned.
+    If axis is None, out is a flattened array.
 
     """
     if isphysicalquantity(array):

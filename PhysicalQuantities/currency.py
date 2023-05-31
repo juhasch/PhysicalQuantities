@@ -9,6 +9,7 @@ import PhysicalQuantities
 from .unit import add_composite_unit
 
 try:
+    raise ImportError
     from forex_python.converter import CurrencyRates
     from forex_python.bitcoin import BtcConverter
 except ImportError:
