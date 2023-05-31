@@ -1,4 +1,5 @@
 """Implement a Numpy array with physical units"""
+from __future__ import annotations
 import numpy as np
 from numpy import ndarray
 
@@ -106,11 +107,11 @@ class PhysicalQuantityArray(ndarray):
         else:
             return self.to(attrunit.name)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         arrstr = super().__str__()
         return f'PhysicalQuantityArray({arrstr}, unit={self.unit})'
 
-    def to(self, *units):
+    def to(self, *units) -> PhysicalQuantityArray:
         units = list(map(findunit, units))
         if len(units) == 1:
             unit = units[0]
@@ -119,7 +120,7 @@ class PhysicalQuantityArray(ndarray):
         raise ValueError('More than one unit given to convert to')
 
     @property
-    def base(self):
+    def base(self) -> PhysicalQuantityArray:
         num = ''
         denom = ''
         for i in range(len(base_names)):

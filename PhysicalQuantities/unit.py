@@ -2,14 +2,17 @@
 
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
+from __future__ import annotations
+from __future__ import annotations
 import copy
 import json
 from functools import reduce, lru_cache
 from typing import Dict
+from fractions import Fraction
 
 import numpy as np
 
-from .NDict import *
+from .fractdict import FractionalDict
 
 
 class UnitError(ValueError):
@@ -17,6 +20,7 @@ class UnitError(ValueError):
 
 
 class PhysicalUnit:
+    prefixed: bool = False
     """Physical unit.
 
     A physical unit is defined by a name (possibly composite), a scaling factor, and the exponentials of each of
@@ -28,7 +32,7 @@ class PhysicalUnit:
         If instance is a scaled version of a unit
     baseunit: PhysicalUnit
         Base unit if prefixed, otherwise self
-    names: NumberDict
+    names: FractionalDict
         A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
         for M{m/s})
     factor: float
@@ -48,13 +52,13 @@ class PhysicalUnit:
 
     """
 
-    def __init__(self, names, factor: float, powers: list, offset: float = 0, url: str = '', verbosename: str = '',
+    def __init__(self, names, factor: float, powers: list[int], offset: float = 0, url: str = '', verbosename: str = '',
                  unece_code: str = ''):
         """ Initialize object
 
         Parameters
         ----------
-        names: NumberDict|str
+        names: FractionalDict|str
             A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
             for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
         factor:
@@ -73,15 +77,14 @@ class PhysicalUnit:
             (see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
 
         """
-        self.prefixed = False
         self.baseunit = self
         self.verbosename = verbosename
         self.url = url
         if isinstance(names, str):
-            self.names = NumberDict()
+            self.names = FractionalDict()
             self.names[names] = 1
         else:
-            self.names = NumberDict()
+            self.names = FractionalDict()
             for _name in names:
                 self.names[_name] = names[_name]
         self.factor = factor
@@ -92,18 +95,18 @@ class PhysicalUnit:
         self.unece_code = unece_code
 
     def set_name(self, name):
-        """Set unit name as NumberDict
+        """Set unit name as FractionalDict
 
         Parameters
         ----------
         name: str
             Unit name
         """
-        self.names = NumberDict()
+        self.names = FractionalDict()
         self.names[name] = 1
 
     @property
-    def name(self):
+    def name(self) -> str:
         """ Return name of unit
 
         Returns
@@ -131,7 +134,7 @@ class PhysicalUnit:
         return num + denom
 
     @property
-    def _markdown_name(self):
+    def _markdown_name(self) -> str:
         """ Return name of unit as markdown string
 
         Returns
@@ -168,7 +171,7 @@ class PhysicalUnit:
         return name
 
     @property
-    def is_power(self):
+    def is_power(self) -> bool:
         """ Test if unit is a power unit. Used of dB conversion
         TODO: basically very dumb right now
 
@@ -185,7 +188,7 @@ class PhysicalUnit:
         return False
 
     @property
-    def is_dimensionless(self):
+    def is_dimensionless(self) -> bool:
         """ Check if no dimension is given
 
         Returns
@@ -196,7 +199,7 @@ class PhysicalUnit:
         return not reduce(lambda a, b: a or b, self.powers)
 
     @property
-    def is_angle(self):
+    def is_angle(self) -> bool:
         """ Check if unit is an angle
 
         Returns
@@ -206,7 +209,7 @@ class PhysicalUnit:
         """
         return self.powers[7] == 1 and reduce(lambda a, b: a + b, self.powers) == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         """ Return string text representation of unit
 
         Returns
@@ -217,10 +220,10 @@ class PhysicalUnit:
         name = self.name.strip().replace('**', u'^')
         return name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<PhysicalUnit ' + self.name + '>'
 
-    def _repr_markdown_(self):
+    def _repr_markdown_(self) -> str:
         """ Return markdown representation for IPython notebook
 
         Returns
@@ -232,7 +235,7 @@ class PhysicalUnit:
         s = '$%s$' % unit
         return s
 
-    def _repr_latex_(self):
+    def _repr_latex_(self) -> str:
         """ Return LaTeX representation for IPython notebook
 
         Returns
@@ -245,7 +248,7 @@ class PhysicalUnit:
         return s
 
     @property
-    def markdown(self):
+    def markdown(self) -> str:
         """ Return unit as a markdown formatted string
 
         Returns
@@ -256,7 +259,7 @@ class PhysicalUnit:
         return self._repr_markdown_()
 
     @property
-    def latex(self):
+    def latex(self) -> str:
         """ Return unit as a LaTeX formatted string
 
         Returns
@@ -266,7 +269,7 @@ class PhysicalUnit:
         """
         return self._repr_latex_()
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """ Test if unit is greater than other unit
 
         Parameters
@@ -283,7 +286,7 @@ class PhysicalUnit:
             return self.factor > other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """ Test if unit is greater or equal than other unit
 
         Parameters
@@ -300,7 +303,7 @@ class PhysicalUnit:
             return self.factor >= other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """ Test if unit is less than other unit
 
         Parameters
@@ -317,7 +320,7 @@ class PhysicalUnit:
             return self.factor < other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """ Test if unit is less or equal than other unit
 
         Parameters
@@ -334,7 +337,7 @@ class PhysicalUnit:
             return self.factor <= other.factor
         raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """ Test if unit is equal than other unit
 
         Parameters
@@ -380,7 +383,7 @@ class PhysicalUnit:
         elif isinstance(other, PhysicalQuantity):
             other = other.unit
             newpowers = [a + b for a, b in zip(other.powers, self.powers)]
-            return PhysicalUnit(self.names + NumberDict({str(other): 1}),
+            return PhysicalUnit(self.names + FractionalDict({str(other): 1}),
                                 self.factor * other.factor, newpowers, self.offset)
         else:
             return PhysicalQuantity(other, self)
@@ -416,10 +419,10 @@ class PhysicalUnit:
         elif isinstance(other, PhysicalQuantity):
             other = other.unit
             newpowers = [a - b for a, b in zip(other.powers, self.powers)]
-            return PhysicalUnit(self.names + NumberDict({str(other): 1}),
+            return PhysicalUnit(self.names + FractionalDict({str(other): 1}),
                                 self.factor / other.factor, newpowers)
         else:
-            return PhysicalUnit(self.names + NumberDict({str(other): -1}),
+            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
                                 self.factor/other.factor, self.powers)
 
     def __rdiv__(self, other):
@@ -430,7 +433,7 @@ class PhysicalUnit:
                                 other.factor / self.factor,
                                 list(map(lambda a, b: a - b, other.powers, self.powers)))
         else:
-            return PhysicalUnit(NumberDict({str(other): 1}) - self.names,
+            return PhysicalUnit(FractionalDict({str(other): 1}) - self.names,
                                 other / self.factor,
                                 list(map(lambda x: -x, self.powers)))
 
@@ -461,13 +464,13 @@ class PhysicalUnit:
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         else:
             # TODO: add test
-            return PhysicalUnit(self.names + NumberDict({str(other): -1}),
+            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
                                 self.factor//other.factor, self.powers)
 
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
-    def __pow__(self, exponent):
+    def __pow__(self, exponent: PhysicalUnit | int):
         """ Power of a unit
 
         Parameters
@@ -489,11 +492,12 @@ class PhysicalUnit:
         if self.offset != 0:
             raise UnitError('Cannot exponentiate units %s and %s with non-zero offset' % (self, exponent))
         if isinstance(exponent, int):
-            p = list(map(lambda x, _p=exponent: x * _p, self.powers))
+            y = lambda x, _p=exponent: x * _p
+            p = list(map(y, self.powers))
             f = pow(self.factor, exponent)
-            names = NumberDict((k, self.names[k] * exponent) for k in self.names)
+            names = FractionalDict((k, self.names[k] * Fraction(exponent, 1)) for k in self.names)
             return PhysicalUnit(names, f, p)
-        if isinstance(exponent, float):
+        elif isinstance(exponent, float):
             inv_exp = 1. / exponent
             rounded = int(np.floor(inv_exp + 0.5))
             if abs(inv_exp - rounded) < 1.e-10:
@@ -505,9 +509,9 @@ class PhysicalUnit:
                     if reduce(lambda a, b: a and b,
                               list(map(lambda x, e=rounded: x % e == 0,
                                        self.names.values()))):
-                        names = NumberDict((k, self.names[k] / rounded) for k in self.names)
+                        names = FractionalDict((k, self.names[k] / rounded) for k in self.names)
                     else:
-                        names = NumberDict()
+                        names = FractionalDict()
                         if f != 1.:
                             names[str(f)] = 1
                         for i in range(len(p)):
@@ -590,7 +594,7 @@ class PhysicalUnit:
         return factor, offset
 
     @property
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export unit as dict
 
         Returns
@@ -617,7 +621,7 @@ class PhysicalUnit:
         return unit_dict
 
     @property
-    def to_json(self):
+    def to_json(self) -> str:
         """Export unit as JSON
 
 
@@ -631,7 +635,7 @@ class PhysicalUnit:
         return json_unit
 
     @staticmethod
-    def from_dict(unit_dict):
+    def from_dict(unit_dict) -> PhysicalUnit:
         """Retrieve PhysicalUnit from dict description
 
         Parameters
@@ -654,7 +658,7 @@ class PhysicalUnit:
         return u
 
     @staticmethod
-    def from_json(json_unit):
+    def from_json(json_unit) -> PhysicalUnit:
         """Retrieve PhysicalUnit from JSON string description
 
         Parameters

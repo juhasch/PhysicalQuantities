@@ -115,7 +115,7 @@ def test_multiply_different_units():
     a = QA(np.random.randn(10), 'm')
     b = QA(np.random.randn(10), 's')
     c = a*b
-    assert str(c.unit) == 'm*s'
+    assert str(c.unit) in ['m*s', 's*m']
     assert_almost_equal(c, a*b)
 
 

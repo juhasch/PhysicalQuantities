@@ -1,17 +1,29 @@
 from setuptools import find_packages, setup
+#from mypyc.build import mypycify
+
+requirements = [
+    'numpy',
+    'IPython',
+    'wrapt',
+    'pytest',
+    ]
+
 
 setup(
     name="PhysicalQuantities",
-    version="1.1.1",
+    version="1.2.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
     license="BSD",
     keywords="Physical Quantities IPython",
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     url="https://github.com/juhasch/PhysicalQuantities",
     packages=find_packages(),
-    install_requires=['numpy', 'IPython', 'wrapt'],
+#    ext_modules=mypycify([
+#        'PhysicalQuantities/fractdict.py'
+#    ]),
+    install_requires=requirements,
     long_description_content_type='text/markdown',
     long_description="""
 *PhysicalQuantities* is a Python module that allows calculations to be aware of physical units. Built-in unit

@@ -1,6 +1,5 @@
 """Decorators to check units in parameters"""
-import wrapt
-
+from wrapt.decorators import decorator
 from .quantity import *
 from .unit import *
 
@@ -52,7 +51,7 @@ def dropunit(arg, unit):
         raise UnitError('%s is not of unit %s' % (arg, unit))
 
 
-def require_units(*units, **kunits):
+def require_units(*units: str, **kunits: str):
     """ Decorator to check arguments of a function call
 
     Parameters
@@ -74,7 +73,7 @@ def require_units(*units, **kunits):
     >>>     return (u*i).W
 
     """
-    @wrapt.decorator
+    @decorator
     def wrapper(wrapped, instance, args, kwargs):
         for i, arg in enumerate(args):
             checkbaseunit(arg, units[i])
@@ -99,7 +98,7 @@ def optional_units(*units, **kunits):
     >>>     return (u*i).W
 
     """
-    @wrapt.decorator
+    @decorator
     def wrapper(wrapped, instance, args, kwargs):
         newargs = []
         for i, arg in enumerate(args):
@@ -108,7 +107,7 @@ def optional_units(*units, **kunits):
         for i, key in enumerate(kwargs):
             newkwargs[key] = dropunit(kwargs.get(key), kunits.get(key))
         return_value = wrapped(*newargs, **newkwargs)
-        return_unit = kunits.get('return_unit','')
+        return_unit = kunits.get('return_unit', '')
         if return_unit != '':
             return_value = PhysicalQuantity(return_value, return_unit)
         return return_value

@@ -64,11 +64,11 @@ class dBUnit:
         dB_unit_table[name] = self
 
     @property
-    def is_power(self):
+    def is_power(self) -> bool:
         return self.physicalunit.is_power
 
     @property
-    def __name__(self):
+    def __name__(self) -> str:
         return self.name
 
 

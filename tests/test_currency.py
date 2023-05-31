@@ -15,21 +15,21 @@ def test_floordiv():
     assert a//b == 4
 
 
-@pytest.mark.skipif(CurrencyRates is None, reason="requires forex_python")
+@pytest.mark.skipif(CurrencyRates() is None, reason="requires forex_python")
 def test_usd():
     """Test might fail if exchange rate cannot be retrieved"""
     a = PhysicalQuantity(1, 'USD')
     assert_almost_equal(a.value, 1)
 
 
-@pytest.mark.skipif(CurrencyRates is None, reason="requires forex_python")
+@pytest.mark.skipif(CurrencyRates() is None, reason="requires forex_python")
 def test_gbp():
     """Test might fail if exchange rate cannot be retrieved"""
     a = PhysicalQuantity(1, 'GBP')
     assert_almost_equal(a.value, 1)
 
 
-@pytest.mark.skipif(CurrencyRates is None, reason="requires forex_python")
+@pytest.mark.skipif(CurrencyRates() is None, reason="requires forex_python")
 def test_convert():
     """Test might fail if exchange rate cannot be retrieved"""
     a = PhysicalQuantity(1, 'EUR')
