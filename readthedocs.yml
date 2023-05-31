@@ -11,3 +11,16 @@ build:
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
    configuration: docs/source/conf.py
+
+python:
+  install:
+  - method: pip
+    path: .
+    requirements:
+      - wrapt
+      - numpy
+      - IPython
+      - sphinx
+      - sphinx-rtd-theme
+      - sphinx-autodoc-typehints
+
