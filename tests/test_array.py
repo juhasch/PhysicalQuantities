@@ -131,3 +131,10 @@ def test_power():
     b = a**3
     assert_almost_equal(b, a**3)
     assert str(b.unit) == 'm^3'
+
+
+def test_add():
+    a = QA(np.random.randn(10), 'm')
+    b = QA(np.random.randn(10), 's')
+    with raises(UnitError):
+        c=a+b

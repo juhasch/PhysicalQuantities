@@ -38,6 +38,30 @@ def test_add_composite_unit_2():
         add_composite_unit('test', 4.92892159375, 'cm**3')
 
 
+def test_add_composite_unit_3():
+    """We only allow floats and ints as values for the offset."""
+    with raises(ValueError):
+        add_composite_unit('test2', 4.92892159375, 'cm**3', offset=1j)
+
+
+def test_add_composite_unit_4():
+    """We only allow floats and ints as values"""
+    with raises(ValueError):
+        add_composite_unit('test2', 1j, 'cm**3')
+
+
+def test_add_composite_unit_5():
+    """Invalid units string"""
+    with raises(TypeError):
+        add_composite_unit('test2', 1, 'cm+3')
+
+
+def test_add_composite_unit_6():
+    """Invalid units string"""
+    with raises(KeyError):
+        add_composite_unit('test2', 1, '/m')
+
+
 def test_findunit_1():
     a = findunit('mm')
     b = PhysicalQuantity(1, 'mm').unit

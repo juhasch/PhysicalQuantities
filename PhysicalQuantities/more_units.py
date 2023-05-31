@@ -3,15 +3,15 @@ import PhysicalQuantities
 from .prefixes import addprefixed
 from .unit import add_composite_unit
 
-#add_composite_unit('Bq', 1., '1/s', verbosename='Becquerel', url='https://en.wikipedia.org/wiki/Becquerel')
-#add_composite_unit('Gy', 1., 'm**2/s**2', verbosename='Gray', url='https://en.wikipedia.org/wiki/Gray_(unit)')
+#add_composite_unit('Bq', 1., 'Hz', verbosename='Becquerel', url='https://en.wikipedia.org/wiki/Becquerel')
+add_composite_unit('Gy', 1., 'm**2/s**2', verbosename='Gray', url='https://en.wikipedia.org/wiki/Gray_(unit)')
 #add_composite_unit('Sv', 1., 'J/kg', verbosename='Sievert', url='https://en.wikipedia.org/wiki/Sievert')
-#add_composite_unit('kat', 1., 'mol/s', verbosename='Katal', url='https://en.wikipedia.org/wiki/Katal')
+add_composite_unit('kat', 1., 'mol/s', verbosename='Katal', url='https://en.wikipedia.org/wiki/Katal')
 #add_composite_unit('abA', 1., '10*A', verbosename='Abampere', url='https://en.wikipedia.org/wiki/Abampere')
 
 # Time units
 add_composite_unit('d', 24, 'h', verbosename='day')
-add_composite_unit('wk',7, 'd', verbosename='week')
+add_composite_unit('wk', 7, 'd', verbosename='week')
 add_composite_unit('yr', 365.25, 'd', verbosename='year')
 add_composite_unit('fortnight', 1209600, 's', verbosename='14 days')
 

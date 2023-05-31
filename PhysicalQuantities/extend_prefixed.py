@@ -1,4 +1,5 @@
 # Extend prefix range of prefixed units from engineering (1e+-12) to full (1e+-24)
+import PhysicalQuantities
 from .prefixes import addprefixed
 
 addprefixed('m', prefixrange='full')
@@ -25,3 +26,5 @@ addprefixed('T', prefixrange='full')
 addprefixed('H', prefixrange='full')
 addprefixed('lm', prefixrange='full')
 addprefixed('lx', prefixrange='full')
+
+PhysicalQuantities.q.update()

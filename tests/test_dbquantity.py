@@ -409,7 +409,7 @@ def test_sub_db_3():
         g1 - g2
 
 
-def test_dB10():
+def test_dB10_0():
     a = dB10(PhysicalQuantity(10, 'V'))
     assert a.value == 10
 
@@ -421,7 +421,7 @@ def test_dB10_1():
     assert b.value == -10
 
 
-def test_dB10():
+def test_dB20():
     a = dB20(PhysicalQuantity(10, 'V'))
     assert a.value == 20
 

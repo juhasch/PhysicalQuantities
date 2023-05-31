@@ -1,68 +1,31 @@
 
-from IPython import __version__
 from PhysicalQuantities import unit_table
-
-if __version__ < '7.0.0':
-    from PhysicalQuantities.ipython import transform_legacy
-    _test_transformer = transform_legacy().func
-else:
-    from PhysicalQuantities.ipython import transform_line
-    _test_transformer = transform_line
-
-units_list = list(unit_table.keys())
+from PhysicalQuantities.ipython import transform
 
 
-def test_simple():
-    """ No transformation """
-    line = 'a =0'
-    ret = _test_transformer(line).strip()
+def test_empty():
+    """ Single line """
+    line = []
+    ret = transform(line)
     assert line == ret
 
 
-def test_1():
-    """ Simple unit """
-    line = '1V'
-    ret = _test_transformer(line).strip()
-    assert ret == "(1 *pq.V)"
+def test_single():
+    """ Single line """
+    line = ['a =0']
+    ret = transform(line)
+    assert line == ret
 
 
-def test_6():
-    """ Don't convert strings"""
-    line = "'1V'"
-    ret = _test_transformer(line).strip()
-    assert ret == "'1V'"
+def test_multi():
+    """ Multi line """
+    line = ['a=1V', 'b = 1']
+    ret = transform(line)
+    assert ret[0] == "a=(1 *pq.V) "
 
 
-def test_7():
-    line = '1V-2V'
-    ret = _test_transformer(line).strip()
-    assert ret == "(1 *pq.V) -(2 *pq.V)"
-
-
-def test_8():
-    """Divide unit quantities"""
-    line = '1V/2m'
-    ret = _test_transformer(line).strip()
-    assert ret == "(1 *pq.V) /(2 *pq.m)"
-
-
-def test_9():
-    """Combined dimension"""
-    line = '1m/s'
-    ret = _test_transformer(line).strip()
-    assert ret == "(1 *pq.m) / pq.s"
-
-
-def test_10():
-    """Test exponentials"""
-    line = '10m**2'
-    ret = _test_transformer(line).strip()
-    assert ret == 'PhysicalQuantity(10 ,"m**2")'
-
-
-def test_multiline_comment():
-    """Make sure multiline comments are handled properly"""
-    lines = '"""\n2m"""'
-    ret = _test_transformer(lines).strip()
-    assert ret == lines
-
+def test_comment():
+    """ Multi line """
+    line = [' """ ', 'a=1V', ' """ ']
+    ret = transform(line)
+    assert ret[1] == "a=1V"
