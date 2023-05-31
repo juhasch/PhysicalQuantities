@@ -131,7 +131,7 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
         return np.linspace(start, stop, num,  endpoint, retstep)
 
     if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
-        start.base.unit = stop.base.unit
+        start.base.unit == stop.base.unit
 
     unit = None
     if isinstance(start, PhysicalQuantity):
