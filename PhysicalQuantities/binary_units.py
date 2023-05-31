@@ -1,4 +1,4 @@
-"""Binary units, i.e. Bits"""
+"""Binary units, i.e. Bits&Bytes"""
 import PhysicalQuantities
 
 from .unit import add_composite_unit
@@ -28,4 +28,3 @@ for key in _units.keys():
                        url='https://en.wikipedia.org/wiki/Byte')
 
 PhysicalQuantities.q.update()
-
