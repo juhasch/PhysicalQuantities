@@ -17,7 +17,7 @@ class PhysicalQuantityArray(ndarray):
         obj.unit = findunit(unit)
         return obj
 
-    def __array_finalize__(self, obj: Any):
+    def __array_finalize__(self, obj: Any, *args: Any, **kwargs: Any):
         if obj is None:
             return
         self.unit = getattr(obj, 'unit', None)
@@ -72,7 +72,7 @@ class PhysicalQuantityArray(ndarray):
             for par2 in inputs:
                 if isinstance(par2, PhysicalQuantityArray):
                     if par2.unit != self.unit:
-                        raise ValueError('Incompatible units.')
+                        raise UnitError('Incompatible units.')
                     args.append(par2.view(np.ndarray))
                 else:
                     args.append(par2)
@@ -108,12 +108,24 @@ class PhysicalQuantityArray(ndarray):
         return f'PhysicalQuantityArray({arrstr}, unit={self.unit})'
 
     def to(self, *units) -> PhysicalQuantityArray:
+        """Convert to a different unit
+
+        Parameters
+        ----------
+        units : str
+            Units to convert to
+
+        Returns
+        -------
+        PhysicalQuantityArray
+            Array with converted units
+        """
         units = list(map(findunit, units))
         if len(units) == 1:
             unit = units[0]
             factor = convertvalue(1, self.unit, unit)
             return self.__class__(self * factor, unit)
-        raise ValueError('More than one unit given to convert to')
+        raise UnitError('More than one unit given to convert to')
 
     @property
     def base(self) -> PhysicalQuantityArray:
