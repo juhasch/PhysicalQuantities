@@ -16,7 +16,7 @@ TODO:
 import copy
 
 import numpy as np
-from IPython import get_ipython
+#from IPython import get_ipython
 
 from .quantity import PhysicalQuantity
 from .unit import PhysicalUnit, UnitError, unit_table
@@ -211,10 +211,10 @@ class dBQuantity:
         except KeyError:
             raise UnitError(f'Unknown unit {unitname}')
 
-        ip = get_ipython()
-        if ip is not None:
+        try:
+            ip = get_ipython()
             self.ptformatter = ip.display_formatter.formatters['text/plain']
-        else:
+        except NameError:
             self.ptformatter = None
         self.format = ''  # display format for number to string conversion
 
