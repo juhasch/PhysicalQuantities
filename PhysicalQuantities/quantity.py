@@ -3,17 +3,10 @@
 """
 from __future__ import annotations
 
-try:
-    from sympy import printing
-except ImportError:  # pragma: no cover
-    def printing():  # type: ignore
-        pass
-
 import copy
 import json
 
 import numpy as np
-from IPython import get_ipython
 
 from .unit import (
     PhysicalUnit, UnitError, base_names, convertvalue, findunit,
@@ -55,10 +48,10 @@ class PhysicalQuantity:
         >>> PhysicalQuantity(1, 'V')
         1 V
         """
-        ip = get_ipython()
-        if ip is not None:  # pragma: no cover
+        try:
+            ip = get_ipython()
             self.ptformatter = ip.display_formatter.formatters['text/plain']
-        else:
+        except NameError:
             self.ptformatter = None
         self.value = value
         self.annotation = annotation
@@ -219,7 +212,7 @@ class PhysicalQuantity:
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())
         if str(type(self.value)).find('sympy') > 0:
-            # sympy
+            from sympy import printing
             return '${0}$ {1}'.format(printing.latex(self.value), self.unit.markdown)
         return '{0:{format}} {1}'.format(self.value, self.unit.markdown, format=self.format)
 
