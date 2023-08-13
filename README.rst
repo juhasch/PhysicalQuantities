@@ -99,8 +99,7 @@ Using PhysicalQuantities in plain Python:
 
 Installation
 ------------
-This module requires Python 3.6 or above. This is due to the use of new features like `f` strings
-or supporting underscores in numeric literals.
+This module requires Python 3.10 or above. This is due to the use of mypy for type annotation checking.
 
 To install, simply do a
 

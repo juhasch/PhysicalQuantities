@@ -37,7 +37,7 @@ class dBUnit:
     offset: float
         Offset, used e.g. for dBd vs. dBi
     factor:
-        Factur, used e.g. for Kelvin vs Fahrenheit
+        Factur for dB <-> linear conversion
     """
     name: str
     physicalunit: PhysicalUnit
@@ -45,7 +45,7 @@ class dBUnit:
     factor: float
     z0: PhysicalQuantity
 
-    def __init__(self, name: str, physicalunit: PhysicalUnit | None, offset: float = 0, factor: float = 0,
+    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float = 0, factor: int = 0,
                  z0=PhysicalQuantity(50, 'Ohm')):
         """
 
@@ -62,10 +62,11 @@ class dBUnit:
         self.name = name
         self.physicalunit = physicalunit
         self.offset = offset
-        self.factor = factor
         self.z0 = z0
-        if self.physicalunit is not None:
-            self.factor = 20.0 - 10.0 * float(self.physicalunit.is_power)
+        try:
+            self.factor = 10 if self.physicalunit.is_power else 20
+        except AttributeError:
+            self.factor = factor
         dB_unit_table[name] = self
 
     @property
