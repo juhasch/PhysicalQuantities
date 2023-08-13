@@ -64,12 +64,17 @@ class FractionalDict(dict):
         for key in self.keys():
             new[key] = other*self[key]
         return new
-
-    __rtruediv__ = __rdiv__
-
+ 
     def __rfloordiv__(self, other: Fraction) -> FractionalDict:
         """Return the floored quotient of other and self."""
         new = FractionalDict()
         for key in self.keys():
             new[key] = other / self[key]
+        return new
+
+    def __rtruediv__(self, other):
+        """Return the quotient of other and self."""
+        new = FractionalDict()
+        for key in self.keys():
+            new[key] = other/self[key]
         return new

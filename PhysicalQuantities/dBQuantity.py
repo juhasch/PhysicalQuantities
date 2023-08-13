@@ -30,15 +30,22 @@ class dBUnit:
 
     Attributes
     ----------
-    name: str
+    name
         Name of dB unit
-    unit: PhysicalUnit
+    physicalunit
         Physical representation of the dB value
     offset: float
         Offset, used e.g. for dBd vs. dBi
-
+    factor:
+        Factur, used e.g. for Kelvin vs Fahrenheit
     """
-    def __init__(self, name: str, physicalunit: PhysicalUnit, offset: float = 0, factor: float = 0,
+    name: str
+    physicalunit: PhysicalUnit
+    offset: float
+    factor: float
+    z0: PhysicalQuantity
+
+    def __init__(self, name: str, physicalunit: PhysicalUnit | None, offset: float = 0, factor: float = 0,
                  z0=PhysicalQuantity(50, 'Ohm')):
         """
 
