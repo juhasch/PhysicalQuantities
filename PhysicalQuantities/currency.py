@@ -7,11 +7,15 @@ BEWARE:
 """
 import PhysicalQuantities
 from .unit import add_composite_unit
+from typing import TYPE_CHECKING
+
 
 try:
-    raise ImportError
-    from forex_python.converter import CurrencyRates
-    from forex_python.bitcoin import BtcConverter
+    if TYPE_CHECKING:
+        raise ImportError
+    else:
+        from forex_python.converter import CurrencyRates
+        from forex_python.bitcoin import BtcConverter
 except ImportError:
     def CurrencyRates():
         return None

@@ -6,21 +6,23 @@ from typing import Any
 
 from .unit import (
     UnitError, base_names, convertvalue, findunit,
-    isphysicalunit, unit_table,
+    isphysicalunit, unit_table, PhysicalUnit
 )
 
 
+
 class PhysicalQuantityArray(ndarray):
+    value: ndarray
+    unit: PhysicalUnit
 
     def __new__(cls, input_array, unit=None):
         obj = np.asarray(input_array).view(cls)
         obj.unit = findunit(unit)
         return obj
 
-    def __array_finalize__(self, obj: Any, *args: Any, **kwargs: Any):
-        if obj is None:
-            return
-        self.unit = getattr(obj, 'unit', None)
+    def __array_finalize__(self, obj, *args: Any, **kwargs: Any):
+        if isinstance(obj, PhysicalQuantityArray):
+            self.unit = obj.unit
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         # add, substract
@@ -120,11 +122,10 @@ class PhysicalQuantityArray(ndarray):
         PhysicalQuantityArray
             Array with converted units
         """
-        units = list(map(findunit, units))
-        if len(units) == 1:
-            unit = units[0]
-            factor = convertvalue(1, self.unit, unit)
-            return self.__class__(self * factor, unit)
+        _units = list(map(findunit, units))
+        if len(_units) == 1:
+            factor = convertvalue(1, self.unit, _units[0])
+            return self.__class__(self * factor, _units[0])
         raise UnitError('More than one unit given to convert to')
 
     @property

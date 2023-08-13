@@ -12,12 +12,10 @@ TODO:
  * (1,2) * dBQuantity(3, 'dBV') gives strange result:  (1, 2, 1, 2, 1, 2) dBV
 
 """
-
+from __future__ import annotations
 import copy
-
 import numpy as np
-#from IPython import get_ipython
-
+#
 from .quantity import PhysicalQuantity
 from .unit import PhysicalUnit, UnitError, unit_table
 
@@ -60,7 +58,7 @@ class dBUnit:
         self.factor = factor
         self.z0 = z0
         if self.physicalunit is not None:
-            self.factor = 20 - 10 * self.physicalunit.is_power
+            self.factor = 20.0 - 10.0 * float(self.physicalunit.is_power)
         dB_unit_table[name] = self
 
     @property
@@ -94,14 +92,14 @@ _add_dB_units('dBi', unit=None, factor=10)
 _add_dB_units('dBc', unit=None, factor=10)
 
 
-def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
+def PhysicalQuantity_to_dBQuantity(x: PhysicalQuantity, dBunitname: str | None = None):
     """ Conversion from a PhysicalQuantity to correct dB<x> value
 
     Parameters
     ----------
-    x: PhysicalQuantity
+    x:
         Linear physical quantiy to be converted into a dB quantitiy
-    dBunitname: str
+    dBunitname:
         Desired unit of dB value (i.e. dBm or dBW for Watt)
 
     Returns
@@ -112,7 +110,6 @@ def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
     """
     if isinstance(x, PhysicalQuantity):
         dbbase = None
-        value = None
 
         if dBunitname is not None and dB_unit_table[dBunitname] is not None:
             if dB_unit_table[dBunitname].physicalunit.baseunit.name == x.unit.baseunit.name:
@@ -132,13 +129,13 @@ def PhysicalQuantity_to_dBQuantity(x, dBunitname=None):
         _unit = x.unit
         if dbbase is None:
             raise UnitError(f'Cannot handle unit {x.unit}')
-        factor = 20 - 10 * _unit.is_power
+        factor = 20 - 10 * int(_unit.is_power)
         dbvalue = factor * np.log10(value)
         return dBQuantity(dbvalue, dbbase, islog=True)
     raise UnitError('Cannot handle unitless quantity %s' % x)
 
 
-def dB10(x):
+def dB10(x) -> dBQuantity:
     """ Convert linear value to 10*log10() dB value
 
     Parameters
@@ -158,7 +155,7 @@ def dB10(x):
     return dBQuantity(10*np.log10(val), 'dB', islog=True)
 
 
-def dB20(x):
+def dB20(x) -> dBQuantity:
     """ Convert linear value to 20*log10() dB value
 
     Parameters
@@ -308,7 +305,7 @@ class dBQuantity:
             return len(self.value)
         raise TypeError('Not a list or array: %s', self)
 
-    def to(self, unitname):
+    def to(self, unitname: str) -> dBQuantity:
         """ Convert to differently scaled dB units
 
         Parameters
@@ -323,6 +320,8 @@ class dBQuantity:
                                                   dB_unit_table[unitname].physicalunit.factor)
             value = self.value + scaling
             return self.__class__(value, unitname, islog=True)
+
+        raise UnitError('Cannot convert to unit %s' % unitname)
 
     def __deepcopy__(self, memo: dict):
         """ Return a copy of the PhysicalQuantity including the value.
@@ -357,12 +356,12 @@ class dBQuantity:
         raise AttributeError('Not a dBQuantity array or list')
 
     @property
-    def dB(self):
+    def dB(self) -> dBQuantity:
         """ return dB value without unit """
         return dBQuantity(self.value, 'dB', islog=True)
 
     @property
-    def lin(self):
+    def lin(self) -> PhysicalQuantity:
         """Return linear value of dBQuantity
 
         Returns
@@ -384,7 +383,7 @@ class dBQuantity:
         return self.__float__()
 
     @property
-    def lin10(self):
+    def lin10(self) -> PhysicalQuantity | float:
         """Return linear value of dBQuantity and with 10^(value/10)
 
         Returns
@@ -415,7 +414,7 @@ class dBQuantity:
             return val
 
     @property
-    def lin20(self):
+    def lin20(self) -> PhysicalQuantity | float:
         """Return linear value of dBQuantity and with 10^(value/20)
 
         Returns

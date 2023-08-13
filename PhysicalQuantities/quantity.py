@@ -12,6 +12,10 @@ from .unit import (
     PhysicalUnit, UnitError, base_names, convertvalue, findunit,
     isphysicalunit, unit_table,
 )
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .dBQuantity import dBQuantity
 
 __all__ = ['PhysicalQuantity', 'PhysicalUnit', 'UnitError', 'unit_table']
 
@@ -30,6 +34,8 @@ class PhysicalQuantity:
     __array_priority__: int = 1000  # make sure numpy arrays do not get iterated
     format: str = ''                # display format for number to string conversion
     annotation: str = ''            # optional annotation of Quantity
+    value: int | float | complex    # value of the quantity
+    unit: PhysicalUnit
 
     def __init__(self, value: int | float | complex, unit: str | PhysicalUnit, annotation: str = ''):
         """There are two constructor calling patterns
@@ -49,8 +55,8 @@ class PhysicalQuantity:
         1 V
         """
         try:
-            ip = get_ipython()
-            self.ptformatter = ip.display_formatter.formatters['text/plain']
+            ip = get_ipython()  # type: ignore
+            self.ptformatter = ip.display_formatter.formatters['text/plain']  # type: ignore
         except NameError:
             self.ptformatter = None
         self.value = value
@@ -72,7 +78,7 @@ class PhysicalQuantity:
                     ulist.append(_u.name)
         return ulist
     
-    def __getattr__(self, attr) -> float | PhysicalQuantity:
+    def __getattr__(self, attr) -> int | float | complex | PhysicalQuantity:
         """ Convert to different scaling in the same unit.
             If a '_' is appended, drop unit (possibly after rescaling) and return value only.
 
@@ -143,7 +149,7 @@ class PhysicalQuantity:
         return self.unit_table.keys()
 
     @property
-    def dB(self):  # noqa
+    def dB(self) -> dBQuantity:
         """ Convert to dB scaled unit, if possible. Guess if it is a power unit to select 10*log10 or 20*log10
 
         Returns
@@ -648,10 +654,7 @@ class PhysicalQuantity:
         >>> a.base
         1.0 m^2*kg/s^3
         """
-        if type(self.value) is list:
-            new_value = [(value+self.unit.offset) * self.unit.factor for value in self.value]
-        else:
-            new_value = (self.value+self.unit.offset) * self.unit.factor
+        new_value = (self.value+self.unit.offset) * self.unit.factor
         num = ''
         denom = ''
         for i in range(len(base_names)):

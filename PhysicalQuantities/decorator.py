@@ -1,5 +1,5 @@
 """Decorators to check units in parameters"""
-from wrapt.decorators import decorator
+import wrapt  # type: ignore
 from .quantity import *
 from .unit import *
 
@@ -73,7 +73,7 @@ def require_units(*units: str, **kunits: str):
     >>>     return (u*i).W
 
     """
-    @decorator
+    @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         for i, arg in enumerate(args):
             checkbaseunit(arg, units[i])
@@ -98,7 +98,7 @@ def optional_units(*units, **kunits):
     >>>     return (u*i).W
 
     """
-    @decorator
+    @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         newargs = []
         for i, arg in enumerate(args):

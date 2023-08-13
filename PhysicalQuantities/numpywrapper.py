@@ -1,5 +1,5 @@
 import numpy as np
-
+from typing import Union
 from . import isphysicalquantity, q
 from .quantity import *
 from .unit import UnitError
@@ -7,7 +7,7 @@ from .unit import UnitError
 __all__ = ['max', 'floor', 'ceil', 'sqrt', 'linspace', 'tophysicalquantity']
 
 
-def max(qu: np.ndarray | PhysicalQuantity):
+def max(qu: Union[np.ndarray, PhysicalQuantity]):
     """Return the maximum of an array or maximum along an axis.
 
     Parameters
@@ -20,13 +20,13 @@ def max(qu: np.ndarray | PhysicalQuantity):
     array_like
         Maximum of an array or maximum along an axis
     """
-    if isphysicalquantity(qu):
-        return qu.__class__(np.max(qu.value), qu.unit)  # type: ignore
+    if isinstance(qu, PhysicalQuantity):
+        return qu.__class__(np.max(qu.value), qu.unit)
     else:
         return np.max(qu)
 
     
-def floor(qu: np.ndarray | PhysicalQuantity):
+def floor(qu: Union[np.ndarray, PhysicalQuantity]):
     """ Return the floor of the input, element-wise.
 
     Parameters
@@ -45,13 +45,13 @@ def floor(qu: np.ndarray | PhysicalQuantity):
     >>> nw.floor(1.3 mm)
     1 mm
     """
-    if isphysicalquantity(qu):
+    if isinstance(qu, PhysicalQuantity):
         return qu.__class__(np.floor(qu.value), qu.unit)  # type: ignore
     else:
         return np.floor(qu)
 
 
-def ceil(qu: np.ndarray | PhysicalQuantity):
+def ceil(qu: Union[np.ndarray, PhysicalQuantity]):
     """ Return the ceiling of the input, element-wise.
 
     Parameters
@@ -70,13 +70,13 @@ def ceil(qu: np.ndarray | PhysicalQuantity):
     >>> nw.ceil(1.3 mm)
     2.0 mm
     """
-    if isphysicalquantity(qu):
+    if isinstance(qu, PhysicalQuantity):
         return qu.__class__(np.ceil(qu.value), qu.unit)  # type: ignore
     else:
         return np.ceil(qu)
 
 
-def sqrt(qu: np.ndarray | PhysicalQuantity):
+def sqrt(qu: Union[np.ndarray, PhysicalQuantity]):
     """ Return the square root of the input, element-wise.
 
     Parameters
@@ -95,7 +95,7 @@ def sqrt(qu: np.ndarray | PhysicalQuantity):
     >>> nw.sqrt(4 m**2)
     2.0 m
     """
-    if isphysicalquantity(qu):
+    if isinstance(qu, PhysicalQuantity):
         value = np.sqrt(qu.value)  # type: ignore
         return qu.__class__(value, qu.unit ** 0.5)  # type: ignore
     else:

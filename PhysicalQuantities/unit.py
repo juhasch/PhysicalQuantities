@@ -501,21 +501,14 @@ class PhysicalUnit:
             inv_exp = 1. / exponent
             rounded = int(np.floor(inv_exp + 0.5))
             if abs(inv_exp - rounded) < 1.e-10:
-                if reduce(lambda a, b: a and b,
-                          list(map(lambda x, e=rounded: x % e == 0, self.powers))):
+                if all(x % rounded == 0 for x in self.powers):
                     f = pow(self.factor, exponent)
-                    p = list(map(lambda x, _p=rounded: x / _p, self.powers))
-                    p = [int(x) for x in p]
-                    if reduce(lambda a, b: a and b,
-                              list(map(lambda x, e=rounded: x % e == 0,
-                                       self.names.values()))):
-                        names = FractionalDict((k, self.names[k] / rounded) for k in self.names)
+                    p = [int(x / rounded) for x in self.powers]
+                    if all(x % rounded == 0 for x in self.names.values()):
+                        names = FractionalDict((k, v / rounded) for k, v in self.names.items())
                     else:
-                        names = FractionalDict()
-                        if f != 1.:
-                            names[str(f)] = 1
-                        for i in range(len(p)):
-                            names[base_names[i]] = p[i]
+                        names = FractionalDict({str(f): 1} if f != 1. else {})
+                        names.update({base_names[i]: p_i for i, p_i in enumerate(p)})
                     return PhysicalUnit(names, f, p)
                 else:
                     raise UnitError('Illegal exponent %f' % exponent)
