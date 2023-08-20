@@ -122,7 +122,7 @@ def units_html_list():
     str
         HTML formatted list of all defined units
     """
-    from IPython.display import HTML
+    from IPython.display import HTML  # type: ignore
     table = "<table>"
     table += "<tr><th>Name</th><th>Base Unit</th><th>Quantity</th></tr>"
     for name in unit_table:
