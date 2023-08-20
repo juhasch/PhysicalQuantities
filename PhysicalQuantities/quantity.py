@@ -218,7 +218,7 @@ class PhysicalQuantity:
             fmt = self.ptformatter.float_format
             return u"%s %s" % (fmt % self.value, self.unit._repr_markdown_())
         if str(type(self.value)).find('sympy') > 0:
-            from sympy import printing
+            from sympy import printing  # type: ignore
             return '${0}$ {1}'.format(printing.latex(self.value), self.unit.markdown)
         return '{0:{format}} {1}'.format(self.value, self.unit.markdown, format=self.format)
 

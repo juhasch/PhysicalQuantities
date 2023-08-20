@@ -78,7 +78,7 @@ class dBUnit:
         return self.name
 
 
-def _add_dB_units(name, unit,  offset: float = 0, factor: float = 0):
+def _add_dB_units(name, unit,  offset: float = 0, factor: int = 0):
     dB_unit_table[name] = dBUnit(name, unit, offset, factor)
 
 
