@@ -34,4 +34,4 @@ Unreleased (aka. GitHub master)
 -------------------------------
 
 - Introduce fractdict to handle fractions in units.
-- Type annotation checking using mypy. Allows compiling the whole package using 'mypyc'. 
+- Type annotation checking using mypy. Allows compiling the whole package using 'mypyc'

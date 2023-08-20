@@ -2,15 +2,17 @@
    :target: http://physicalquantities.readthedocs.io/en/latest/
    :alt: Documentation Status
 
-.. image:: https://codecov.io/gh/juhasch/PhysicalQuantities/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/juhasch/PhysicalQuantities
-
 .. image:: https://badge.fury.io/py/physicalquantities.svg
-    :target: https://badge.fury.io/py/physicalquantities
+   :target: https://badge.fury.io/py/physicalquantities
+   :alt: Documentation Status
 
-.. image:: https://travis-ci.org/juhasch/PhysicalQuantities.svg
-    :target: https://travis-ci.org/juhasch/PhysicalQuantities
+.. image:: https://github.com/juhasch/PhysicalQuantities/actions/workflows/api.yml/badge.svg
+   :alt: Documentation Status
+   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/api.yml/badge.svg
 
+.. image:: https://github.com/juhasch/PhysicalQuantities/actions/workflows/mypy.yml/badge.svg
+   :alt: Documentation Status
+   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/mypy.yml/badge.svg
 
 ======================================================
  PhysicalQuantities - Calculation in Python with Units
