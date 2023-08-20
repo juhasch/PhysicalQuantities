@@ -20,6 +20,6 @@ jobs:
         pip install pylint pytest mypy numpy wrapt
     - name: Analysing the code with mypy
       run: |
-        mypy -m fixedpoint
+        mypy -m PhysicalQuantities
 
 
