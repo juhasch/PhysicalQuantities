@@ -39,6 +39,8 @@ class FractionalDict(dict):
 
     def __truediv__(self, other: Fraction) -> FractionalDict:
         """Return the quotient of self and other."""
+        if other == 0:
+            raise ZeroDivisionError("Division by zero")
         new = FractionalDict()
         for key in self.keys():
             new[key] = self[key]/other
@@ -46,12 +48,14 @@ class FractionalDict(dict):
 
     def __floordiv__(self, other: Fraction) -> FractionalDict:
         """Return the floored quotient of self and other."""
+        if other == 0:
+            raise ZeroDivisionError("Division by zero")
         new = FractionalDict()
         for key in self.keys():
-            new[key] = self[key] / other
+            new[key] = self[key] // other
         return new
 
-    def __rdiv__(self, other: Fraction) -> FractionalDict:
+    def __rtruediv__(self, other: Fraction) -> FractionalDict:
         """Return the quotient of other and self."""
         new = FractionalDict()
         for key in self.keys():
@@ -69,7 +73,7 @@ class FractionalDict(dict):
         """Return the floored quotient of other and self."""
         new = FractionalDict()
         for key in self.keys():
-            new[key] = other / self[key]
+            new[key] = other // self[key]
         return new
 
     def __rtruediv__(self, other):
