@@ -595,7 +595,7 @@ class dBQuantity:
         return pow(10, val)
     
     def __str__(self):
-        if self.ptformatter is not None and self.format == '' and isinstance(self.value, float):
+        if self.ptformatter is not None and self.format == '' and isinstance(self.value, float):  # pragma: no cover
             # %precision magic only works for floats
             fmt = self.ptformatter.float_format
             return "%s %s" % (fmt % self.value, str(self.unit.name))

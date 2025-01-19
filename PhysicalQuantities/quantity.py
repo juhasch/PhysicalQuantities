@@ -112,7 +112,8 @@ class PhysicalQuantity:
         except KeyError:
             raise AttributeError(f'Unit {attr} not found')
         if dropunit is True:
-            return self.to(attrunit.name).value
+            rv = self.to(attrunit.name).value
+            return rv
         else:
             return self.to(attrunit.name)
 
@@ -147,6 +148,26 @@ class PhysicalQuantity:
 
     def _ipython_key_completions_(self):
         return self.unit_table.keys()
+
+    @property
+    def np(self) -> np.ndarray:
+        """ Return a numpy array with the unit as metadata attribute
+
+         Returns
+         -------
+         np.ndarray
+            dtype.metadata = dict(unit=PhysicalUnit)
+         """
+        if isinstance(self.value, np.ndarray):
+            array = self.value
+            metadata = dict(unit=str(self.unit))
+            dtype = np.dtype(str(array.dtype), metadata=metadata)
+            return array.astype(dtype)
+        array = np.array(self.value)
+        metadata = dict(unit=str(self.unit))
+        dtype = np.dtype(dtype=array.dtype, metadata=metadata)
+        array = array.astype(dtype)
+        return array
 
     @property
     def dB(self) -> dBQuantity:
@@ -254,6 +275,10 @@ class PhysicalQuantity:
         return self.__class__(new_value, self.unit)
 
     def __add__(self, other):
+        print('add')
+        if isinstance(other, np.ndarray):
+            metadata = other.dtype.metadata
+            other = PhysicalQuantity(other, metadata['unit'])
         return self._sum(other, 1, 1)
 
     __radd__ = __add__
