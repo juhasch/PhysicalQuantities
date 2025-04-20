@@ -654,16 +654,19 @@ class PhysicalQuantity:
 
         Raises
         -------
+        TypeError
+            If `other` is not a `PhysicalQuantity`.
         UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
+            If units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit == other.base.unit:
-                return self.base.value > other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        if not isinstance(other, PhysicalQuantity):
+            # Raise TypeError for comparison with incompatible types
+            raise TypeError(f"\'>' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
+        # Check dimensional compatibility first
+        if self.unit.powers != other.unit.powers:
+            raise UnitError(f'Cannot compare quantities with incompatible units: {self.unit} and {other.unit}')
+        # Compare values in base units
+        return self.base.value > other.base.value
 
     def __ge__(self, other):
         """Tests if this quantity is greater than or equal to another (`self >= other`).
@@ -682,16 +685,16 @@ class PhysicalQuantity:
 
         Raises
         -------
+        TypeError
+            If `other` is not a `PhysicalQuantity`.
         UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
+            If units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit == other.base.unit:
-                return self.base.value >= other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        if not isinstance(other, PhysicalQuantity):
+            raise TypeError(f"\'>=' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
+        if self.unit.powers != other.unit.powers:
+            raise UnitError(f'Cannot compare quantities with incompatible units: {self.unit} and {other.unit}')
+        return self.base.value >= other.base.value
 
     def __lt__(self, other):
         """Tests if this quantity is less than another (`self < other`).
@@ -710,16 +713,16 @@ class PhysicalQuantity:
 
         Raises
         -------
+        TypeError
+            If `other` is not a `PhysicalQuantity`.
         UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
+            If units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit == other.base.unit:
-                return self.base.value < other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        if not isinstance(other, PhysicalQuantity):
+            raise TypeError(f"\'<' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
+        if self.unit.powers != other.unit.powers:
+            raise UnitError(f'Cannot compare quantities with incompatible units: {self.unit} and {other.unit}')
+        return self.base.value < other.base.value
 
     def __le__(self, other):
         """Tests if this quantity is less than or equal to another (`self <= other`).
@@ -738,76 +741,59 @@ class PhysicalQuantity:
 
         Raises
         -------
+        TypeError
+            If `other` is not a `PhysicalQuantity`.
         UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
-
-        Note
-        ----
-        The original docstring contained `:param:`, `:return:`, `:rtype:` which is not standard NumPy format.
+            If units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit == other.base.unit:
-                return self.base.value <= other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        if not isinstance(other, PhysicalQuantity):
+            raise TypeError(f"\'<=' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
+        if self.unit.powers != other.unit.powers:
+            raise UnitError(f'Cannot compare quantities with incompatible units: {self.unit} and {other.unit}')
+        return self.base.value <= other.base.value
 
     def __eq__(self, other):
         """Tests if two quantities are equal (`self == other`).
 
         Compares values after converting both quantities to base units.
+        Returns `False` if `other` is not a `PhysicalQuantity` or if units
+        are dimensionally incompatible.
 
         Parameters
         ----------
-        other : PhysicalQuantity
-            The quantity to compare against.
+        other : object
+            The object to compare against.
 
         Returns
         -------
         bool
             `True` if `self` is equal to `other`.
-
-        Raises
-        -------
-        UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit.name == other.base.unit.name:
-                return self.base.value == other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        if not isinstance(other, PhysicalQuantity):
+            # According to Python data model, __eq__ should return False for different types
+            return False
+        # Check dimensional compatibility
+        if self.unit.powers != other.unit.powers:
+            # Dimensionally incompatible objects cannot be equal
+            return False
+        # Compare values in base units (consider np.isclose for floats if needed)
+        return self.base.value == other.base.value
 
     def __ne__(self, other):
         """Tests if two quantities are not equal (`self != other`).
 
-        Compares values after converting both quantities to base units.
-
         Parameters
         ----------
-        other : PhysicalQuantity
-            The quantity to compare against.
+        other : object
+            The object to compare against.
 
         Returns
         -------
         bool
             `True` if `self` is not equal to `other`.
-
-        Raises
-        -------
-        UnitError
-            If `other` is not a `PhysicalQuantity` or if units are incompatible.
         """
-        if isinstance(other, PhysicalQuantity):
-            if self.base.unit == other.base.unit:
-                return not self.base.value == other.base.value
-            else:
-                raise UnitError(f'Cannot compare unit {self.unit} with unit {other.unit}')
-        else:
-            raise UnitError(f'Cannot compare PhysicalQuantity with type {type(other)}')
+        # Delegate to __eq__
+        return not self.__eq__(other)
 
     def __format__(self, *args, **kw):
         """Formats the quantity using a standard format specifier applied to the value."""
