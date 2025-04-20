@@ -5,24 +5,38 @@ from pytest import raises
 from PhysicalQuantities import PhysicalQuantity, units_html_list, units_list
 from PhysicalQuantities.unit import (
     PhysicalUnit, UnitError, add_composite_unit, addunit, convertvalue,
-    findunit, isphysicalunit,
+    findunit, isphysicalunit, unit_table
 )
 
 
 def test_addunit_1():
-    addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
-            url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
-    a = PhysicalQuantity(1, 'degC')
+    # Test adding a *new* unique unit to avoid conflicts
+    # with pre-defined units like degC
+    test_unit_name = 'TestDegreeX'
+    if test_unit_name in unit_table:
+        # Should not happen in clean test run, but handles re-runs
+        del unit_table[test_unit_name]
+
+    addunit(PhysicalUnit(test_unit_name, 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=100.0,
+            url='https://example.com/testunit', verbosename='Test Degree X'))
+    a = PhysicalQuantity(1, test_unit_name)
     assert(type(a.unit) == PhysicalUnit)
+    assert a.unit.name == test_unit_name
+    assert a.unit.offset == 100.0
+    # Clean up the added unit
+    del unit_table[test_unit_name]
 
 
 def test_addunit_2():
-    with raises(KeyError):
+    # This test relies on degC potentially being defined, which it now is.
+    # Let's test adding a known duplicate.
+    with raises(KeyError, match='Unit degC already defined'):
         addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
                 url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
-    with raises(KeyError):
-        addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
-                url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
+    # The second part of the original test seems redundant if the first raises KeyError
+    # with raises(KeyError):
+    #     addunit(PhysicalUnit('degC', 1., [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], offset=273.15,
+    #             url='https://en.wikipedia.org/wiki/Celsius', verbosename='degrees Celsius'))
 
 
 def test_add_composite_unit():

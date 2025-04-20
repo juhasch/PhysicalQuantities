@@ -546,7 +546,9 @@ class PhysicalUnit:
         return self.factor / other.factor
 
     def conversion_tuple_to(self, other):
-        """Return conversion factor and offset to another unit
+        """Return conversion factor and offset to another unit.
+
+        The conversion is defined such that ``value_in_other = value_in_self * factor + offset``.
 
         Parameters
         ----------
@@ -563,27 +565,32 @@ class PhysicalUnit:
         >>> from PhysicalQuantities import q
         >>> q.km.unit.conversion_tuple_to(q.m.unit)
         (1000.0, 0.0)
+        >>> q.degC = add_composite_unit('degC', 1.0, 'K', offset=273.15) # Define Celsius relative to Kelvin
+        >>> q.K.unit.conversion_tuple_to(q.degC.unit) # K to degC
+        (1.0, -273.15)
+        >>> q.degC.unit.conversion_tuple_to(q.K.unit) # degC to K
+        (1.0, 273.15)
         """
         if self.powers != other.powers:
             raise UnitError(f'Incompatible unit for conversion from {self} to {other}')
 
-        # let (s1,d1) be the conversion tuple from 'self' to base units
-        #   (ie. (x+d1)*s1 converts a value x from 'self' to base units,
-        #   and (x/s1)-d1 converts x from base to 'self' units)
-        # and (s2,d2) be the conversion tuple from 'other' to base units
-        # then we want to compute the conversion tuple (S,D) from
-        #   'self' to 'other' such that (x+D)*S converts x from 'self'
-        #   units to 'other' units
-        # the formula to convert x from 'self' to 'other' units via the
-        #   base units is (by definition of the conversion tuples):
-        #     ( ((x+d1)*s1) / s2 ) - d2
-        #   = ( (x+d1) * s1/s2) - d2
-        #   = ( (x+d1) * s1/s2 ) - (d2*s2/s1) * s1/s2
-        #   = ( (x+d1) - (d1*s2/s1) ) * s1/s2
-        #   = (x + d1 - d2*s2/s1) * s1/s2
-        # thus, D = d1 - d2*s2/s1 and S = s1/s2
-        factor = self.factor / other.factor
-        offset = self.offset - (other.offset * other.factor / self.factor)
+        # Based on the definition: base = value * factor + offset
+        # Let (f1, o1) be the conversion from 'self' (x) to base: base = x * f1 + o1
+        # Let (f2, o2) be the conversion from 'other' (y) to base: base = y * f2 + o2
+        # We want (F, O) such that y = x * F + O.
+        # x * f1 + o1 = (x * F + O) * f2 + o2
+        # x * f1 + o1 = x * F * f2 + O * f2 + o2
+        # Equating coefficients:
+        # f1 = F * f2  => F = f1 / f2
+        # o1 = O * f2 + o2 => O = (o1 - o2) / f2
+        # Note: Division by zero is possible if other.factor is 0, but this shouldn't
+        # happen for physically meaningful units.
+
+        f1, o1 = self.factor, self.offset
+        f2, o2 = other.factor, other.offset
+
+        factor = f1 / f2
+        offset = (o1 - o2) / f2
         return factor, offset
 
     @property
@@ -857,11 +864,16 @@ def convertvalue(value, src_unit, target_unit):
     >>> from PhysicalQuantities import q
     >>> convertvalue(1, q.mm.unit, q.km.unit)
     1e-06
+    >>> convertvalue(0, q.degC.unit, q.K.unit) # 0 degC to K
+    273.15
+    >>> convertvalue(273.15, q.K.unit, q.degC.unit) # 273.15 K to degC
+    0.0
     """
     (factor, offset) = src_unit.conversion_tuple_to(target_unit)
     if isinstance(value, list):
         raise UnitError('Cannot convert units for a list')
-    return (value + offset) * factor
+    # Apply conversion: value_in_other = value_in_self * factor + offset
+    return value * factor + offset
 
 
 def isphysicalunit(x):

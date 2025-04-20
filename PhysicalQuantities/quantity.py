@@ -652,9 +652,15 @@ class PhysicalQuantity:
 
         >>> a = PhysicalQuantity(1, 'V')
         >>> a.base
-        1.0 m^2*kg/s^3
+        1.0 m^2*kg/s^3/A
+        >>> from PhysicalQuantities import q # Import q for other examples
+        >>> q.PhysicalQuantity(0, 'degC').base # 0 degC should be 273.15 K
+        273.15 K
+        >>> q.PhysicalQuantity(0, 'degF').base # 0 degF should be 255.37... K
+        255.37222222222223 K
         """
-        new_value = (self.value+self.unit.offset) * self.unit.factor
+        # Correct conversion to base: value * factor + offset
+        new_value = self.value * self.unit.factor + self.unit.offset
         num = ''
         denom = ''
         for i in range(len(base_names)):
