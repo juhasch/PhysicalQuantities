@@ -175,13 +175,13 @@ def test_div():
 def test_rdiv_1():
     a = PhysicalQuantity(3, 'm')
     b = PhysicalQuantity(4, 'm')
-    assert a.__rdiv__(b) == 4/3
+    assert b / a == 4/3
 
 
 def test_rdiv_2():
     a = PhysicalQuantity(3, 'm')
     b = PhysicalQuantity(4, 'm^2')
-    assert a.__rdiv__(b) == PhysicalQuantity(4/3, 'm')
+    assert b / a == PhysicalQuantity(4/3, 'm')
 
 
 def test_eq():

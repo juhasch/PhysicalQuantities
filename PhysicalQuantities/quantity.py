@@ -427,7 +427,13 @@ class PhysicalQuantity:
 
     def __rsub__(self, other):
         """Subtracts this quantity from another (`other - self`). Units must be compatible."""
-        return self._sum(other, -1, 1)
+        # Check if other is a PhysicalQuantity
+        if isinstance(other, PhysicalQuantity):
+            # Delegate to other's subtraction method
+            return other._sum(self, 1, -1) # other + (-1)*self
+        else:
+            # Subtraction of PhysicalQuantity from a scalar is ambiguous
+            raise TypeError(f"Unsupported operand type(s) for -: '{type(other).__name__}' and '{type(self).__name__}'")
 
     def __mul__(self, other):
         """Multiplies by a scalar or another PhysicalQuantity.
@@ -487,8 +493,21 @@ class PhysicalQuantity:
         -------
         PhysicalQuantity
             The result with reciprocal units.
+        
+        Raises
+        ------
+        TypeError
+            If `other` is a PhysicalQuantity.
         """
-        return self.__class__(other // self.value, self.unit)
+        if isinstance(other, PhysicalQuantity):
+            # Floor division between two quantities is handled by __floordiv__
+            # Reverse floor division is not defined between two quantities in this way.
+            raise TypeError(f"Unsupported operand type(s) for //: '{type(other).__name__}' and '{type(self).__name__}'")
+        else:
+            # Handle scalar // quantity
+            value = other // self.value
+            reciprocal_unit = 1 / self.unit
+            return self.__class__(value, reciprocal_unit)
             
     def __div__(self, other):
         """Performs true division (`self / other`) (Python 2 style).
@@ -509,17 +528,19 @@ class PhysicalQuantity:
 
         See `__rtruediv__`.
         """
-        if not isinstance(other, PhysicalQuantity):
-            return self.__class__(other / self.value, pow(self.unit, -1))
-        value = other.value / self.value
-        unit = other.unit / self.unit
-        if unit.is_dimensionless:
-            return value * unit.factor
+        # This method primarily handles scalar / quantity
+        if isinstance(other, PhysicalQuantity):
+            # Division between two quantities is handled by __div__ / __truediv__.
+            # Reverse division is not defined between two quantities in this way.
+             raise TypeError(f"Unsupported operand type(s) for /: '{type(other).__name__}' and '{type(self).__name__}'")
         else:
-            return self.__class__(value, unit)
+            # Handle scalar / quantity
+            value = other / self.value
+            reciprocal_unit = 1 / self.unit
+            return self.__class__(value, reciprocal_unit)
 
     __truediv__ = __div__
-    __rtruediv__ = __rdiv__
+    __rtruediv__ = __rdiv__ # Alias __rtruediv__ to the corrected __rdiv__
 
     def __round__(self, ndigits=0):
         """Rounds the numerical value to a given number of decimal places.
