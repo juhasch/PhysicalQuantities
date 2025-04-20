@@ -3,7 +3,6 @@
 Original author: Georg Brandl <georg@python.org>, https://bitbucket.org/birkenfeld/ipython-physics
 """
 from __future__ import annotations
-from __future__ import annotations
 import copy
 import json
 from functools import reduce, lru_cache
@@ -33,11 +32,10 @@ class PhysicalUnit:
     baseunit: PhysicalUnit
         Base unit if prefixed, otherwise self
     names: FractionalDict
-        A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
-        for M{m/s})
+        A dictionary mapping each name component to its associated integer power (e.g. `{'m': 1, 's': -1}`).
     factor: float
         A scaling factor from base units
-    powers: list
+    powers: list[int]
         The integer powers for each of the nine base units:
         ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
     offset: float
@@ -58,23 +56,24 @@ class PhysicalUnit:
 
         Parameters
         ----------
-        names: FractionalDict|str
-            A dictionary mapping each name component to its associated integer power (e.g. C{{'m': 1, 's': -1}})
-            for M{m/s}). As a shorthand, a string may be passed which is assigned an implicit power 1.
-        factor:
+        names: FractionalDict | str
+            A dictionary mapping each name component to its associated integer power (e.g. `{'m': 1, 's': -1}`).
+            As a shorthand, a string may be passed which is assigned an implicit power 1.
+        factor: float
             A scaling factor from base units
-        powers:
+        powers: list[int]
             The integer powers for each of the nine base units:
             ['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr']
-        offset:
-            An additive offset to the unit (used only for temperatures)
-        url:
-            URL describing the unit
-        verbosename:
-            The verbose name of the unit (e.g. Coulomb)
-        unece_code:
+        offset: float, optional
+            An additive offset to the unit (used only for temperatures). Default is 0.
+        url: str, optional
+            URL describing the unit. Default is ''.
+        verbosename: str, optional
+            The verbose name of the unit (e.g. Coulomb). Default is ''.
+        unece_code: str, optional
             Official unit code
-            (see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls)
+            (see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls).
+            Default is ''.
 
         """
         self.baseunit = self
@@ -112,8 +111,7 @@ class PhysicalUnit:
         Returns
         -------
         str
-            Name of unit
-
+            Name of unit (e.g., 'm/s', 'kg*m^2/s^2').
         """
         num = ''
         denom = ''
@@ -140,8 +138,7 @@ class PhysicalUnit:
         Returns
         -------
         str
-            Name of unit as markdown string
-
+            Name of unit formatted as a markdown/LaTeX math string.
         """
         num = ''
         denom = ''
@@ -172,18 +169,20 @@ class PhysicalUnit:
 
     @property
     def is_power(self) -> bool:
-        """ Test if unit is a power unit. Used of dB conversion
-        TODO: basically very dumb right now
+        """ Test if unit is a power unit (or related, like energy or area for dBsm).
+
+        Used for dB conversion logic.
+        TODO: This detection logic is currently very basic.
 
         Returns
         -------
         bool
-            True if it is a power unit, i.e. W, J or anything like it
+            True if it is considered a power unit (e.g., W, J, m^2), False otherwise.
         """
         p = self.powers
         if p == [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
-            return True  # for m^ -> dBsm
-        if p[0] == 2 and p[1] == 1 and p[3] > -1:
+            return True  # for m^2 -> dBsm
+        if p[0] == 2 and p[1] == 1 and p[3] > -1: # Matches energy/power dimensions (L^2 M T^-n, n>=0)
             return True
         return False
 
@@ -215,33 +214,34 @@ class PhysicalUnit:
         Returns
         -------
         str
-            Text representation of unit
+            Text representation of unit (e.g., 'm/s', 'km/h^2').
         """
-        name = self.name.strip().replace('**', u'^')
+        name = self.name.strip().replace('**', '^')
         return name
 
     def __repr__(self) -> str:
+        """Return unambiguous string representation of the unit."""
         return '<PhysicalUnit ' + self.name + '>'
 
     def _repr_markdown_(self) -> str:
-        """ Return markdown representation for IPython notebook
+        """ Return markdown representation for IPython notebooks.
 
         Returns
         -------
         str
-            Unit as LaTeX string
+            Unit formatted as a markdown math string (e.g., '$\\frac{\\text{m}}{\\text{s}}$').
         """
         unit = self._markdown_name
         s = '$%s$' % unit
         return s
 
     def _repr_latex_(self) -> str:
-        """ Return LaTeX representation for IPython notebook
+        """ Return LaTeX representation for IPython notebooks.
 
         Returns
         -------
         str
-            Unit as LaTeX string
+            Unit formatted as a raw LaTeX math string (e.g., '\\frac{\\text{m}}{\\text{s}}').
         """
         unit = self._markdown_name
         s = '%s' % unit
@@ -249,23 +249,23 @@ class PhysicalUnit:
 
     @property
     def markdown(self) -> str:
-        """ Return unit as a markdown formatted string
+        """ Return unit as a markdown formatted string.
 
         Returns
         -------
         str
-            Unit as LaTeX string
+            Unit formatted as a markdown math string (e.g., '$\\frac{\\text{m}}{\\text{s}}$').
         """
         return self._repr_markdown_()
 
     @property
     def latex(self) -> str:
-        """ Return unit as a LaTeX formatted string
+        """ Return unit as a LaTeX formatted string.
 
         Returns
         -------
         str
-            Unit as LaTeX string
+            Unit formatted as a raw LaTeX math string (e.g., '\\frac{\\text{m}}{\\text{s}}').
         """
         return self._repr_latex_()
 
@@ -422,10 +422,12 @@ class PhysicalUnit:
             return PhysicalUnit(self.names + FractionalDict({str(other): 1}),
                                 self.factor / other.factor, newpowers)
         else:
+            # Treat 'other' as a dimensionless factor multiplying the unit's factor
             return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
-                                self.factor/other.factor, self.powers)
+                                self.factor / other, self.powers)
 
     def __rdiv__(self, other):
+        """ Called for `other / self`. """
         if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
             raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self, other))
         if isphysicalunit(other):
@@ -433,9 +435,10 @@ class PhysicalUnit:
                                 other.factor / self.factor,
                                 list(map(lambda a, b: a - b, other.powers, self.powers)))
         else:
-            return PhysicalUnit(FractionalDict({str(other): 1}) - self.names,
-                                other / self.factor,
-                                list(map(lambda x: -x, self.powers)))
+            # TODO: add test
+            # Treat 'other' as a dimensionless factor being divided by the unit's factor
+            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
+                                other // self.factor, self.powers)
 
     def __floordiv__(self, other):
         """ Divide two units
@@ -515,7 +518,7 @@ class PhysicalUnit:
         raise UnitError('Only integer and inverse integer exponents allowed')
 
     def __hash__(self):
-        """Custom hash function"""
+        """Return a hash based on factor, offset, and powers tuple."""
         return hash((self.factor, self.offset, str(self.powers)))
 
     def conversion_factor_to(self, other):
@@ -557,8 +560,8 @@ class PhysicalUnit:
 
         Returns
         -------
-        float tuple
-            Tuple (factor, offset)
+        tuple[float, float]
+            Tuple ``(factor, offset)``.
 
         Examples
         --------
@@ -595,17 +598,16 @@ class PhysicalUnit:
 
     @property
     def to_dict(self) -> dict:
-        """Export unit as dict
+        """Export unit as dictionary.
 
         Returns
         -------
         dict
-            Dict containing unit description
+            Dictionary containing unit description ('name', 'verbosename', 'offset', 'factor', 'base_exponents').
 
         Notes
         -----
-        Give unit and iterate over base units
-
+        The 'base_exponents' key contains a dictionary mapping base unit names to their integer exponents.
         """
         unit_dict = {'name': self.name,
                      'verbosename': self.verbosename,
@@ -622,72 +624,88 @@ class PhysicalUnit:
 
     @property
     def to_json(self) -> str:
-        """Export unit as JSON
+        """Export unit as JSON string.
 
+        Returns
+        -------
+        str
+            JSON string containing the unit description wrapped in a 'PhysicalUnit' key.
 
         Notes
         -----
-        Give unit and iterate over base units
-
+        Uses `to_dict` internally for serialization.
         """
-
         json_unit = json.dumps({'PhysicalUnit': self.to_dict})
         return json_unit
 
     @staticmethod
     def from_dict(unit_dict) -> PhysicalUnit:
-        """Retrieve PhysicalUnit from dict description
+        """Retrieve PhysicalUnit from dict description.
 
         Parameters
         ----------
         unit_dict: dict
-            PhysicalUnit stored as dict
+            PhysicalUnit stored as dict (matching the format from `to_dict`).
 
         Returns
         -------
         PhysicalUnit
-            Retrieved PhysicalUnit
+            Retrieved PhysicalUnit instance.
+
+        Raises
+        ------
+        UnitError
+            If the unit name in the dictionary does not correspond to a known unit
+            or if the dictionary data mismatches the found unit's definition.
 
         Notes
         -----
-        Current implementation: throw exception if unit has not already been defined
+        This currently requires the unit to have been previously defined (e.g., via `addunit` or `add_composite_unit`).
+        It does not create a new unit definition from the dictionary alone.
         """
         u = findunit(unit_dict['name'])
+        # Check for consistency, but allow for float precision issues in factor/offset?
+        # For now, requires exact match.
         if u.to_dict != unit_dict:
-            raise UnitError(f'Unit {str(u)} does not correspond to given dict')
+            # Provide more detailed error message if possible
+            raise UnitError(f"Unit '{unit_dict['name']}' found, but its definition does not match the provided dict.")
         return u
 
     @staticmethod
     def from_json(json_unit) -> PhysicalUnit:
-        """Retrieve PhysicalUnit from JSON string description
+        """Retrieve PhysicalUnit from JSON string description.
 
         Parameters
         ----------
         json_unit: str
-            PhysicalUnit encoded as JSON string
+            PhysicalUnit encoded as JSON string (matching the format from `to_json`).
 
         Returns
         -------
         PhysicalUnit
-            New PhysicalUnit
+            Retrieved PhysicalUnit instance.
+
+        Raises
+        ------
+        UnitError
+            If the JSON is invalid or the contained dictionary data is invalid per `from_dict`.
         """
         unit_dict = json.loads(json_unit)
         return PhysicalUnit.from_dict(unit_dict['PhysicalUnit'])
 
 
-def addunit(unit):
-    """ Add new PhysicalUnit entry to the unit_table
+def addunit(unit: PhysicalUnit):
+    """ Add a new PhysicalUnit entry to the global `unit_table`.
 
     Parameters
     -----------
-    unit: Physicalunit
-        PhysicalUnit object
+    unit: PhysicalUnit
+        PhysicalUnit object to add.
 
     Raises
     ------
     KeyError
-        If unit already exists
-
+        If a unit with the same name already exists in `unit_table`.
     """
     if unit.name in unit_table:
         raise KeyError(f'Unit {unit.name} already defined')
@@ -734,36 +752,38 @@ addunit(PhysicalUnit('currency', 1., [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 
 
 def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=False, url=''):
-    """ Add new unit to the unit_table
+    """ Add new unit to the `unit_table`, defined relative to existing units.
 
     Parameters
     -----------
     name: str
-        Name of the unit
+        Name of the new unit (e.g., 'km', 'degC').
     factor: float
-        scaling factor
+        Scaling factor relative to the base units derived from `units`.
     units: str
-        Composed units of new unit
-    offset: float
-        Offset factor
-    verbosename: str
-        A more verbose name for the unit
-    prefixed: bool
-        This is a prefixed unit
-    url: str
-        A URL linking to more information about the unit
+        String defining the base unit composition (e.g., 'm', 'K', 'm/s').
+        This string is evaluated using the existing `unit_table`.
+    offset: float, optional
+        Additive offset factor (primarily for temperature scales). Default is 0.
+    verbosename: str, optional
+        A more descriptive name for the unit (e.g., 'Kilometre', 'degree Celsius'). Default is ''.
+    prefixed: bool, optional
+        Indicates if this unit is a standard prefixed version (like 'k'ilo, 'm'illi)
+        of the unit defined by `units`. Affects the `baseunit` attribute. Default is False.
+    url: str, optional
+        A URL linking to more information about the unit. Default is ''.
 
     Returns
     -------
     str
-        Name of new unit
+        The name of the newly added unit.
 
     Raises
     ------
     KeyError
-        If unit already exists or if units string is invalid
+        If a unit with `name` already exists or if the `units` string is invalid or cannot be evaluated.
     ValueError
-        If factor or offset is not numeric
+        If `factor` or `offset` is not numeric.
     """
     if name in unit_table:
         raise KeyError(f'Unit {name} already defined')
@@ -798,27 +818,32 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
 # Helper functions
 @lru_cache(maxsize=None)
 def findunit(unitname):
-    """ Return PhysicalUnit class if given parameter is a valid unit
+    """ Find and return a PhysicalUnit instance from its name string or object.
+
+    Uses caching for performance. Handles simple fraction notation like '1/s'.
 
     Parameters
     ----------
     unitname: str or PhysicalUnit
-        Unit to check if valid
+        The name of the unit (e.g., 'm', 'km/h', 'N*m') or a PhysicalUnit object.
 
     Returns
     -------
     PhysicalUnit
-        Unit
+        The corresponding PhysicalUnit instance.
 
     Raises
     ------
     UnitError
-        If the input is invalid.
+        If the input `unitname` is an empty string, cannot be parsed, or does not
+        correspond to a known unit in the `unit_table`.
 
     Examples
     --------
     >>> findunit('mm')
-     <PhysicalUnit mm>
+    <PhysicalUnit mm>
+    >>> findunit('1/s')
+    <PhysicalUnit 1/s>
     """
     if isinstance(unitname, str):
         if unitname == '':
@@ -830,6 +855,7 @@ def findunit(unitname):
             unit = eval(name, unit_table)
         except NameError:
             raise UnitError('Invalid or unknown unit %s' % name)
+        # Clean up namespace pollution from eval if necessary
         for cruft in ['__builtins__', '__args__']:
             try:
                 del unit_table[cruft]
@@ -843,21 +869,29 @@ def findunit(unitname):
 
 
 def convertvalue(value, src_unit, target_unit):
-    """ Convert between units, if possible
+    """ Convert a numerical value between compatible units.
+
+    Handles both multiplicative factors and additive offsets (e.g., temperature scales).
 
     Parameters
     ----------
-    value:
-        Value in source units
+    value: number or array-like
+        The numerical value(s) to convert.
     src_unit: PhysicalUnit
-        Source unit
+        The unit of the input `value`.
     target_unit: PhysicalUnit
-        Target unit
+        The unit to convert the `value` to.
 
     Returns
     -------
-    any
-        Value scaled to target unit
+    number or array-like
+        The converted value(s) in `target_unit`.
+
+    Raises
+    ------
+    UnitError
+        If `src_unit` and `target_unit` are incompatible (represent different physical dimensions)
+        or if the conversion cannot be performed (e.g., involving incompatible offsets).
 
     Examples
     --------
@@ -871,17 +905,24 @@ def convertvalue(value, src_unit, target_unit):
     """
     (factor, offset) = src_unit.conversion_tuple_to(target_unit)
     if isinstance(value, list):
-        raise UnitError('Cannot convert units for a list')
+        # Converting lists directly might be ambiguous (element-wise?); suggest using NumPy arrays.
+        raise UnitError('Cannot convert units for a standard Python list; use NumPy arrays for element-wise conversion.')
     # Apply conversion: value_in_other = value_in_self * factor + offset
+    # This works correctly for numbers and NumPy arrays due to broadcasting.
     return value * factor + offset
 
 
 def isphysicalunit(x):
-    """ Return true if valid PhysicalUnit class
+    """ Check if an object is an instance of the PhysicalUnit class.
 
     Parameters
     ----------
-    x: PhysicalUnit
-        Unit
+    x: Any
+        Object to check.
+
+    Returns
+    -------
+    bool
+        True if `x` is a PhysicalUnit instance, False otherwise.
     """
     return isinstance(x, PhysicalUnit)
