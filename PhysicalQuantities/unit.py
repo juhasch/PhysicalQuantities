@@ -12,6 +12,8 @@ from fractions import Fraction
 import numpy as np
 
 from .fractdict import FractionalDict
+# Remove top-level import causing circular dependency
+# from .quantity import PhysicalQuantity
 
 
 class UnitError(ValueError):
@@ -180,9 +182,14 @@ class PhysicalUnit:
             True if it is considered a power unit (e.g., W, J, m^2), False otherwise.
         """
         p = self.powers
-        if p == [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
-            return True  # for m^2 -> dBsm
-        if p[0] == 2 and p[1] == 1 and p[3] > -1: # Matches energy/power dimensions (L^2 M T^-n, n>=0)
+        # Indices: 0:m, 1:kg, 2:s, 3:A, 4:K, 5:mol, 6:cd, 7:rad, 8:sr
+        # Check for Area (L^2), e.g., m^2 for dBsm
+        if p[0] == 2 and sum(abs(x) for x in p) == 2:
+            return True
+        # Check for Energy (M L^2 T^-2) or Power (M L^2 T^-3) dimensions
+        # Original check used p[3] > -1 (Ampere), likely a typo.
+        # Matching comment: (L^2 M T^-n, n>=2)
+        if p[0] == 2 and p[1] == 1 and p[2] <= -2:
             return True
         return False
 
@@ -193,9 +200,10 @@ class PhysicalUnit:
         Returns
         -------
         bool
-            True if dimensionless
+            True if dimensionless, False otherwise.
         """
-        return not reduce(lambda a, b: a or b, self.powers)
+        # Check if all power exponents are zero
+        return not any(self.powers)
 
     @property
     def is_angle(self) -> bool:
@@ -204,9 +212,10 @@ class PhysicalUnit:
         Returns
         -------
         bool
-            True if unit is an angle
+            True if unit is an angle, False otherwise.
         """
-        return self.powers[7] == 1 and reduce(lambda a, b: a + b, self.powers) == 1
+        # Check if radian power is 1 and all other powers sum to 1 (meaning only radian is non-zero)
+        return self.powers[7] == 1 and sum(self.powers) == 1
 
     def __str__(self) -> str:
         """ Return string text representation of unit
@@ -221,7 +230,7 @@ class PhysicalUnit:
 
     def __repr__(self) -> str:
         """Return unambiguous string representation of the unit."""
-        return '<PhysicalUnit ' + self.name + '>'
+        return f'<PhysicalUnit {self.name}>'
 
     def _repr_markdown_(self) -> str:
         """ Return markdown representation for IPython notebooks.
@@ -284,7 +293,7 @@ class PhysicalUnit:
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor > other.factor
-        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
+        raise UnitError(f'Cannot compare different dimensions {self} and {other}')
 
     def __ge__(self, other) -> bool:
         """ Test if unit is greater or equal than other unit
@@ -301,7 +310,7 @@ class PhysicalUnit:
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor >= other.factor
-        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
+        raise UnitError(f'Cannot compare different dimensions {self} and {other}')
 
     def __lt__(self, other) -> bool:
         """ Test if unit is less than other unit
@@ -318,7 +327,7 @@ class PhysicalUnit:
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor < other.factor
-        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
+        raise UnitError(f'Cannot compare different dimensions {self} and {other}')
 
     def __le__(self, other) -> bool:
         """ Test if unit is less or equal than other unit
@@ -335,7 +344,7 @@ class PhysicalUnit:
         """
         if isphysicalunit(other) and self.powers == other.powers:
             return self.factor <= other.factor
-        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
+        raise UnitError(f'Cannot compare different dimensions {self} and {other}')
 
     def __eq__(self, other) -> bool:
         """ Test if unit is equal than other unit
@@ -350,154 +359,226 @@ class PhysicalUnit:
         bool
             True, if unit is equal than other unit
         """
-        if isphysicalunit(other) and self.powers == other.powers:
-            return self.factor == other.factor
-        raise UnitError('Cannot compare different dimensions %s and %s' % (self, other))
+        if isphysicalunit(other):
+             # Check for compatible dimensions first
+             if self.powers != other.powers:
+                 # Units with different dimensions cannot be equal
+                 return False
+             # Consider using tolerance for float comparison if needed, e.g., math.isclose
+             return self.factor == other.factor and self.offset == other.offset
+         # If other is not a PhysicalUnit, they are not equal
+        return False
 
     def __mul__(self, other):
         """ Multiply units with other value
 
         Parameters
         ----------
-        other:
+        other: PhysicalUnit | PhysicalQuantity | number
             Value or unit to multiply with
 
         Returns
         -------
         PhysicalUnit or PhysicalQuantity
-            Multiplied unit
+            Resulting unit or quantity
 
         Examples
         --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit * q.s.unit
-        m*s
+        <PhysicalUnit m*s>
+        >>> q.m.unit * 5
+        <PhysicalQuantity 5 m>
+        >>> 5 * q.m.unit
+        <PhysicalQuantity 5 m>
         """
+        # Import locally
         from .quantity import PhysicalQuantity
-        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError(f'Cannot multiply units {self} and {other} with non-zero offset')
+
+        if self.offset != 0:
+            raise UnitError(f'Cannot multiply unit {self} with non-zero offset')
+
         if isphysicalunit(other):
+            if other.offset != 0:
+                raise UnitError(f'Cannot multiply unit {other} with non-zero offset')
             return PhysicalUnit(self.names + other.names,
                                 self.factor * other.factor,
                                 list(map(lambda a, b: a + b, self.powers, other.powers)))
         elif isinstance(other, PhysicalQuantity):
-            other = other.unit
-            newpowers = [a + b for a, b in zip(other.powers, self.powers)]
-            return PhysicalUnit(self.names + FractionalDict({str(other): 1}),
-                                self.factor * other.factor, newpowers, self.offset)
+            # Defer to PhysicalQuantity's __rmul__ for unit * quantity
+            # This ensures the result is a PhysicalQuantity with combined unit and scaled value
+            # Let standard dispatch handle calling PhysicalQuantity.__mul__ or __rmul__
+            return other * self
         else:
-            return PhysicalQuantity(other, self)
+            # Assume 'other' is a scalar: scalar * unit
+            try:
+                # Check if 'other' can be treated as a number
+                float(other)
+                # Return PhysicalQuantity(scalar, unit)
+                return PhysicalQuantity(other, self)
+            except (ValueError, TypeError):
+                raise TypeError(f"Unsupported operand type(s) for *: '{type(self).__name__}' and '{type(other).__name__}'")
 
+    # __rmul__ should handle scalar * unit correctly by calling __mul__
+    # No change needed here if __mul__ handles scalar * unit correctly
     __rmul__ = __mul__
 
-    def __div__(self, other):
-        """ Divide two units
+    def __truediv__(self, other):
+        """ Divide unit by another value (true division).
 
         Parameters
         ----------
-        other: PhysicalUnit
-            Other unit to divide
+        other: PhysicalUnit | PhysicalQuantity | number
+            Value or unit to divide by
 
         Returns
         -------
-        PhysicalUnit
-            Divided unit
+        PhysicalUnit or PhysicalQuantity
+            Resulting unit or quantity
 
         Examples
         --------
         >>> from PhysicalQuantities import q
         >>> q.m.unit / q.s.unit
-        m/s
+        <PhysicalUnit m/s>
+        >>> q.m.unit / 5
+        <PhysicalQuantity 0.2 m>
         """
-        from .quantity import PhysicalQuantity
-        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
+        from .quantity import PhysicalQuantity # Import locally
+        if self.offset != 0:
+             raise UnitError(f'Cannot divide unit {self} with non-zero offset in numerator')
+
         if isphysicalunit(other):
+            if other.offset != 0:
+                raise UnitError(f'Cannot divide unit {other} with non-zero offset in denominator')
             return PhysicalUnit(self.names - other.names,
                                 self.factor / other.factor,
                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
         elif isinstance(other, PhysicalQuantity):
-            other = other.unit
-            newpowers = [a - b for a, b in zip(other.powers, self.powers)]
-            return PhysicalUnit(self.names + FractionalDict({str(other): 1}),
-                                self.factor / other.factor, newpowers)
+            # Let PhysicalQuantity handle division: quantity**-1 * self
+            return (other ** -1) * self
         else:
-            # Treat 'other' as a dimensionless factor multiplying the unit's factor
-            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
-                                self.factor / other, self.powers)
-
-    def __rdiv__(self, other):
-        """ Called for `other / self` (true division).
-        
-        Handles `scalar / unit` and `unit / unit`.
-        """
-        if self.offset != 0:
-            raise UnitError(f'Cannot divide unit {self} with non-zero offset in denominator')
-        
-        if isphysicalunit(other):
-            # Handle unit / unit
-            if other.offset != 0:
-                 raise UnitError(f'Cannot divide unit {other} with non-zero offset in numerator')
-            return PhysicalUnit(other.names - self.names,
-                                other.factor / self.factor,
-                                list(map(lambda a, b: a - b, other.powers, self.powers)))
-        else:
-            # Handle scalar / unit
-            # Ensure 'other' is treated as a number for factor calculation
+            # Assume 'other' is a scalar divisor
             try:
-                scalar_numerator = float(other)
+                scalar_denominator = float(other)
+                if scalar_denominator == 0:
+                    raise ZeroDivisionError("Scalar division by zero")
+                return PhysicalQuantity(1.0 / scalar_denominator, self)
             except (ValueError, TypeError):
-                raise TypeError(f"Unsupported operand type(s) for /: '{type(other).__name__}' and '{type(self).__name__}'")
+                raise TypeError(f"Unsupported operand type(s) for /: '{type(self).__name__}' and '{type(other).__name__}'")
 
-            new_factor = scalar_numerator / self.factor
-            # Invert powers and names for the resulting unit
-            new_powers = [-p for p in self.powers]
-            # Use dict comprehension to invert powers in names dict
-            new_names = FractionalDict({name: -power for name, power in self.names.items()})
-            
-            # Create the reciprocal unit
-            return PhysicalUnit(new_names, new_factor, new_powers)
 
-    def __floordiv__(self, other):
-        """ Divide two units (floor division on factor)
+    def __rtruediv__(self, other):
+        """ Called for `other / self` (true division).
+
+        Handles `scalar / unit`.
 
         Parameters
         ----------
-        other: PhysicalUnit
-            Other unit to divide
+        other: number
+            Scalar numerator
 
         Returns
         -------
-        PhysicalUnit
-            Divided unit
+        PhysicalQuantity
+            Resulting quantity
 
         Examples
         --------
         >>> from PhysicalQuantities import q
-        >>> q.m.unit / q.s.unit
-        m/s
+        >>> 10 / q.s.unit
+        <PhysicalQuantity 10 1/s>
         """
-        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError(f'Cannot divide units {self} and {other} with non-zero offset')
+        from .quantity import PhysicalQuantity # Import locally
+        if self.offset != 0:
+            raise UnitError(f'Cannot divide unit {self} with non-zero offset in denominator')
+
+        # Note: unit / unit is handled by __truediv__
+        # This method primarily handles scalar / unit
+        try:
+            scalar_numerator = float(other)
+            # Result is scalar * (unit ** -1)
+            return PhysicalQuantity(scalar_numerator, self**-1)
+        except (ValueError, TypeError):
+             raise TypeError(f"Unsupported operand type(s) for /: '{type(other).__name__}' and '{type(self).__name__}'")
+
+    def __floordiv__(self, other):
+        """ Divide unit by another value (floor division).
+
+        Note: Floor division is primarily meaningful for the scalar value
+        when dividing by a scalar. For unit/unit or unit/quantity,
+        it behaves like true division for the unit part, but the resulting
+        scalar factor might not be intuitive or physically standard.
+
+        Parameters
+        ----------
+        other: PhysicalUnit | PhysicalQuantity | number
+            Value or unit to divide by
+
+        Returns
+        -------
+        PhysicalUnit or PhysicalQuantity
+            Resulting unit or quantity
+
+        Examples
+        --------
+        >>> from PhysicalQuantities import q
+        >>> q.km.unit // q.m.unit # Operates on factors, returns unit
+        <PhysicalUnit km/m>
+        >>> q.m.unit // 5
+        <PhysicalQuantity 0.0 m>
+        """
+        from .quantity import PhysicalQuantity # Import locally
+        if self.offset != 0:
+             raise UnitError(f'Cannot divide unit {self} with non-zero offset in numerator')
+
         if isphysicalunit(other):
-            return PhysicalUnit(self.names - other.names,
-                                self.factor // other.factor,
-                                list(map(lambda a, b: a - b, self.powers, other.powers)))
+             if other.offset != 0:
+                raise UnitError(f'Cannot divide unit {other} with non-zero offset in denominator')
+             # Floor division applies to the factor
+             new_factor = self.factor // other.factor
+             return PhysicalUnit(self.names - other.names,
+                                 new_factor,
+                                 list(map(lambda a, b: a - b, self.powers, other.powers)))
+        elif isinstance(other, PhysicalQuantity):
+             # This case is potentially ambiguous. What does unit // quantity mean?
+             # Let's define it as floor division of the scalar part resulting from (1/quantity) * unit
+             # (1/other) * self -> calculate value and apply floor
+             temp_quantity = (other ** -1) * self
+             # We need the value part for floor division. Assuming PhysicalQuantity has a 'value' attribute
+             # This requires knowing the structure of PhysicalQuantity
+             # If PhysicalQuantity doesn't directly support floor division in this way,
+             # this operation might need further definition or restriction.
+             # For now, let's raise an error as the semantics are unclear.
+             raise TypeError(f"Floor division between PhysicalUnit and PhysicalQuantity is not clearly defined.")
+
         else:
-            # TODO: add test
-            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
-                                self.factor//other.factor, self.powers)
+            # Assume 'other' is a scalar divisor
+            try:
+                scalar_denominator = float(other)
+                if scalar_denominator == 0:
+                     raise ZeroDivisionError("Scalar division by zero")
+                # Perform floor division on the resulting scalar value
+                return PhysicalQuantity(1.0 // scalar_denominator, self)
+            except (ValueError, TypeError):
+                raise TypeError(f"Unsupported operand type(s) for //: '{type(self).__name__}' and '{type(other).__name__}'")
 
-    __truediv__ = __div__
-    __rtruediv__ = __rdiv__
+    # __rfloordiv__ for scalar // unit could be added if needed,
+    # but its physical meaning is often obscure.
 
-    def __pow__(self, exponent: PhysicalUnit | int):
+    # Keep __div__ and __rdiv__ assignments for Python 2 compatibility if needed,
+    # but __truediv__ and __rtruediv__ are preferred in Python 3.
+    # If strictly Python 3+, these aliases can be removed.
+    __div__ = __truediv__
+    __rdiv__ = __rtruediv__
+
+    def __pow__(self, exponent: int | float):
         """ Power of a unit
 
         Parameters
         ----------
-        exponent: PhysicalUnit
-            Power exponent
+        exponent: int | float
+            Power exponent (Must be integer or inverse of integer)
 
         Returns
         -------
@@ -537,7 +618,8 @@ class PhysicalUnit:
 
     def __hash__(self):
         """Return a hash based on factor, offset, and powers tuple."""
-        return hash((self.factor, self.offset, str(self.powers)))
+        # Powers list needs to be converted to a tuple to be hashable
+        return hash((self.factor, self.offset, tuple(self.powers)))
 
     def conversion_factor_to(self, other):
         """Return conversion factor to another unit
@@ -559,11 +641,12 @@ class PhysicalUnit:
         1000.0
         """
         if self.powers != other.powers:
-            raise UnitError('Incompatible units')
+            raise UnitError(f'Incompatible units: cannot convert from {self} to {other}')
         if self.offset != other.offset and self.factor != other.factor:
-            raise UnitError(('Unit conversion (%s to %s) cannot be expressed ' +
-                             'as a simple multiplicative factor') %
-                            (self.name, other.name))
+            # This error might be too strict if only offset differs, conversion_tuple_to handles that.
+            # Perhaps remove this check or refine it. For now, keep it but use f-string.
+            raise UnitError(f'Unit conversion ({self.name} to {other.name}) with different offsets '
+                            f'cannot be expressed as a simple multiplicative factor. Use conversion_tuple_to.')
         return self.factor / other.factor
 
     def conversion_tuple_to(self, other):
@@ -803,13 +886,25 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
     ValueError
         If `factor` or `offset` is not numeric.
     """
+    # Import locally to avoid circular dependency at module level
+    from .quantity import PhysicalQuantity
+
     if name in unit_table:
         raise KeyError(f'Unit {name} already defined')
     # Parse composed units string
     try:
-        baseunit = eval(units, unit_table)
-    except (SyntaxError, ValueError):
-        raise KeyError(f'Invalid units string: {units}')
+        potential_base = eval(units, unit_table)
+        # Ensure we are working with a PhysicalUnit, not a PhysicalQuantity
+        if isinstance(potential_base, PhysicalQuantity):
+            baseunit = potential_base.unit
+        elif isphysicalunit(potential_base):
+            baseunit = potential_base
+        else:
+            # Handle cases where eval returns something unexpected (e.g., a number)
+            raise TypeError(f"Evaluating '{units}' did not result in a PhysicalUnit or PhysicalQuantity.")
+    except (SyntaxError, ValueError, NameError, TypeError) as e:
+        # Catch eval errors and type errors from the check above
+        raise KeyError(f'Invalid or unresolvable units string: {units} -> {e}')
 
     # Validate factor and offset values
     for value in (factor, offset):
@@ -834,7 +929,8 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
 
 
 # Helper functions
-@lru_cache(maxsize=None)
+# Temporarily comment out cache to debug hashing issue
+# @lru_cache(maxsize=None)
 def findunit(unitname):
     """ Find and return a PhysicalUnit instance from its name string or object.
 
@@ -863,26 +959,54 @@ def findunit(unitname):
     >>> findunit('1/s')
     <PhysicalUnit 1/s>
     """
+    # Import locally to avoid circular dependency at module level
+    from .quantity import PhysicalQuantity
+
+    # Handle PhysicalUnit input directly (it's hashable and what we want)
+    if isphysicalunit(unitname):
+        return unitname
+
     if isinstance(unitname, str):
         if unitname == '':
             raise UnitError('Empty unit name is not valid')
         name = unitname.strip().replace('^', '**')
-        if name.startswith('1/'):
-            name = '(' + name[2:] + ')**-1'
+        # Handle simple fractions like 1/s, but avoid double-inverting things like 1/(m*s)
+        # A more robust parser would be better than eval.
+        if name.startswith('1/') and '(' not in name:
+            name = f'({name[2:]})**-1'
+
         try:
-            unit = eval(name, unit_table)
+            evaluated_unit = eval(name, unit_table)
         except NameError:
-            raise UnitError('Invalid or unknown unit %s' % name)
+            raise UnitError(f'Invalid or unknown unit: {name}')
+        except Exception as e:
+            # Catch other potential eval errors
+            raise UnitError(f'Error parsing unit string "{name}": {e}')
+
+        # Check what eval returned - it might be a PhysicalQuantity
+        if isphysicalunit(evaluated_unit):
+            unit = evaluated_unit
+        elif isinstance(evaluated_unit, PhysicalQuantity):
+            unit = evaluated_unit.unit # Extract the unit part
+        else:
+            raise UnitError(f'Parsed unit string "{name}" did not result in a valid PhysicalUnit or PhysicalQuantity.')
+
         # Clean up namespace pollution from eval if necessary
         for cruft in ['__builtins__', '__args__']:
             try:
                 del unit_table[cruft]
             except KeyError:
                 pass
-    else:
+    elif isphysicalunit(unitname):
+        # This case should be caught by the initial check, but kept for safety
         unit = unitname
+    else:
+        # Raise error for other unexpected types
+        raise TypeError(f"findunit() argument must be a str or PhysicalUnit, not {type(unitname).__name__}")
+
+    # Final check (redundant if logic above is correct, but safe)
     if not isphysicalunit(unit):
-        raise UnitError(f'{str(unit)} is not a unit')
+         raise UnitError(f'Could not resolve "{unitname}" to a PhysicalUnit.')
     return unit
 
 

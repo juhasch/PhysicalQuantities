@@ -443,13 +443,30 @@ class PhysicalQuantity:
           If the resulting unit is dimensionless, returns a scaled scalar.
         """
         if not isinstance(other, PhysicalQuantity):
-            return self.__class__(self.value * other, self.unit)
-        value = self.value * other.value
-        unit = self.unit * other.unit
-        if unit.is_dimensionless:
-            return value * unit.factor
+            # Handle quantity * scalar or quantity * unit
+            if isphysicalunit(other):
+                # quantity * unit
+                value = self.value  # Value remains the same
+                unit = self.unit * other  # Multiply units
+                if unit.is_dimensionless:
+                    # If result is dimensionless, return scaled scalar value
+                    return value * unit.factor
+                else:
+                    # Return new quantity with combined unit
+                    return self.__class__(value, unit)
+            else:
+                # Assume quantity * scalar (or list, array, complex, etc.)
+                # Revert to simpler multiplication, relying on self.value's behavior
+                # This handles numeric types, lists, arrays via duck typing / NumPy overload
+                return self.__class__(self.value * other, self.unit)
         else:
-            return self.__class__(value, unit)
+            # Handle quantity * quantity
+            value = self.value * other.value
+            unit = self.unit * other.unit
+            if unit.is_dimensionless:
+                return value * unit.factor
+            else:
+                return self.__class__(value, unit)
 
     __rmul__ = __mul__
 
