@@ -103,6 +103,8 @@ class PhysicalQuantity:
         (in the specified unit) is returned without the unit (e.g., `quantity.mV_`).
         Accessing just `_` returns the original numerical value.
 
+        This method is called only if standard attribute lookup fails.
+
         Parameters
         ----------
         attr : str
@@ -118,8 +120,9 @@ class PhysicalQuantity:
         Raises
         ------
         AttributeError
-            If `attr` is not a unit name found in the `unit_table` or if the
-            attribute syntax is otherwise invalid.
+            If `attr` is not a unit name found in `unit_table`, if the found unit
+            is incompatible with the quantity's unit, or if the attribute syntax
+            is otherwise invalid.
 
         Examples
         --------
@@ -133,19 +136,46 @@ class PhysicalQuantity:
         0.002
         >>> a.m # Converts mm to m and returns the PhysicalQuantity
         0.002 m
+        >>> a.base # Accesses the .base property, does not go through __getattr__
+        0.002 m
+        >>> a.kg # doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+            ...
+        AttributeError: Unit 'kg' is not compatible with unit 'mm'
         """
-        dropunit = (attr[-1] == '_')
-        attr = attr.strip('_')
-        if attr == '' and dropunit is True:
+        # Check if it's the special case for accessing the value directly
+        if attr == '_':
             return self.value
+
+        dropunit = (attr[-1] == '_')
+        attr_unit_name = attr.strip('_')
+
+        # Optimization: check unit_table *first*. If not there, it's not a unit attr.
+        if attr_unit_name not in unit_table:
+            # If it wasn't found in unit_table, raise standard AttributeError
+            # This allows access to normal methods/properties like .base, .value etc.
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{attr}'")
+
+        # If it IS in unit_table, proceed with unit conversion logic
         try:
-            attrunit = unit_table[attr]
+            attrunit = unit_table[attr_unit_name]
+            # Check for dimensional compatibility BEFORE conversion using the 'powers' array
+            if self.unit.powers != attrunit.powers:
+                raise AttributeError(f"Unit '{attr_unit_name}' is not compatible with unit '{self.unit.name}' (dimension mismatch)")
+
+            # If compatible, perform the conversion
+            converted_quantity = self.to(attrunit.name)
+            if dropunit:
+                return converted_quantity.value
+            else:
+                return converted_quantity
+
         except KeyError:
-            raise AttributeError(f'Unit {attr} not found')
-        if dropunit is True:
-            return self.to(attrunit.name).value
-        else:
-            return self.to(attrunit.name)
+            # This case should technically not be reached due to the initial check,
+            # but kept for safety. It implies attr_unit_name was initially in unit_table
+            # but somehow disappeared, which is unlikely.
+            # Re-raising standard AttributeError is safer.
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{attr}'")
 
     def __getitem__(self, key):
         """Allows indexing if the underlying value is an array or list.
@@ -588,18 +618,24 @@ class PhysicalQuantity:
             return self.__class__(np.ndarray.__neg__(self.value), self.unit)
         return self.__class__(-self.value, self.unit)
 
-    def __nonzero__(self):
-        """Tests if the quantity's value is non-zero (Python 2 boolean context).
+    # __nonzero__ is Python 2. Use __bool__ in Python 3.
+    def __bool__(self) -> bool:
+        """Tests if the quantity's value is non-zero (Python 3 boolean context).
+
+        This method provides the standard boolean interpretation used in contexts like `if quantity:`.
 
         Returns
         -------
-        bool | PhysicalQuantity
-            For scalar values, returns `self.value != 0`.
-            For numpy array values, returns `np.nonzero(self.value)` wrapped in a PhysicalQuantity.
+        bool
+            `True` if the value is non-zero, `False` otherwise.
+            For array values, tests if *any* element is non-zero using `numpy.any()`.
         """
         if isinstance(self.value, np.ndarray):
-            return self.__class__(np.nonzero(self.value), self.unit)
-        return self.value != 0
+            # Correct Python 3 boolean context: check if *any* element is non-zero
+            # Explicitly cast numpy.bool_ to standard Python bool
+            return bool(np.any(self.value))
+        # Standard boolean conversion for scalars
+        return bool(self.value)
 
     def __gt__(self, other):
         """Tests if this quantity is greater than another (`self > other`).
