@@ -1228,3 +1228,129 @@ class PhysicalQuantity:
         """
         quantity_dict = json.loads(json_quantity)
         return PhysicalQuantity.from_dict(quantity_dict['PhysicalQuantity'])
+
+    # NumPy interoperability
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        """Implements NumPy Universal Function (ufunc) support."""
+        # Ensure the method is a standard call
+        if method != '__call__':
+            return NotImplemented
+
+        # --- Prepare inputs ---
+        # Convert inputs to values and units
+        processed_inputs = []
+        input_units = []
+        for x in inputs:
+            if isinstance(x, PhysicalQuantity):
+                processed_inputs.append(x.value)
+                input_units.append(x.unit)
+            elif isinstance(x, (int, float, complex, list, np.ndarray)):
+                processed_inputs.append(x)
+                input_units.append(None) # Mark non-quantity inputs
+            else:
+                # Cannot handle other types
+                return NotImplemented
+
+        # --- Handle specific ufuncs ---
+
+        # Division (np.true_divide)
+        if ufunc is np.true_divide:
+            if len(processed_inputs) != 2:
+                return NotImplemented # Requires 2 arguments
+
+            val1, val2 = processed_inputs
+            unit1, unit2 = input_units
+
+            # Calculate result value
+            # Check for output argument and handle if necessary (ignoring for now)
+            if 'out' in kwargs:
+                # For simplicity, we don't support 'out' for now with unit changes
+                return NotImplemented
+            
+            result_value = ufunc(val1, val2, **kwargs)
+
+            # Determine result unit
+            if unit1 is not None and unit2 is not None: # quantity / quantity
+                result_unit = unit1 / unit2
+            elif unit1 is not None and unit2 is None: # quantity / scalar_or_array
+                result_unit = unit1
+            elif unit1 is None and unit2 is not None: # scalar_or_array / quantity
+                result_unit = 1 / unit2
+            else: # scalar_or_array / scalar_or_array (should not happen via PhysicalQuantity)
+                 return NotImplemented
+
+            # Return result
+            if result_unit.is_dimensionless:
+                return result_value * result_unit.factor
+            else:
+                return self.__class__(result_value, result_unit)
+
+        # Add / Subtract (requires compatible units)
+        elif ufunc in (np.add, np.subtract):
+             if len(processed_inputs) != 2:
+                return NotImplemented
+             val1, val2 = processed_inputs
+             unit1, unit2 = input_units
+
+             if unit1 is None or unit2 is None:
+                 # Cannot add/subtract scalar and quantity directly via ufunc
+                 return NotImplemented
+            
+             # Ensure units are compatible
+             if unit1.powers != unit2.powers:
+                  raise UnitError(f"Cannot {ufunc.__name__} quantities with incompatible units: {unit1} and {unit2}")
+
+             # Convert second value to units of the first
+             val2_converted = val2 * unit2.conversion_factor_to(unit1)
+             result_value = ufunc(val1, val2_converted, **kwargs)
+             # Result is in the unit of the first operand
+             return self.__class__(result_value, unit1)
+
+        # Multiply
+        elif ufunc is np.multiply:
+            if len(processed_inputs) != 2:
+                return NotImplemented
+            val1, val2 = processed_inputs
+            unit1, unit2 = input_units
+
+            result_value = ufunc(val1, val2, **kwargs)
+
+            # Determine result unit
+            if unit1 is not None and unit2 is not None: # quantity * quantity
+                result_unit = unit1 * unit2
+            elif unit1 is not None and unit2 is None: # quantity * scalar_or_array
+                result_unit = unit1
+            elif unit1 is None and unit2 is not None: # scalar_or_array * quantity
+                result_unit = unit2
+            else: # scalar_or_array * scalar_or_array
+                 return NotImplemented
+
+            # Return result
+            if result_unit.is_dimensionless:
+                return result_value * result_unit.factor
+            else:
+                return self.__class__(result_value, result_unit)
+
+        # Trig functions (sin, cos, tan)
+        elif ufunc in (np.sin, np.cos, np.tan):
+            if len(processed_inputs) != 1:
+                 return NotImplemented # Requires 1 argument
+            val = processed_inputs[0]
+            unit = input_units[0]
+
+            if unit is None:
+                 # Applying trig func to scalar/array without unit
+                 return NotImplemented # Or should we allow np.sin(5)? Let NumPy handle.
+            
+            if not unit.is_angle:
+                 raise UnitError(f"Argument of {ufunc.__name__} must be an angle, not {unit}")
+
+            # Convert to radians
+            value_rad = val * unit.conversion_factor_to(unit_table['rad'])
+            # Apply ufunc to value in radians
+            result_value = ufunc(value_rad, **kwargs)
+            # Result is dimensionless scalar/array
+            return result_value
+
+        # --- Default: Ufunc not handled ---
+        return NotImplemented

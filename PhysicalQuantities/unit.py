@@ -427,21 +427,39 @@ class PhysicalUnit:
                                 self.factor / other, self.powers)
 
     def __rdiv__(self, other):
-        """ Called for `other / self`. """
-        if self.offset != 0 or (isphysicalunit(other) and other.offset != 0):
-            raise UnitError('Cannot divide units %s and %s with non-zero offset' % (self, other))
+        """ Called for `other / self` (true division).
+        
+        Handles `scalar / unit` and `unit / unit`.
+        """
+        if self.offset != 0:
+            raise UnitError(f'Cannot divide unit {self} with non-zero offset in denominator')
+        
         if isphysicalunit(other):
+            # Handle unit / unit
+            if other.offset != 0:
+                 raise UnitError(f'Cannot divide unit {other} with non-zero offset in numerator')
             return PhysicalUnit(other.names - self.names,
                                 other.factor / self.factor,
                                 list(map(lambda a, b: a - b, other.powers, self.powers)))
         else:
-            # TODO: add test
-            # Treat 'other' as a dimensionless factor being divided by the unit's factor
-            return PhysicalUnit(self.names + FractionalDict({str(other): -1}),
-                                other // self.factor, self.powers)
+            # Handle scalar / unit
+            # Ensure 'other' is treated as a number for factor calculation
+            try:
+                scalar_numerator = float(other)
+            except (ValueError, TypeError):
+                raise TypeError(f"Unsupported operand type(s) for /: '{type(other).__name__}' and '{type(self).__name__}'")
+
+            new_factor = scalar_numerator / self.factor
+            # Invert powers and names for the resulting unit
+            new_powers = [-p for p in self.powers]
+            # Use dict comprehension to invert powers in names dict
+            new_names = FractionalDict({name: -power for name, power in self.names.items()})
+            
+            # Create the reciprocal unit
+            return PhysicalUnit(new_names, new_factor, new_powers)
 
     def __floordiv__(self, other):
-        """ Divide two units
+        """ Divide two units (floor division on factor)
 
         Parameters
         ----------
