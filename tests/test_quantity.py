@@ -207,8 +207,7 @@ def test_ne_1():
 
 def test_ne_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
-        assert a != 3
+    assert a != 3
 
 
 def test_ne_prefixed():
@@ -227,7 +226,7 @@ def test_lt_1():
 
 def test_lt_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a < 3
 
 
@@ -247,7 +246,7 @@ def test_le_1():
 
 def test_le_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a <= 3
 
 
@@ -267,7 +266,7 @@ def test_gt_1():
 
 def test_gt_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a > 3
 
 
@@ -287,7 +286,7 @@ def test_ge_1():
 
 def test_ge_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a >= 3
 
 
