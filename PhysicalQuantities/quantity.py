@@ -1297,6 +1297,8 @@ class PhysicalQuantity:
                  return NotImplemented
 
             # Return result
+            # Add assertion to check type before accessing property
+            assert isphysicalunit(result_unit), f"result_unit should be PhysicalUnit, got {type(result_unit)}"
             if result_unit.is_dimensionless:
                 return result_value * result_unit.factor
             else:

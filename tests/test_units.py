@@ -148,9 +148,10 @@ def test_unit_multiplication_3():
 
 def test_unit_multiplication_4():
     a = PhysicalQuantity(2, 'm')
-    b = a.unit * 2
+    b = a.unit * 2 # unit * scalar -> PhysicalQuantity(scalar, unit)
     assert type(b) is PhysicalQuantity
-    assert str(b) == '4 m'
+    # The value should be the scalar (2), not scaled by the original quantity's value
+    assert str(b) == '2 m'
 
 
 def test_unit_inversion():

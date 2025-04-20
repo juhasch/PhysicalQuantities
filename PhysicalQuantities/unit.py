@@ -189,7 +189,8 @@ class PhysicalUnit:
         # Check for Energy (M L^2 T^-2) or Power (M L^2 T^-3) dimensions
         # Original check used p[3] > -1 (Ampere), likely a typo.
         # Matching comment: (L^2 M T^-n, n>=2)
-        if p[0] == 2 and p[1] == 1 and p[2] <= -2:
+        # Refined check: Ensure Ampere dimension (p[3]) is 0 for true power/energy units.
+        if p[0] == 2 and p[1] == 1 and p[2] <= -2 and p[3] == 0:
             return True
         return False
 
@@ -480,16 +481,15 @@ class PhysicalUnit:
 
         Returns
         -------
-        PhysicalQuantity
-            Resulting quantity
+        PhysicalUnit
+            Resulting reciprocal unit, scaled by the scalar.
 
         Examples
         --------
         >>> from PhysicalQuantities import q
         >>> 10 / q.s.unit
-        <PhysicalQuantity 10 1/s>
+        <PhysicalUnit 10/s>
         """
-        from .quantity import PhysicalQuantity # Import locally
         if self.offset != 0:
             raise UnitError(f'Cannot divide unit {self} with non-zero offset in denominator')
 
@@ -497,8 +497,16 @@ class PhysicalUnit:
         # This method primarily handles scalar / unit
         try:
             scalar_numerator = float(other)
-            # Result is scalar * (unit ** -1)
-            return PhysicalQuantity(scalar_numerator, self**-1)
+            # Calculate new factor for the reciprocal unit, scaled by the numerator
+            # Avoid division by zero for factor
+            if self.factor == 0:
+                raise ZeroDivisionError("Division by unit with zero factor")
+            new_factor = scalar_numerator / self.factor
+            # Invert powers and names for the resulting unit
+            new_powers = [-p for p in self.powers]
+            new_names = FractionalDict({name: -power for name, power in self.names.items()})
+            # Create and return the new reciprocal PhysicalUnit
+            return PhysicalUnit(new_names, new_factor, new_powers)
         except (ValueError, TypeError):
              raise TypeError(f"Unsupported operand type(s) for /: '{type(other).__name__}' and '{type(self).__name__}'")
 
@@ -929,8 +937,8 @@ def add_composite_unit(name, factor, units, offset=0, verbosename='', prefixed=F
 
 
 # Helper functions
-# Temporarily comment out cache to debug hashing issue
-# @lru_cache(maxsize=None)
+# Restore cache decorator
+@lru_cache(maxsize=None)
 def findunit(unitname):
     """ Find and return a PhysicalUnit instance from its name string or object.
 
