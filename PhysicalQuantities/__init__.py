@@ -32,7 +32,7 @@ from .default_units import *
 from .dBQuantity import dBQuantity, dB_unit_table
 from .quantityarray import PhysicalQuantityArray
 
-__version__: str = '1.1.1'
+__version__: str = '1.3.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
