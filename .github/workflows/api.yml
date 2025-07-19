@@ -6,16 +6,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Test python API
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']  # Test on multiple Python versions
+      fail-fast: false  # Continue testing other versions even if one fails
     defaults:
       run:
         working-directory: .
     steps:
-    - uses: actions/checkout@v2  # Use latest version of checkout action
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4  # Use latest version of checkout action
+    - uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: ${{ matrix.python-version }}
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -28,14 +32,10 @@ jobs:
     - name: Run tests and collect coverage
       run: pytest --cov .
       env:
-        COVERAGE_FILE: coverage.$PYTHON_VERSION.xml
+        COVERAGE_FILE: coverage.${{ matrix.python-version }}.xml
       shell: bash
     - name: Upload coverage reports to Codecov with GitHub Action
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: coverage.*.xml  # Upload coverage reports for all Python versions
       if: always()  # Ensure the action is executed even if the tests fail
-    strategy:
-      matrix:
-        python-version: ['3.10', '3.11']  # Test on multiple Python versions
-      fail-fast: false  # Continue testing other versions even if one fails

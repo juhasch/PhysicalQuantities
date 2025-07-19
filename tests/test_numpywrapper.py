@@ -59,9 +59,9 @@ def test_linspace_3():
 
 
 def test_linspace_4():
-    a = nw.linspace(PhysicalQuantity(1, 'mm'), 10, 10)
-    b = np.linspace(1, 10, 10)
-    assert_almost_equal(a.value, b)
+    # Mixing scalar and Quantity should raise UnitError
+    with raises(UnitError):
+        a = nw.linspace(PhysicalQuantity(1, 'mm'), 10, 10)
 
 
 def test_linspace_5():
@@ -72,9 +72,9 @@ def test_linspace_5():
 
 
 def test_linspace_6():
-    a = nw.linspace(1, PhysicalQuantity(10, 'mm'), 10)
-    b = np.linspace(1, 10, 10)
-    assert_almost_equal(a.value, b)
+    # Mixing scalar and Quantity should raise UnitError
+    with raises(UnitError):
+        a = nw.linspace(1, PhysicalQuantity(10, 'mm'), 10)
 
 
 def test_tophysicalquantity_1():

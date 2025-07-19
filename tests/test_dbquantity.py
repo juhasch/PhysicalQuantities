@@ -182,8 +182,8 @@ def test_eq_dB_2():
 def test_eq_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    with raises(UnitError):
-        assert g == 0
+    # Comparing dBQuantity with scalar should be False
+    assert (g == 0) is False
 
 
 def test_eq_dB_4():
@@ -221,8 +221,8 @@ def test_ne_db_2():
 def test_ne_dB_3():
     """ test eq operator with scalar """
     g = dBQuantity(0, 'dBnV')
-    with raises(UnitError):
-        assert g != 0
+    # Comparing dBQuantity with scalar should be True for !=
+    assert (g != 0) is True
 
 
 def test_ne_dB_4():

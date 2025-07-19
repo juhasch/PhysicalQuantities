@@ -8,11 +8,11 @@
 
 .. image:: https://github.com/juhasch/PhysicalQuantities/actions/workflows/api.yml/badge.svg
    :alt: Documentation Status
-   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/api.yml/badge.svg
+   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/api.yml
 
 .. image:: https://github.com/juhasch/PhysicalQuantities/actions/workflows/mypy.yml/badge.svg
    :alt: Documentation Status
-   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/mypy.yml/badge.svg
+   :target: https://github.com/juhasch/PhysicalQuantities/actions/workflows/mypy.yml
 
 ======================================================
  PhysicalQuantities - Calculation in Python with Units
@@ -21,7 +21,7 @@
 Overview
 ========
 
-PhysicalQuantities is a module for Python 3.6 that allows calculations to be aware 
+PhysicalQuantities is a module for Python 3.10 that allows calculations to be aware 
 of physical units with a focus on engineering applications. 
 Built-in unit conversion ensures that calculations will result in the correct aggregate 
 unit.
@@ -106,12 +106,6 @@ This module requires Python 3.10 or above. This is due to the use of mypy for ty
 To install, simply do a
 
     pip install PhysicalQuantities
-
-There also is a conda receive, so you can do
-
-    conda build
-
-to generate a conda package. I will upload a receipe to conda-forge at a later time.
 
 Note
 ----

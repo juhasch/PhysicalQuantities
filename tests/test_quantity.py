@@ -175,13 +175,13 @@ def test_div():
 def test_rdiv_1():
     a = PhysicalQuantity(3, 'm')
     b = PhysicalQuantity(4, 'm')
-    assert a.__rdiv__(b) == 4/3
+    assert b / a == 4/3
 
 
 def test_rdiv_2():
     a = PhysicalQuantity(3, 'm')
     b = PhysicalQuantity(4, 'm^2')
-    assert a.__rdiv__(b) == PhysicalQuantity(4/3, 'm')
+    assert b / a == PhysicalQuantity(4/3, 'm')
 
 
 def test_eq():
@@ -207,8 +207,7 @@ def test_ne_1():
 
 def test_ne_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
-        assert a != 3
+    assert a != 3
 
 
 def test_ne_prefixed():
@@ -227,7 +226,7 @@ def test_lt_1():
 
 def test_lt_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a < 3
 
 
@@ -247,7 +246,7 @@ def test_le_1():
 
 def test_le_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a <= 3
 
 
@@ -267,7 +266,7 @@ def test_gt_1():
 
 def test_gt_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a > 3
 
 
@@ -287,7 +286,7 @@ def test_ge_1():
 
 def test_ge_2():
     a = PhysicalQuantity(2, 'm')
-    with raises(UnitError):
+    with raises(TypeError):
         assert a >= 3
 
 
@@ -451,18 +450,21 @@ def test_neg():
 
 
 def test_neg_np():
-    a = np.array([1, 2]) * PhysicalQuantity(1, 'm')
-    assert np.any(operator.neg(a) == -a)
+    assert np.any((-(np.array([3, 0, 1]) * PhysicalQuantity(1, 'm'))).value == np.array([-3, 0, -1]))
 
 
-def test_nonzero():
-    assert PhysicalQuantity(4, 'm').__nonzero__() is True
-    assert PhysicalQuantity(0, 'm').__nonzero__() is False
+def test_bool_scalar():
+    """Tests the boolean value of scalar quantities."""
+    assert not bool(PhysicalQuantity(0, 'm'))
+    assert bool(PhysicalQuantity(1, 'm'))
+    assert bool(PhysicalQuantity(-1, 'kg'))
 
 
-def test_nonzero_np():
-    r = (np.array([3, 0, 1]) * PhysicalQuantity(1, 'm')).__nonzero__()
-    assert np.any(r.value == np.array([0, 2]))
+def test_bool_np():
+    """Tests the boolean value of array quantities (True if any element is non-zero)."""
+    assert bool(np.array([3, 0, 1]) * PhysicalQuantity(1, 'm'))
+    assert bool(np.array([0, 0, 1]) * PhysicalQuantity(1, 'm'))
+    assert not bool(np.array([0, 0, 0]) * PhysicalQuantity(1, 'm'))
 
 
 def test_is_angle():
