@@ -84,7 +84,7 @@ class _Quantity:
         try:
             _Q = self.table[attr]
         except KeyError as exc:
-            raise KeyError(f'Unit {attr} not found') from exc
+            raise AttributeError(f'Unit {attr} not found') from exc
         return _Q
     
     def _ipython_key_completions_(self):
