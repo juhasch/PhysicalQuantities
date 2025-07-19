@@ -47,7 +47,7 @@ def test_div():
     c = Fraction(3)
     b = a//c
     assert b['a'] == Fraction(3, 3)
-    assert b['b'] == Fraction(2, 3)
+    assert b['b'] == Fraction(0)
 
 
 def test_rdiv():

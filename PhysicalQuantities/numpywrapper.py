@@ -130,26 +130,32 @@ def linspace(start, stop, num=50,  endpoint=True, retstep=False):
     if not isinstance(start, PhysicalQuantity) and not isinstance(stop, PhysicalQuantity):
         return np.linspace(start, stop, num,  endpoint, retstep)
 
-    if isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
-        start.base.unit == stop.base.unit
+    # Check for incompatible combinations (scalar + quantity)
+    if not isinstance(start, PhysicalQuantity) and isinstance(stop, PhysicalQuantity):
+         raise UnitError("linspace requires both start and stop to be quantities or both to be scalars.")
+    if isinstance(start, PhysicalQuantity) and not isinstance(stop, PhysicalQuantity):
+         raise UnitError("linspace requires both start and stop to be quantities or both to be scalars.")
 
-    unit = None
-    if isinstance(start, PhysicalQuantity):
-        start_value = start.value
-        unit = start.unit
-    else:
-        start_value = start
+    # Both are PhysicalQuantities, check for compatible units
+    if start.unit.powers != stop.unit.powers:
+        raise UnitError(f"linspace requires compatible units, got {start.unit} and {stop.unit}")
 
-    if isinstance(stop, PhysicalQuantity):
-        stop_value = stop.value
-        unit = stop.unit
-    else:
-        stop_value = stop
+    # Units are compatible, proceed. Convert stop to start's units for linspace.
+    unit = start.unit
+    start_value = start.value
+    stop_value = stop.to(unit).value # Convert stop to start's unit
 
     array = np.linspace(start_value, stop_value, num,  endpoint, retstep)
 
+    # Result has the unit of the start value
     if retstep:
-        return PhysicalQuantity(array[0], unit), PhysicalQuantity(array[1], unit)
+        # Step also needs a unit. Calculate step value and assign unit.
+        # np.linspace returns (array, step_value) when retstep=True
+        step_value = array[1] # The calculated step value
+        array_values = array[0] # The array part
+        # Step unit should reflect the unit of the difference (start.unit)
+        step_pq = PhysicalQuantity(step_value, unit)
+        return PhysicalQuantity(array_values, unit), step_pq
     else:
         return PhysicalQuantity(array, unit)
 

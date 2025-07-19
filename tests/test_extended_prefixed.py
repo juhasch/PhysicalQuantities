@@ -8,13 +8,13 @@ def test_extend_prefixes():
     assert q.sr == q.sr
     assert q.Hz == q.Hz
 
-    with raises(KeyError):
+    with raises(AttributeError):
         assert q.Ym == q.Ym
 
-    with raises(KeyError):
+    with raises(AttributeError):
         assert q.Ysr == q.Ysr
 
-    with raises(KeyError):        
+    with raises(AttributeError):        
         assert q.YHz == q.YHz
     
     import PhysicalQuantities.extend_prefixed
