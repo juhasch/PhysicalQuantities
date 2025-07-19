@@ -440,14 +440,16 @@ class dBQuantity:
         ValueError
             If a power quantity is converted
         """
-
         val = pow(10, self.value / 20)
         if self.unit.physicalunit is not None:
-            if self.unit.is_power is True:
-                raise ValueError('Invalid 10^(x/20) conversion of a power quantity')
-            else:
+            # This property is for amplitude-like units (is_power is False)
+            if self.unit.is_power is False:
                 return PhysicalQuantity(val, self.unit.physicalunit)
+            else:
+                # Raise error if called on a power unit
+                raise ValueError('Invalid 10^(x/20) conversion of a power quantity')
         else:
+            # No physical unit, return raw value (e.g., for plain dB)
             return val
 
     def __add__(self, other):
@@ -620,15 +622,21 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBunit or type are compared
+            If different dBunit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
             # dB values without scaling
             if self.unit.name == other.unit.name:
                 return self.value > other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            # If dB units differ, check underlying physical units
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
+                # If dimensions match, compare linear values in base units
                 return self.lin.base.value > other.lin.base.value
+            else:
+                # If dimensions differ, raise error
+                raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
@@ -648,14 +656,17 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBunit or type are compared
+            If different dBunit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
-            if self.unit.name is other.unit.name:
+            if self.unit.name == other.unit.name:
                 return self.value >= other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
                 return self.lin.base.value >= other.lin.base.value
+            else:
+                raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
@@ -675,14 +686,17 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBunit or type are compared
+            If different dBunit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
             if self.unit.name == other.unit.name:
                 return self.value < other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
                 return self.lin.base.value < other.lin.base.value
+            else:
+                raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
@@ -702,14 +716,17 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBUnit or type are compared
+            If different dBUnit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
             if self.unit.name == other.unit.name:
                 return self.value <= other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
                 return self.lin.base.value <= other.lin.base.value
+            else:
+                 raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
             raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
 
@@ -729,16 +746,20 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBunit or type are compared
+            If different dBunit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
             if self.unit.name == other.unit.name:
                 return self.value == other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
                 return self.lin.base.value == other.lin.base.value
+            else:
+                 raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
-            raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
+            # Return False for comparison with non-dBQuantity types
+            return False
 
     def __ne__(self, other):
         """ Test if two quantities are not equal
@@ -756,13 +777,17 @@ class dBQuantity:
         Raises
         ------
         UnitError
-            If different dBUnit or type are compared
+            If different dBUnit or type are compared, or if underlying
+            physical units are dimensionally incompatible.
 
         """
         if isinstance(other, dBQuantity):
             if self.unit.name == other.unit.name:
                 return self.value != other.value
-            elif self.lin.base.unit == other.lin.base.unit:
+            elif self.lin.base.unit.powers == other.lin.base.unit.powers:
                 return self.lin.base.value != other.lin.base.value
+            else:
+                raise UnitError(f'Cannot compare dB quantities with incompatible underlying units: {self.unit.physicalunit.name} and {other.unit.physicalunit.name}')
         else:
-            raise UnitError('Cannot compare dBQuantity with type %s' % type(other))
+            # Return True for comparison with non-dBQuantity types
+            return True

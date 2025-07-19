@@ -33,7 +33,7 @@ from .dBQuantity import dBQuantity, dB_unit_table
 from .quantityarray import PhysicalQuantityArray
 import numpy as np
 
-__version__: str = '1.1.1'
+__version__: str = '1.3.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
@@ -100,7 +100,7 @@ class _Quantity:
         try:
             _Q = self.table[attr]
         except KeyError as exc:
-            raise KeyError(f'Unit {attr} not found') from exc
+            raise AttributeError(f'Unit {attr} not found') from exc
         return _Q
     
     def _ipython_key_completions_(self):

@@ -23,10 +23,10 @@ addprefixed('K', prefixrange='engineering')
 addprefixed('mol', prefixrange='engineering')
 addprefixed('cd', prefixrange='engineering')
 addprefixed('rad', prefixrange='engineering')
-addprefixed('sr', 'prefixrange=engineering')
+addprefixed('sr', prefixrange='engineering')
 
 addprefixed(add_composite_unit('Hz', 1, '1/s', verbosename='Hertz',
-                               url='https://en.wikipedia.org/wiki/Hertz'), 'engineering')
+                               url='https://en.wikipedia.org/wiki/Hertz'), prefixrange='engineering')
 addprefixed(add_composite_unit('N', 1, 'm*kg/s**2', verbosename='Newton',
                                url='https://en.wikipedia.org/wiki/Newton_(unit)'), prefixrange='engineering')
 addprefixed(add_composite_unit('Pa', 1, 'N/m**2', verbosename='Pascal',
