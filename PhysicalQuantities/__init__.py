@@ -31,12 +31,28 @@ from .prefixes import *
 from .default_units import *
 from .dBQuantity import dBQuantity, dB_unit_table
 from .quantityarray import PhysicalQuantityArray
+import numpy as np
 
 __version__: str = '1.3.0'
 
 Q = PhysicalQuantity
 U = PhysicalUnit
 QA = PhysicalQuantityArray
+
+
+def np_add_unit(array: np.ndarray, unit: str = '') -> np.ndarray:
+    """Add unit metadata to array
+
+    Parameters
+    ----------
+     array: Input numpy array
+     unit:  PhysicalUnit to assign to array
+    """
+    if len(unit) > 0:
+        metadata = dict(unit=unit)
+        dtype = np.dtype(str(array.dtype), metadata=metadata)
+        return array.astype(dtype)
+    return array
 
 
 class _Quantity:

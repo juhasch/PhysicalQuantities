@@ -171,11 +171,7 @@ class PhysicalQuantity:
                 return converted_quantity
 
         except KeyError:
-            # This case should technically not be reached due to the initial check,
-            # but kept for safety. It implies attr_unit_name was initially in unit_table
-            # but somehow disappeared, which is unlikely.
-            # Re-raising standard AttributeError is safer.
-            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{attr}'")
+            raise AttributeError(f'Unit {attr} not found')
 
     def __getitem__(self, key):
         """Allows indexing if the underlying value is an array or list.
@@ -274,6 +270,26 @@ class PhysicalQuantity:
     def _ipython_key_completions_(self):
         """Provides key completions for IPython environments (used for `obj['<tab>]`)."""
         return self.unit_table.keys()
+
+    @property
+    def np(self) -> np.ndarray:
+        """ Return a numpy array with the unit as metadata attribute
+
+         Returns
+         -------
+         np.ndarray
+            dtype.metadata = dict(unit=PhysicalUnit)
+         """
+        if isinstance(self.value, np.ndarray):
+            array = self.value
+            metadata = dict(unit=str(self.unit))
+            dtype = np.dtype(str(array.dtype), metadata=metadata)
+            return array.astype(dtype)
+        array = np.array(self.value)
+        metadata = dict(unit=str(self.unit))
+        dtype = np.dtype(dtype=array.dtype, metadata=metadata)
+        array = array.astype(dtype)
+        return array
 
     @property
     def dB(self) -> dBQuantity:
@@ -417,6 +433,10 @@ class PhysicalQuantity:
 
     def __add__(self, other):
         """Adds another PhysicalQuantity. Units must be compatible."""
+        if isinstance(other, np.ndarray):
+            metadata = other.dtype.metadata
+            if metadata and 'unit' in metadata:
+                other = PhysicalQuantity(other, metadata['unit'])
         return self._sum(other, 1, 1)
 
     __radd__ = __add__
