@@ -11,7 +11,7 @@ requirements = [
 
 setup(
     name="PhysicalQuantities",
-    version="1.3.0",
+    version="1.4.0",
     author="Juergen Hasch",
     author_email="juergen.hasch@elbonia.de",
     description="Allow calculations using physical quantities",
