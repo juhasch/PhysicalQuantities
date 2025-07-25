@@ -15,103 +15,102 @@ Usage:
 """
 
 import re
-import ast
-import sys
-from typing import Optional, Callable, Any
-from functools import wraps
+from typing import Optional, Callable
+from PhysicalQuantities import q
 
 
 class PhysicsTransformer:
     """Transform physics syntax to PhysicalQuantity calls"""
-    
-    # Common physical units that work with PhysicalQuantities
-    UNITS = {
-        # Length
-        'm', 'mm', 'cm', 'km', 'um', 'nm', 'in', 'ft', 'yd', 'mi',
-        # Mass  
-        'kg', 'g', 'mg', 'ug', 'lb', 'oz', 'ton', 'tonne',
-        # Time
-        's', 'ms', 'us', 'ns', 'min', 'h', 'day', 'week', 'year',
-        # Force
-        'N', 'kN', 'MN', 'dyn', 'lbf', 'kgf',
-        # Energy
-        'J', 'kJ', 'MJ', 'GJ', 'eV', 'keV', 'MeV', 'GeV', 'cal', 'kcal', 'Wh', 'kWh',
-        # Power
-        'W', 'kW', 'MW', 'GW', 'hp',
-        # Pressure
-        'Pa', 'kPa', 'MPa', 'GPa', 'atm', 'psi', 'mmHg', 'torr',
-        # Electrical
-        'V', 'mV', 'kV', 'A', 'mA', 'uA', 'C', 'mC', 'uC',
-        'ohm', 'Ohm', 'kohm', 'Mohm', 'F', 'mF', 'uF', 'nF', 'pF',
-        'H', 'mH', 'uH', 'nH',
-        # Magnetic
-        'T', 'mT', 'uT', 'nT', 'G', 'Wb',
-        # Frequency
-        'Hz', 'kHz', 'MHz', 'GHz', 'THz', 'rpm',
-        # Temperature
-        'K', 'Celsius', 'Fahrenheit',
-        # Amount
-        'mol', 'mmol', 'umol', 'nmol',
-        # Volume
-        'L', 'mL', 'uL', 'nL', 'gal', 'qt', 'pt', 'cup',
-        # Angle
-        'rad', 'mrad', 'deg', 'arcmin', 'arcsec',
-    }
-    
+
     def __init__(self):
         self.transformation_rules = self._create_rules()
-        
+
+    def _is_valid_unit(self, unit: str) -> bool:
+        # Accepts units like 'm', 'm/s', 'kg*m**2/s**2', etc.
+        # Split by operators and check all parts
+        # Remove spaces for easier parsing
+        unit = unit.replace(' ', '')
+        # Split by *, /, and **
+        import re
+        tokens = re.split(r'[*/]', unit)
+        for token in tokens:
+            # Remove exponents (e.g., m**2 -> m)
+            base = token.split('**')[0]
+            if base and base not in q.table:
+                return False
+        return True
+
     def _create_rules(self):
         """Create regex transformation rules"""
         return [
             # Pattern 1: Simple assignment like "a = 100mm"
             (r'\b([a-zA-Z_]\w*)\s*=\s*(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*([a-zA-Z][a-zA-Z\d/\-\*\^]*)\b',
-             r'\1 = q(\2, "\3")'),
-            
+             self._replace_assignment),
+
             # Pattern 2: Spaced assignment like "v = 10 m/s"  
             (r'\b([a-zA-Z_]\w*)\s*=\s*(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s+([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)\b',
-             r'\1 = q(\2, "\3")'),
-             
+             self._replace_assignment),
+
             # Pattern 3: Parenthesized quantities like "(1 m)"
             (r'\((\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s+([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)\)',
-             r'q(\1, "\2")'),
-             
+             self._replace_paren),
+
             # Pattern 4: Standalone quantities in expressions like "+ 1m", "* 5kg", etc.
-            # This must come after assignment patterns to avoid conflicts
             (r'([+\-*/=\(,\s])(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)([a-zA-Z][a-zA-Z\d/\-\*\^]*)\b',
-             r'\1q(\2, "\3")'),
+             self._replace_expr),
         ]
-    
+
+    def _replace_assignment(self, match):
+        var, value, unit = match.group(1), match.group(2), match.group(3)
+        if self._is_valid_unit(unit):
+            return f'{var} = q({value}, "{unit}")'
+        return match.group(0)
+
+    def _replace_paren(self, match):
+        value, unit = match.group(1), match.group(2)
+        if self._is_valid_unit(unit):
+            return f'q({value}, "{unit}")'
+        return match.group(0)
+
+    def _replace_expr(self, match):
+        prefix, value, unit = match.group(1), match.group(2), match.group(3)
+        if self._is_valid_unit(unit):
+            return f'{prefix}q({value}, "{unit}")'
+        return match.group(0)
+
     def transform_code(self, code: str) -> str:
         """Transform physics syntax in code"""
         if not code.strip():
             return code
-            
+
         lines = code.split('\n')
         transformed_lines = []
-        
+
         for line in lines:
             # Skip empty lines, comments, and imports
             if not line.strip() or line.strip().startswith('#') or \
                line.strip().startswith('import') or line.strip().startswith('from'):
                 transformed_lines.append(line)
                 continue
-                
+
             transformed_line = line
-            
+
             # Apply transformation rules
             for pattern, replacement in self.transformation_rules:
-                transformed_line = re.sub(pattern, replacement, transformed_line)
-            
+                if callable(replacement):
+                    transformed_line = re.sub(pattern, replacement, transformed_line)
+                else:
+                    transformed_line = re.sub(pattern, replacement, transformed_line)
+
             # Handle unit conversions like: result = value // unit
             transformed_line = re.sub(
                 r'([^/]+)\s*//\s*([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)',
-                r'(\1).to("\2")',
+                lambda m: f'({m.group(1)}).to("{m.group(2)}")' if self._is_valid_unit(m.group(2)) else m.group(0),
                 transformed_line
             )
-            
+
             transformed_lines.append(transformed_line)
-        
+
         return '\n'.join(transformed_lines)
 
 
@@ -160,14 +159,6 @@ def enable_physics_magic():
         import marimo._islands._island_generator as islands_module  
         if hasattr(islands_module, 'compile_cell'):
             islands_module.compile_cell = _physics_compile_cell
-            
-        print("✅ Physics magic enabled! Natural syntax now works in all cells.")
-        print("Examples:")
-        print("  distance = 100 mm    # becomes: distance = q(100, 'mm')")  
-        print("  velocity = 10 m/s    # becomes: velocity = q(10, 'm/s')")
-        print("  force = 5 N          # becomes: force = q(5, 'N')")
-        print("  energy = 1.5 kJ      # becomes: energy = q(1.5, 'kJ')")
-        
         return True
         
     except ImportError as e:
