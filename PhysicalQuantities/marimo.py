@@ -5,7 +5,7 @@ This extension monkey-patches marimo's cell compilation to automatically transfo
 physics syntax like "a = 100mm" to "a = q(100, 'mm')" just like IPython magic.
 
 Usage:
-    from marimo_physics_extension import enable_physics_magic
+    from marimo_physics_extension import enable_physics_magic, pq
     enable_physics_magic()
     
     # Now you can use natural syntax in any cell:
@@ -14,72 +14,18 @@ Usage:
     # force = 5N      # becomes: force = q(5, 'N')
 """
 
-import re
 from typing import Optional, Callable
-from PhysicalQuantities import q
+from PhysicalQuantities.transform import transform_line
 
 
 class PhysicsTransformer:
-    """Transform physics syntax to PhysicalQuantity calls"""
+    """Transform physics syntax to PhysicalQuantity calls using transform_line"""
 
     def __init__(self):
-        self.transformation_rules = self._create_rules()
-
-    def _is_valid_unit(self, unit: str) -> bool:
-        # Accepts units like 'm', 'm/s', 'kg*m**2/s**2', etc.
-        # Split by operators and check all parts
-        # Remove spaces for easier parsing
-        unit = unit.replace(' ', '')
-        # Split by *, /, and **
-        import re
-        tokens = re.split(r'[*/]', unit)
-        for token in tokens:
-            # Remove exponents (e.g., m**2 -> m)
-            base = token.split('**')[0]
-            if base and base not in q.table:
-                return False
-        return True
-
-    def _create_rules(self):
-        """Create regex transformation rules"""
-        return [
-            # Pattern 1: Simple assignment like "a = 100mm"
-            (r'\b([a-zA-Z_]\w*)\s*=\s*(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*([a-zA-Z][a-zA-Z\d/\-\*\^]*)\b',
-             self._replace_assignment),
-
-            # Pattern 2: Spaced assignment like "v = 10 m/s"  
-            (r'\b([a-zA-Z_]\w*)\s*=\s*(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s+([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)\b',
-             self._replace_assignment),
-
-            # Pattern 3: Parenthesized quantities like "(1 m)"
-            (r'\((\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s+([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)\)',
-             self._replace_paren),
-
-            # Pattern 4: Standalone quantities in expressions like "+ 1m", "* 5kg", etc.
-            (r'([+\-*/=\(,\s])(\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)([a-zA-Z][a-zA-Z\d/\-\*\^]*)\b',
-             self._replace_expr),
-        ]
-
-    def _replace_assignment(self, match):
-        var, value, unit = match.group(1), match.group(2), match.group(3)
-        if self._is_valid_unit(unit):
-            return f'{var} = q({value}, "{unit}")'
-        return match.group(0)
-
-    def _replace_paren(self, match):
-        value, unit = match.group(1), match.group(2)
-        if self._is_valid_unit(unit):
-            return f'q({value}, "{unit}")'
-        return match.group(0)
-
-    def _replace_expr(self, match):
-        prefix, value, unit = match.group(1), match.group(2), match.group(3)
-        if self._is_valid_unit(unit):
-            return f'{prefix}q({value}, "{unit}")'
-        return match.group(0)
+        pass  # No regex rules needed
 
     def transform_code(self, code: str) -> str:
-        """Transform physics syntax in code"""
+        """Transform physics syntax in code using transform_line for each line"""
         if not code.strip():
             return code
 
@@ -93,22 +39,7 @@ class PhysicsTransformer:
                 transformed_lines.append(line)
                 continue
 
-            transformed_line = line
-
-            # Apply transformation rules
-            for pattern, replacement in self.transformation_rules:
-                if callable(replacement):
-                    transformed_line = re.sub(pattern, replacement, transformed_line)
-                else:
-                    transformed_line = re.sub(pattern, replacement, transformed_line)
-
-            # Handle unit conversions like: result = value // unit
-            transformed_line = re.sub(
-                r'([^/]+)\s*//\s*([a-zA-Z][a-zA-Z\d\s/\-\*\^]*)',
-                lambda m: f'({m.group(1)}).to("{m.group(2)}")' if self._is_valid_unit(m.group(2)) else m.group(0),
-                transformed_line
-            )
-
+            transformed_line = transform_line(line)
             transformed_lines.append(transformed_line)
 
         return '\n'.join(transformed_lines)
