@@ -1,3 +1,4 @@
+# .gitea/workflows/ci-test.yaml
 name: CI-Test
 
 on:
@@ -6,15 +7,18 @@ on:
 
 jobs:
   run-tests:
-    runs-on: linux
+    runs-on: ubuntu-latest  # PASST ZU DEINEM LABEL!
     steps:
       - uses: actions/checkout@v3
+
       - name: Dependencies installieren
         run: |
-          apt-get update
-          apt-get install -y python3
+          apt-get update -qq
+          apt-get install -y python3 python3-pip
+
       - name: Tests ausführen
         run: |
           echo "Test erfolgreich!"
-          pytest --cov --cov-report html tests/
-          
+          # Falls du pytest hast:
+          python3 -m pip install pytest pytest-cov
+          pytest --cov --cov-report=html tests
