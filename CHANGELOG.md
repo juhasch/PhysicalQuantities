@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres (at least as of 0.3.0!) to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+1.4.0
+-----
+
+- Marimo magic extension: Allows using numbers with units directly in marimo notebooks (e.g., `a = 5 m + 10 cm`).
+  See [PR #152](https://github.com/juhasch/PhysicalQuantities/pull/152).
+
 
 1.3.0
 -----
