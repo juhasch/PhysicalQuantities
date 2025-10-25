@@ -1,0 +1,20 @@
+name: CI-Test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  run-tests:
+    runs-on: linux
+    steps:
+      - uses: actions/checkout@v3
+      - name: Dependencies installieren
+        run: |
+          apt-get update
+          apt-get install -y python3
+      - name: Tests ausführen
+        run: |
+          echo "Test erfolgreich!"
+          pytest --cov --cov-report html tests/
+          
