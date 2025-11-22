@@ -111,3 +111,19 @@ Note
 ----
 This module is originally based on the IPython extension by Georg Brandl at
 https://bitbucket.org/birkenfeld/ipython-physics.
+
+
+Marimo Integration
+------------------
+
+If you use [marimo](https://github.com/marimo-team/marimo) notebooks, you can enable natural quantity syntax (e.g., `a = 5 m + 10 cm`) by simply importing the marimo extension:
+
+.. code-block:: python
+
+    import PhysicalQuantities.marimo
+    # Optionally, import the quantity constructor:
+    from PhysicalQuantities import q
+
+This will enable the magic transformation for all cells in your marimo notebook.
+
+See the documentation and [PR #152](https://github.com/juhasch/PhysicalQuantities/pull/152) for details.
