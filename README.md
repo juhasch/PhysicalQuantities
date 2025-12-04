@@ -108,3 +108,6 @@ enable_magic()
 
 This will enable the magic transformation for all cells in your marimo notebook.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md)
