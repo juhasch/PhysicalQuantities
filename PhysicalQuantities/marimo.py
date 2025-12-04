@@ -1,12 +1,12 @@
 """
-Marimo Physics Extension - IPython-like Magic for Physical Quantities
+Marimo Extension - IPython-like Magic for Physical Quantities
 
 This extension monkey-patches marimo's cell compilation to automatically transform
 physics syntax like "a = 100mm" to "a = q(100, 'mm')" just like IPython magic.
 
 Usage:
-    from marimo_physics_extension import enable_physics_magic, pq
-    enable_physics_magic()
+    from PhysicalQuantities.marimo import enable_magic
+    enable_magic()
     
     # Now you can use natural syntax in any cell:
     # a = 100 mm      # becomes: a = q(100, 'mm')
@@ -16,16 +16,16 @@ Usage:
 
 from typing import Optional, Callable
 from PhysicalQuantities.transform import transform_line
+from PhysicalQuantities import q
 
 
-class PhysicsTransformer:
-    """Transform physics syntax to PhysicalQuantity calls using transform_line"""
+class MarimoTransformer:
+    """Transform Python syntax to PhysicalQuantity calls using transform_line"""
 
     def __init__(self):
         pass  # No regex rules needed
 
     def transform_code(self, code: str) -> str:
-        """Transform physics syntax in code using transform_line for each line"""
         if not code.strip():
             return code
 
@@ -46,22 +46,22 @@ class PhysicsTransformer:
 
 
 # Global transformer instance
-_physics_transformer = PhysicsTransformer()
+_marimo_transformer = MarimoTransformer()
 
 # Store original compile_cell function
 _original_compile_cell: Optional[Callable] = None
 
 
-def _physics_compile_cell(code: str, *args, **kwargs):
-    """Wrapper for compile_cell that applies physics transformations"""
+def _marimo_compile_cell(code: str, *args, **kwargs):
+    """Wrapper for compile_cell that applies transformations"""
     # Transform the code first
-    transformed_code = _physics_transformer.transform_code(code)
+    transformed_code = _marimo_transformer.transform_code(code)
     
     # Call the original compile_cell with transformed code
     return _original_compile_cell(transformed_code, *args, **kwargs)
 
 
-def enable_physics_magic():
+def enable_magic():
     """Enable automatic physics syntax transformation in marimo cells"""
     global _original_compile_cell
     
@@ -80,28 +80,28 @@ def enable_physics_magic():
             
         # Monkey-patch the module
         import marimo._ast.compiler as compiler_module
-        compiler_module.compile_cell = _physics_compile_cell
+        compiler_module.compile_cell = _marimo_compile_cell
         
         # Also patch any other modules that might import compile_cell
         import marimo._runtime.runtime as runtime_module
         if hasattr(runtime_module, 'compile_cell'):
-            runtime_module.compile_cell = _physics_compile_cell
+            runtime_module.compile_cell = _marimo_compile_cell
             
         import marimo._islands._island_generator as islands_module  
         if hasattr(islands_module, 'compile_cell'):
-            islands_module.compile_cell = _physics_compile_cell
+            islands_module.compile_cell = _marimo_compile_cell
         return True
         
     except ImportError as e:
-        print(f"❌ Could not enable physics magic: {e}")
+        print(f"❌ Could not enable magic: {e}")
         print("Make sure you're running this inside a marimo notebook.")
         return False
     except Exception as e:
-        print(f"❌ Error enabling physics magic: {e}")
+        print(f"❌ Error enabling magic: {e}")
         return False
 
 
-def disable_physics_magic():
+def disable__magic():
     """Disable physics syntax transformation and restore original behavior"""
     global _original_compile_cell
     
@@ -157,22 +157,6 @@ def setup_physics_environment(verbose=True):
         return None
 
 
-# Convenience function to do everything at once
-def activate_physics():
-    """Complete physics setup - environment + magic transformations"""
-    q = setup_physics_environment()
-    if q is not None:
-        success = enable_physics_magic()
-        if success:
-            print("\n🚀 Physics magic is now active! Try this in a cell:")
-            print("    length = 5 m")
-            print("    time = 2 s") 
-            print("    velocity = length / time")
-            print("    print(velocity)")
-            return True
-    return False
-
-
 if __name__ == "__main__":
     # Demo the transformation
     code = """
@@ -184,10 +168,10 @@ energy = 1.5 kJ
 result = force // N
 """
     
-    transformer = PhysicsTransformer()
+    transformer = MarimoTransformer()
     transformed = transformer.transform_code(code)
     
     print("Original code:")
     print(code)
     print("\nTransformed code:")
-    print(transformed) 
+    print(transformed)

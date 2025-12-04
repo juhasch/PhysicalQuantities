@@ -984,6 +984,7 @@ def findunit(unitname):
             name = f'({name[2:]})**-1'
 
         try:
+            print(name)
             evaluated_unit = eval(name, unit_table)
         except NameError:
             raise UnitError(f'Invalid or unknown unit: {name}')
