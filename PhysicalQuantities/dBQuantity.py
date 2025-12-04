@@ -282,7 +282,12 @@ class dBQuantity:
         if unitname == '' and dropunit is True:
             return self.value
 
+        # Marimo does some strange things with display, mime, repr_html, repr_mimebundle, repr_html_
+        if unitname in ['display', 'mime'] or unitname.startswith('repr_'):
+            return self
+
         isdbunit = unitname in dB_unit_table.keys()
+        print('isdbunit', isdbunit, unitname)
         if not isdbunit:
             if dropunit is False:
                 return self.lin.to(unitname)

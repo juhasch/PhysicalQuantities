@@ -101,11 +101,10 @@ https://bitbucket.org/birkenfeld/ipython-physics.
 If you use [marimo](https://github.com/marimo-team/marimo) notebooks, you can enable natural quantity syntax (e.g., `a = 5 m + 10 cm`) by simply importing the marimo extension:
 
 ```python
-import PhysicalQuantities.marimo
-# Optionally, import the quantity constructor:
-from PhysicalQuantities import q
+from PhysicalQuantities.marimo import enable_physics_magic
+from PhysicalQuantities import q as pq
+enable_magic()
 ```
 
 This will enable the magic transformation for all cells in your marimo notebook.
 
-See the documentation and [PR #152](https://github.com/juhasch/PhysicalQuantities/pull/152) for details.

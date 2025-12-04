@@ -3,11 +3,11 @@ name: CI-Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest  # PASST ZU DEINEM LABEL!
+    runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v3
 
